@@ -1,0 +1,517 @@
+nano ~/Desktop/index.html<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>TOÁN DZUI - Học toán thông minh</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: white;
+            color: #05445E;
+            padding: 0;
+            line-height: 1.5;
+            font-family: 'Segoe UI', 'Quicksand', 'Poppins', system-ui, -apple-system, sans-serif;
+        }
+
+        .math-header {
+            background: linear-gradient(95deg, #E24265, #e85d7c);
+            width: 100%;
+            padding: 12px 0 14px 0;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #ff99b0;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 0 1cm;
+            width: 100%;
+        }
+
+        .home-link {
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .home-link:hover {
+            transform: scale(1.02);
+        }
+
+        .math-title {
+            font-family: 'Kalam', 'Comic Neue', cursive;
+            font-size: 36px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -1px;
+            word-spacing: -2px;
+            line-height: 1.2;
+            display: inline-block;
+            transform: rotate(-0.3deg);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            background: white;
+        }
+
+        .row-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(267px, 293px));
+            gap: 40px;
+            margin-bottom: 50px;
+            justify-content: center;
+        }
+
+        @media (max-width: 1000px) {
+            .row-grid {
+                grid-template-columns: repeat(2, minmax(240px, 260px));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .row-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            cursor: default;
+            position: relative;
+            overflow: visible;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Khung trắng bên trong */
+        .white-frame {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 80%;
+            height: 20%;
+        }
+
+        /* TEST NHANH */
+        .card-test .white-frame {
+            top: 15%;
+            left: 10%;
+            border-radius: 20px 8px 20px 8px;
+        }
+        .card-test .deco-circle {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 50%;
+            top: 5%;
+            right: 8%;
+            z-index: 1;
+        }
+
+        /* TOÁN 7 */
+        .card-7 .white-frame {
+            top: 15%;
+            right: 10%;
+            border-radius: 8px 20px 8px 20px;
+        }
+        .card-7 .deco-circle {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            top: 30%;
+            left: 3%;
+            z-index: 1;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+        }
+
+        /* TOÁN 6 */
+        .card-6 .white-frame {
+            top: 40%;
+            left: 15%;
+            border-radius: 30px 8px 30px 8px;
+        }
+        .card-6 .deco-square {
+            position: absolute;
+            width: 42px;
+            height: 42px;
+            background: rgba(255,255,255,0.3);
+            top: 38%;
+            left: 5%;
+            z-index: 1;
+            border-radius: 10px;
+            transform: rotate(10deg);
+        }
+
+        /* TÍNH NHẨM NGẦU */
+        .card-mental .white-frame {
+            width: 94%;
+            top: 55%;
+            left: 3%;
+            border-radius: 4px;
+        }
+        .card-mental .deco-circle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 50%;
+            top: 42%;
+            right: 2%;
+            z-index: 1;
+        }
+
+        /* TOÁN 8 */
+        .card-8 .white-frame {
+            bottom: 20%;
+            left: 15%;
+            border-radius: 8px 30px 8px 30px;
+        }
+        .card-8 .deco-square {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.3);
+            bottom: 5%;
+            right: 10%;
+            z-index: 1;
+            border-radius: 12px;
+            transform: rotate(15deg);
+            opacity: 0.95;
+        }
+
+        /* TOÁN 9 */
+        .card-9 .white-frame {
+            top: 25%;
+            right: 10%;
+            border-radius: 15px;
+            width: 75%;
+        }
+        .card-9 .deco-circle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.35);
+            border-radius: 50%;
+            top: 12%;
+            right: 5%;
+            z-index: 1;
+        }
+
+        /* Chữ bên trong khung trắng */
+        .card-number {
+            font-family: 'Baloo 2', 'Comic Neue', 'Quicksand', sans-serif;
+            font-size: 33px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 5;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            display: block;
+        }
+
+        .card-mental .card-number {
+            font-size: 30px;
+        }
+
+        /* Màu chữ theo từng khối */
+        .card-test .card-number { color: #0A1A9E; }
+        .card-mental .card-number { color: #A82828; }
+        .card-6 .card-number { color: #48D1CC; }
+        .card-7 .card-number { color: #2A8F4A; }
+        .card-8 .card-number { color: #007FFF; }
+        .card-9 .card-number { color: #E64A19; }
+
+        /* Màu nền các khối */
+        /* TEST NHANH - màu #0A1A9E */
+        .card-test { 
+            background: linear-gradient(135deg, #0A1A9E, #3A4ADA);
+            box-shadow: 0 2px 5px rgba(10, 26, 158, 0.08);
+        }
+        
+        .card-mental { background: #A82828; }
+        
+        /* TOÁN 6 - màu #48D1CC */
+        .card-6 { 
+            background: linear-gradient(135deg, #48D1CC, #7EE0DC);
+            box-shadow: 0 2px 5px rgba(72, 209, 204, 0.08);
+        }
+        
+        /* TOÁN 7 - màu trung hòa giữa #50C878 và #66D992 = #5BD185 */
+        .card-7 { 
+            background: linear-gradient(135deg, #5BD185, #8BE3B0);
+            box-shadow: 0 2px 5px rgba(91, 209, 133, 0.08);
+        }
+        
+        /* TOÁN 8 - màu #007FFF */
+        .card-8 { 
+            background: linear-gradient(135deg, #007FFF, #4DADFF);
+            box-shadow: 0 2px 5px rgba(0, 127, 255, 0.08);
+        }
+        
+        /* TOÁN 9 */
+        .card-9 { 
+            background: linear-gradient(135deg, #E64A19, #E67E3A);
+            box-shadow: 0 1.94px 4.85px rgba(230, 74, 25, 0.0776);
+        }
+
+        @media (max-width: 780px) {
+            .math-title { font-size: 28px; }
+            .card-number { font-size: 26px; }
+            .card-mental .card-number { font-size: 24px; }
+            .deco-circle, .deco-square { transform: scale(0.8); }
+        }
+
+        @media (max-width: 550px) {
+            .math-title { font-size: 24px; }
+            .card-number { font-size: 22px; }
+            .card-mental .card-number { font-size: 20px; }
+            .header-inner { padding: 0 20px 0 0.6cm; }
+            .deco-circle, .deco-square { transform: scale(0.7); }
+        }
+
+        .level-grid {
+            display: none;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .level-grid.active { display: flex; }
+
+        .level-card {
+            flex: 1;
+            min-width: 260px;
+            background: #fefdf6;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+            border: 1px solid #ffe0a3;
+        }
+
+        .level-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .level-header {
+            background: linear-gradient(115deg, #ffb347, #ff8c1a);
+            padding: 18px 16px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.7rem;
+            letter-spacing: 1px;
+            font-family: 'Baloo 2', 'Comic Neue', cursive;
+        }
+
+        .level-header small {
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: block;
+            opacity: 0.9;
+        }
+
+        .level-content {
+            padding: 20px 20px 24px;
+            text-align: center;
+        }
+
+        .level-badge {
+            font-size: 3rem;
+            margin-bottom: 8px;
+        }
+
+        .level-desc {
+            color: #7a5a2a;
+            font-weight: 500;
+            background: #fff2df;
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .quiz-placeholder {
+            background: #faf2e6;
+            border-radius: 32px;
+            padding: 20px 12px;
+            text-align: center;
+            border: 2px dashed #ffc489;
+            color: #b97f2e;
+            font-weight: 500;
+            margin-top: 12px;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        .quiz-placeholder i {
+            font-size: 1.8rem;
+            display: block;
+            opacity: 0.6;
+        }
+
+        .quiz-placeholder p {
+            margin: 6px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-bottom: 20px;
+            color: #2b6f94;
+            font-size: 0.85rem;
+            font-family: 'Quicksand', sans-serif;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Kalam:wght@400;700&family=Comic+Neue:wght@400;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="math-header">
+        <div class="header-inner">
+            <a href="/" class="home-link">
+                <div class="math-title">TOÁN DZUI</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row-grid">
+            <div class="card card-test" id="testBlock">
+                <div class="deco-circle"></div>
+                <div class="white-frame">
+                    <div class="card-number">TEST NHANH</div>
+                </div>
+            </div>
+            <div class="card card-mental" id="mentalBlock">
+                <div class="deco-circle"></div>
+                <div class="white-frame">
+                    <div class="card-number">TÍNH NHẨM NGẦU</div>
+                </div>
+            </div>
+            <div class="card card-6">
+                <div class="deco-square"></div>
+                <div class="white-frame">
+                    <div class="card-number">TOÁN 6</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-grid">
+            <div class="card card-7">
+                <div class="deco-circle"></div>
+                <div class="white-frame">
+                    <div class="card-number">TOÁN 7</div>
+                </div>
+            </div>
+            <div class="card card-8">
+                <div class="deco-square"></div>
+                <div class="white-frame">
+                    <div class="card-number">TOÁN 8</div>
+                </div>
+            </div>
+            <div class="card card-9">
+                <div class="deco-circle"></div>
+                <div class="white-frame">
+                    <div class="card-number">TOÁN 9</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="level-grid" id="levelGrid">
+            <div class="level-card">
+                <div class="level-header">🌱 Level 1 <small>Tân Thủ</small></div>
+                <div class="level-content">
+                    <div class="level-badge">⚡</div>
+                    <div class="level-desc">Khởi động tư duy</div>
+                    <div class="quiz-placeholder">
+                        <i>📦</i>
+                        <p>✨ Thử thách tính nhẩm cơ bản ✨</p>
+                        <p style="font-size: 0.8rem;">(Nội dung câu hỏi sẽ được thêm sau)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="level-card">
+                <div class="level-header">🔥 Level 2 <small>Cao Thủ</small></div>
+                <div class="level-content">
+                    <div class="level-badge">⚡⚡</div>
+                    <div class="level-desc">Nâng cao tốc độ</div>
+                    <div class="quiz-placeholder">
+                        <i>📦</i>
+                        <p>✨ Tính nhẩm nâng cao ✨</p>
+                        <p style="font-size: 0.8rem;">(Đang xây dựng ngân hàng câu hỏi)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="level-card">
+                <div class="level-header">🏆 Level 3 <small>Huyền Thoại</small></div>
+                <div class="level-content">
+                    <div class="level-badge">⚡⚡⚡</div>
+                    <div class="level-desc">Thách thức siêu trí não</div>
+                    <div class="quiz-placeholder">
+                        <i>📦</i>
+                        <p>✨ Đẳng cấp tính nhẩm thần tốc ✨</p>
+                        <p style="font-size: 0.8rem;">(Sắp có những phép tính "khó nhằn")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>✨ TOÁN DZUI - TOÁN 6 giữ màu #48D1CC (Medium Turquoise). TOÁN 8 màu #007FFF. ✨</footer>
+    </div>
+
+    <script>
+        const mentalBlock = document.getElementById('mentalBlock');
+        const levelGrid = document.getElementById('levelGrid');
+        
+        if (mentalBlock && levelGrid) {
+            mentalBlock.addEventListener('click', function(e) {
+                levelGrid.classList.toggle('active');
+            });
+        }
+
+        const testBlock = document.getElementById('testBlock');
+        if (testBlock) {
+            testBlock.addEventListener('click', function() {
+                alert('Chức năng TEST NHANH đang được phát triển!');
+            });
+        }
+    </script>
+</body>
+</html>
+
+
