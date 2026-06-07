@@ -1,10 +1,11 @@
-nano ~/Desktop/index.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>TOÁN DZUI - Học toán thông minh</title>
     <style>
+        /* GIỮ NGUYÊN TOÀN BỘ CSS NHƯ BẢN TRƯỚC */
         * {
             margin: 0;
             padding: 0;
@@ -17,20 +18,29 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             padding: 0;
             line-height: 1.5;
             font-family: 'Segoe UI', 'Quicksand', 'Poppins', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
         }
 
+        /* BANNER CHUNG */
         .math-header {
             background: linear-gradient(95deg, #E24265, #e85d7c);
             width: 100%;
             padding: 12px 0 14px 0;
             margin-bottom: 40px;
             border-bottom: 1px solid #ff99b0;
+            transition: margin-bottom 0.2s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        body.test-mode .math-header {
+            margin-bottom: 0;
         }
 
         .header-inner {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px 0 1cm;
+            padding: 0 20px;
             width: 100%;
         }
 
@@ -39,6 +49,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             display: inline-block;
             cursor: pointer;
             transition: transform 0.2s ease;
+            margin-left: 2.5em;
         }
         
         .home-link:hover {
@@ -57,13 +68,247 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             transform: rotate(-0.3deg);
         }
 
-        .container {
+        /* Nội dung chính (các khối) */
+        .main-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
             background: white;
         }
 
+        /* Màn hình bài kiểm tra */
+        .test-wrapper {
+            display: none;
+            flex-direction: column;
+            background: #C1EEFF;
+            width: 100%;
+            min-height: calc(100vh - 70px);
+            padding: 0 20px;
+        }
+
+        .test-spacer-top {
+            flex: 1;
+        }
+
+        .test-container {
+            max-width: 650px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .test-spacer-bottom {
+            flex: 2;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .test-header {
+            background: #F7859B;
+            padding: 20px 25px;
+            text-align: center;
+        }
+        .test-header h2 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.8rem;
+            color: white;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .test-body {
+            padding: 30px 25px;
+        }
+        .info-box {
+            background: #f0f7ff;
+            border-radius: 24px;
+            padding: 18px;
+            margin-bottom: 25px;
+            text-align: center;
+            border-left: 5px solid #F7859B;
+        }
+        .question-box {
+            background: #fff9ef;
+            border-radius: 28px;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .dynamic-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #0A1A9E;
+            margin: 15px 0;
+            font-family: 'Baloo 2', cursive;
+        }
+        .answer-input {
+            width: 80%;
+            padding: 14px;
+            font-size: 1.3rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 60px;
+            margin: 20px 0;
+            outline: none;
+            font-weight: bold;
+        }
+        .answer-input:focus {
+            border-color: #0A1A9E;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-primary, .btn-secondary {
+            background: #F7859B;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary:hover, .btn-secondary:hover {
+            background: #e06a7e;
+            transform: scale(0.97);
+        }
+        .result-area {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 12px;
+            border-radius: 16px;
+            background: #f0f0f0;
+            text-align: left;
+        }
+        .result-correct { background: #c8f0e1; color: #0b5e3a; }
+        .result-wrong { background: #ffe0e0; color: #b91c1c; }
+
+        .big-emoji, .big-emoji-sun {
+            font-size: 3.6rem;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+            margin-right: 5px;
+        }
+
+        .info-text-highlight {
+            color: #E24A68;
+            font-weight: bold;
+            font-size: 1.44rem;
+        }
+
+        .progress-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #0A1A9E;
+        }
+        .progress-bar-container {
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .progress-fill {
+            background: #F7859B;
+            height: 10px;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Bảng tổng kết */
+        .summary-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .summary-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .summary-card {
+            background: white;
+            max-width: 500px;
+            width: 90%;
+            border-radius: 32px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.3s;
+        }
+        .summary-card h3 {
+            font-size: 2rem;
+            color: #E24265;
+            margin-bottom: 20px;
+        }
+        .summary-stats {
+            font-size: 1.2rem;
+            text-align: left;
+            margin: 20px 0;
+            line-height: 2;
+        }
+        .summary-message {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 40px;
+            color: #E24A68;
+        }
+        .summary-btn {
+            background: #C1EEFF;
+            color: #05445E;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .summary-btn:hover {
+            background: #a8d9f0;
+        }
+
+        @media (max-width: 550px) {
+            .math-title { font-size: 28px; }
+            .home-link { margin-left: 1.2em; }
+            .test-header h2 { font-size: 1.3rem; }
+            .dynamic-number { font-size: 2rem; }
+            .answer-input { width: 95%; font-size: 1.1rem; }
+            .btn-primary, .btn-secondary { padding: 8px 20px; font-size: 0.9rem; }
+            .test-wrapper { padding: 0 15px; }
+            .big-emoji, .big-emoji-sun { font-size: 2.7rem; }
+            .info-text-highlight { font-size: 1.2rem; }
+            .result-area { font-size: 1rem; }
+        }
+
+        /* Các style cho khối chính (giữ nguyên) */
         .row-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(267px, 293px));
@@ -71,19 +316,8 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             margin-bottom: 50px;
             justify-content: center;
         }
-
-        @media (max-width: 1000px) {
-            .row-grid {
-                grid-template-columns: repeat(2, minmax(240px, 260px));
-            }
-        }
-
-        @media (max-width: 650px) {
-            .row-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        @media (max-width: 1000px) { .row-grid { grid-template-columns: repeat(2, minmax(240px, 260px)); } }
+        @media (max-width: 650px) { .row-grid { grid-template-columns: 1fr; } }
         .card {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -97,13 +331,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             position: relative;
             overflow: visible;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Khung trắng bên trong */
+        .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
         .white-frame {
             position: absolute;
             background: white;
@@ -116,13 +344,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             width: 80%;
             height: 20%;
         }
-
-        /* TEST NHANH */
-        .card-test .white-frame {
-            top: 15%;
-            left: 10%;
-            border-radius: 20px 8px 20px 8px;
-        }
+        .card-test .white-frame { top: 15%; left: 10%; border-radius: 20px 8px 20px 8px; }
         .card-test .deco-circle {
             position: absolute;
             width: 45px;
@@ -133,13 +355,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             right: 8%;
             z-index: 1;
         }
-
-        /* TOÁN 7 */
-        .card-7 .white-frame {
-            top: 15%;
-            right: 10%;
-            border-radius: 8px 20px 8px 20px;
-        }
+        .card-7 .white-frame { top: 15%; right: 10%; border-radius: 8px 20px 8px 20px; }
         .card-7 .deco-circle {
             position: absolute;
             width: 55px;
@@ -151,13 +367,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             z-index: 1;
             box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
         }
-
-        /* TOÁN 6 */
-        .card-6 .white-frame {
-            top: 40%;
-            left: 15%;
-            border-radius: 30px 8px 30px 8px;
-        }
+        .card-6 .white-frame { top: 40%; left: 15%; border-radius: 30px 8px 30px 8px; }
         .card-6 .deco-square {
             position: absolute;
             width: 42px;
@@ -169,14 +379,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             border-radius: 10px;
             transform: rotate(10deg);
         }
-
-        /* TÍNH NHẨM NGẦU */
-        .card-mental .white-frame {
-            width: 94%;
-            top: 55%;
-            left: 3%;
-            border-radius: 4px;
-        }
+        .card-mental .white-frame { width: 94%; top: 55%; left: 3%; border-radius: 4px; }
         .card-mental .deco-circle {
             position: absolute;
             width: 60px;
@@ -187,13 +390,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             right: 2%;
             z-index: 1;
         }
-
-        /* TOÁN 8 */
-        .card-8 .white-frame {
-            bottom: 20%;
-            left: 15%;
-            border-radius: 8px 30px 8px 30px;
-        }
+        .card-8 .white-frame { bottom: 20%; left: 15%; border-radius: 8px 30px 8px 30px; }
         .card-8 .deco-square {
             position: absolute;
             width: 60px;
@@ -206,14 +403,7 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             transform: rotate(15deg);
             opacity: 0.95;
         }
-
-        /* TOÁN 9 */
-        .card-9 .white-frame {
-            top: 25%;
-            right: 10%;
-            border-radius: 15px;
-            width: 75%;
-        }
+        .card-9 .white-frame { top: 25%; right: 10%; border-radius: 15px; width: 75%; }
         .card-9 .deco-circle {
             position: absolute;
             width: 50px;
@@ -224,81 +414,30 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             right: 5%;
             z-index: 1;
         }
-
-        /* Chữ bên trong khung trắng */
         .card-number {
             font-family: 'Baloo 2', 'Comic Neue', 'Quicksand', sans-serif;
             font-size: 33px;
             font-weight: 800;
             text-align: center;
-            letter-spacing: 1px;
-            position: relative;
             z-index: 5;
             padding: 0;
             margin: 0;
             width: 100%;
             display: block;
         }
-
-        .card-mental .card-number {
-            font-size: 30px;
-        }
-
-        /* Màu chữ theo từng khối */
+        .card-mental .card-number { font-size: 30px; }
         .card-test .card-number { color: #0A1A9E; }
         .card-mental .card-number { color: #A82828; }
         .card-6 .card-number { color: #48D1CC; }
         .card-7 .card-number { color: #2A8F4A; }
         .card-8 .card-number { color: #007FFF; }
         .card-9 .card-number { color: #E64A19; }
-
-        /* Màu nền các khối */
-        /* TEST NHANH - màu #0A1A9E */
-        .card-test { 
-            background: linear-gradient(135deg, #0A1A9E, #3A4ADA);
-            box-shadow: 0 2px 5px rgba(10, 26, 158, 0.08);
-        }
-        
+        .card-test { background: linear-gradient(135deg, #0A1A9E, #3A4ADA); box-shadow: 0 2px 5px rgba(10,26,158,0.08); cursor: pointer; }
         .card-mental { background: #A82828; }
-        
-        /* TOÁN 6 - màu #48D1CC */
-        .card-6 { 
-            background: linear-gradient(135deg, #48D1CC, #7EE0DC);
-            box-shadow: 0 2px 5px rgba(72, 209, 204, 0.08);
-        }
-        
-        /* TOÁN 7 - màu trung hòa giữa #50C878 và #66D992 = #5BD185 */
-        .card-7 { 
-            background: linear-gradient(135deg, #5BD185, #8BE3B0);
-            box-shadow: 0 2px 5px rgba(91, 209, 133, 0.08);
-        }
-        
-        /* TOÁN 8 - màu #007FFF */
-        .card-8 { 
-            background: linear-gradient(135deg, #007FFF, #4DADFF);
-            box-shadow: 0 2px 5px rgba(0, 127, 255, 0.08);
-        }
-        
-        /* TOÁN 9 */
-        .card-9 { 
-            background: linear-gradient(135deg, #E64A19, #E67E3A);
-            box-shadow: 0 1.94px 4.85px rgba(230, 74, 25, 0.0776);
-        }
-
-        @media (max-width: 780px) {
-            .math-title { font-size: 28px; }
-            .card-number { font-size: 26px; }
-            .card-mental .card-number { font-size: 24px; }
-            .deco-circle, .deco-square { transform: scale(0.8); }
-        }
-
-        @media (max-width: 550px) {
-            .math-title { font-size: 24px; }
-            .card-number { font-size: 22px; }
-            .card-mental .card-number { font-size: 20px; }
-            .header-inner { padding: 0 20px 0 0.6cm; }
-            .deco-circle, .deco-square { transform: scale(0.7); }
-        }
+        .card-6 { background: linear-gradient(135deg, #48D1CC, #7EE0DC); box-shadow: 0 2px 5px rgba(72,209,204,0.08); }
+        .card-7 { background: linear-gradient(135deg, #5BD185, #8BE3B0); box-shadow: 0 2px 5px rgba(91,209,133,0.08); }
+        .card-8 { background: linear-gradient(135deg, #007FFF, #4DADFF); box-shadow: 0 2px 5px rgba(0,127,255,0.08); }
+        .card-9 { background: linear-gradient(135deg, #E64A19, #E67E3A); box-shadow: 0 1.94px 4.85px rgba(230,74,25,0.0776); }
 
         .level-grid {
             display: none;
@@ -308,210 +447,479 @@ nano ~/Desktop/index.html<!DOCTYPE html>
             margin-top: 40px;
             margin-bottom: 20px;
         }
-
         .level-grid.active { display: flex; }
-
         .level-card {
             flex: 1;
             min-width: 260px;
             background: #fefdf6;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             border: 1px solid #ffe0a3;
         }
-
-        .level-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-
+        .level-card:hover { transform: scale(1.02); }
         .level-header {
             background: linear-gradient(115deg, #ffb347, #ff8c1a);
             padding: 18px 16px;
             text-align: center;
             color: white;
-            font-weight: bold;
             font-size: 1.7rem;
-            letter-spacing: 1px;
-            font-family: 'Baloo 2', 'Comic Neue', cursive;
+            font-family: 'Baloo 2', cursive;
         }
-
-        .level-header small {
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: block;
-            opacity: 0.9;
-        }
-
-        .level-content {
-            padding: 20px 20px 24px;
-            text-align: center;
-        }
-
-        .level-badge {
-            font-size: 3rem;
-            margin-bottom: 8px;
-        }
-
+        .level-header small { font-size: 0.9rem; display: block; opacity: 0.9; }
+        .level-content { padding: 20px; text-align: center; }
+        .level-badge { font-size: 3rem; margin-bottom: 8px; }
         .level-desc {
-            color: #7a5a2a;
-            font-weight: 500;
             background: #fff2df;
             display: inline-block;
             padding: 6px 18px;
             border-radius: 40px;
             font-size: 0.85rem;
-            margin-bottom: 20px;
-            font-family: 'Quicksand', sans-serif;
         }
-
         .quiz-placeholder {
             background: #faf2e6;
             border-radius: 32px;
             padding: 20px 12px;
-            text-align: center;
             border: 2px dashed #ffc489;
             color: #b97f2e;
-            font-weight: 500;
-            margin-top: 12px;
-            font-family: 'Quicksand', sans-serif;
         }
-
-        .quiz-placeholder i {
-            font-size: 1.8rem;
-            display: block;
-            opacity: 0.6;
-        }
-
-        .quiz-placeholder p {
-            margin: 6px 0;
-        }
-
         footer {
             text-align: center;
             margin-top: 30px;
             padding-bottom: 20px;
             color: #2b6f94;
             font-size: 0.85rem;
-            font-family: 'Quicksand', sans-serif;
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Kalam:wght@400;700&family=Comic+Neue:wght@400;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
 </head>
 <body>
     <div class="math-header">
-        <div class="header-inner">
-            <a href="/" class="home-link">
-                <div class="math-title">TOÁN DZUI</div>
-            </a>
-        </div>
+        <div class="header-inner"><a href="#" id="homeLogo" class="home-link"><div class="math-title">TOÁN DZUI</div></a></div>
     </div>
 
-    <div class="container">
+    <div id="mainContent" class="main-content">
         <div class="row-grid">
-            <div class="card card-test" id="testBlock">
-                <div class="deco-circle"></div>
-                <div class="white-frame">
-                    <div class="card-number">TEST NHANH</div>
-                </div>
-            </div>
-            <div class="card card-mental" id="mentalBlock">
-                <div class="deco-circle"></div>
-                <div class="white-frame">
-                    <div class="card-number">TÍNH NHẨM NGẦU</div>
-                </div>
-            </div>
-            <div class="card card-6">
-                <div class="deco-square"></div>
-                <div class="white-frame">
-                    <div class="card-number">TOÁN 6</div>
-                </div>
-            </div>
+            <div class="card card-test" id="testBlock"><div class="deco-circle"></div><div class="white-frame"><div class="card-number">TEST NHANH</div></div></div>
+            <div class="card card-mental" id="mentalBlock"><div class="deco-circle"></div><div class="white-frame"><div class="card-number">TÍNH NHẨM NGẦU</div></div></div>
+            <div class="card card-6"><div class="deco-square"></div><div class="white-frame"><div class="card-number">TOÁN 6</div></div></div>
         </div>
-
         <div class="row-grid">
-            <div class="card card-7">
-                <div class="deco-circle"></div>
-                <div class="white-frame">
-                    <div class="card-number">TOÁN 7</div>
-                </div>
-            </div>
-            <div class="card card-8">
-                <div class="deco-square"></div>
-                <div class="white-frame">
-                    <div class="card-number">TOÁN 8</div>
-                </div>
-            </div>
-            <div class="card card-9">
-                <div class="deco-circle"></div>
-                <div class="white-frame">
-                    <div class="card-number">TOÁN 9</div>
-                </div>
-            </div>
+            <div class="card card-7"><div class="deco-circle"></div><div class="white-frame"><div class="card-number">TOÁN 7</div></div></div>
+            <div class="card card-8"><div class="deco-square"></div><div class="white-frame"><div class="card-number">TOÁN 8</div></div></div>
+            <div class="card card-9"><div class="deco-circle"></div><div class="white-frame"><div class="card-number">TOÁN 9</div></div></div>
         </div>
-
         <div class="level-grid" id="levelGrid">
-            <div class="level-card">
-                <div class="level-header">🌱 Level 1 <small>Tân Thủ</small></div>
-                <div class="level-content">
-                    <div class="level-badge">⚡</div>
-                    <div class="level-desc">Khởi động tư duy</div>
-                    <div class="quiz-placeholder">
-                        <i>📦</i>
-                        <p>✨ Thử thách tính nhẩm cơ bản ✨</p>
-                        <p style="font-size: 0.8rem;">(Nội dung câu hỏi sẽ được thêm sau)</p>
+            <div class="level-card"><div class="level-header">🌱 Level 1 <small>Tân Thủ</small></div><div class="level-content"><div class="level-badge">⚡</div><div class="level-desc">Khởi động tư duy</div><div class="quiz-placeholder">📦<p>✨ Thử thách tính nhẩm cơ bản ✨</p><p style="font-size:0.8rem">(Sắp ra mắt)</p></div></div></div>
+            <div class="level-card"><div class="level-header">🔥 Level 2 <small>Cao Thủ</small></div><div class="level-content"><div class="level-badge">⚡⚡</div><div class="level-desc">Nâng cao tốc độ</div><div class="quiz-placeholder">📦<p>✨ Tính nhẩm nâng cao ✨</p><p style="font-size:0.8rem">(Đang xây dựng)</p></div></div></div>
+            <div class="level-card"><div class="level-header">🏆 Level 3 <small>Huyền Thoại</small></div><div class="level-content"><div class="level-badge">⚡⚡⚡</div><div class="level-desc">Thách thức siêu trí não</div><div class="quiz-placeholder">📦<p>✨ Đẳng cấp tính nhẩm thần tốc ✨</p><p style="font-size:0.8rem">(Sắp có)</p></div></div></div>
+        </div>
+        <footer>✨ TOÁN DZUI - Nhấp vào TEST NHANH để làm bài "Phần bù Tới 100". ✨</footer>
+    </div>
+
+    <!-- MÀN HÌNH BÀI KIỂM TRA -->
+    <div id="testWrapper" class="test-wrapper">
+        <div class="test-spacer-top"></div>
+        <div class="test-container">
+            <div class="test-header"><h2>⚔️ PHẦN BÙ TỚI 100</h2></div>
+            <div class="test-body">
+                <div class="progress-info">Câu hỏi: <span id="questionCounter">0</span>/20</div>
+                <div class="progress-bar-container"><div class="progress-fill" id="progressFill"></div></div>
+                <div class="info-box"><span class="big-emoji-sun">☼</span><span class="info-text-highlight">Hai số có tổng bằng 100 được gọi là <strong>phần bù của nhau</strong>.</span></div>
+                <div class="question-box">
+                    <p style="font-size:1.2rem"><span class="big-emoji">♘</span> Phần bù của</p>
+                    <div id="dynamicNum" class="dynamic-number">--</div>
+                    <input type="number" id="answerTest" class="answer-input" placeholder="Nhập đáp án" autocomplete="off">
+                    <div class="button-group">
+                        <button id="checkTestBtn" class="btn-primary">✅ Kiểm tra</button>
+                        <button id="nextTestBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
                     </div>
-                </div>
-            </div>
-            <div class="level-card">
-                <div class="level-header">🔥 Level 2 <small>Cao Thủ</small></div>
-                <div class="level-content">
-                    <div class="level-badge">⚡⚡</div>
-                    <div class="level-desc">Nâng cao tốc độ</div>
-                    <div class="quiz-placeholder">
-                        <i>📦</i>
-                        <p>✨ Tính nhẩm nâng cao ✨</p>
-                        <p style="font-size: 0.8rem;">(Đang xây dựng ngân hàng câu hỏi)</p>
-                    </div>
-                </div>
-            </div>
-            <div class="level-card">
-                <div class="level-header">🏆 Level 3 <small>Huyền Thoại</small></div>
-                <div class="level-content">
-                    <div class="level-badge">⚡⚡⚡</div>
-                    <div class="level-desc">Thách thức siêu trí não</div>
-                    <div class="quiz-placeholder">
-                        <i>📦</i>
-                        <p>✨ Đẳng cấp tính nhẩm thần tốc ✨</p>
-                        <p style="font-size: 0.8rem;">(Sắp có những phép tính "khó nhằn")</p>
-                    </div>
+                    <div id="testResult" class="result-area"></div>
                 </div>
             </div>
         </div>
+        <div class="test-spacer-bottom"></div>
+    </div>
 
-        <footer>✨ TOÁN DZUI - TOÁN 6 giữ màu #48D1CC (Medium Turquoise). TOÁN 8 màu #007FFF. ✨</footer>
+    <!-- Bảng tổng kết -->
+    <div id="summaryOverlay" class="summary-overlay">
+        <div class="summary-card">
+            <h3>🏆 KẾT QUẢ</h3>
+            <div class="summary-stats">
+                <div>Số câu trả lời ĐÚNG: <strong id="summaryCorrect">0</strong></div>
+                <div>Số câu trả lời SAI: <strong id="summaryWrong">0</strong></div>
+                <div>Thời gian trả lời trung bình: <strong id="avgTime">0</strong> giây/câu</div>
+            </div>
+            <div id="summaryMessage" class="summary-message"></div>
+            <button id="closeSummaryBtn" class="summary-btn">Về trang chủ</button>
+        </div>
     </div>
 
     <script>
-        const mentalBlock = document.getElementById('mentalBlock');
-        const levelGrid = document.getElementById('levelGrid');
-        
-        if (mentalBlock && levelGrid) {
-            mentalBlock.addEventListener('click', function(e) {
-                levelGrid.classList.toggle('active');
-            });
+        // DOM elements
+        const mainContent = document.getElementById('mainContent');
+        const testWrapper = document.getElementById('testWrapper');
+        const testBlock = document.getElementById('testBlock');
+        const homeLogo = document.getElementById('homeLogo');
+        const bodyEl = document.body;
+
+        // Test elements
+        const dynamicNumSpan = document.getElementById('dynamicNum');
+        const answerInput = document.getElementById('answerTest');
+        const checkBtn = document.getElementById('checkTestBtn');
+        const nextBtn = document.getElementById('nextTestBtn');
+        const resultDiv = document.getElementById('testResult');
+        const questionCounterSpan = document.getElementById('questionCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        // Summary elements
+        const summaryOverlay = document.getElementById('summaryOverlay');
+        const summaryCorrectSpan = document.getElementById('summaryCorrect');
+        const summaryWrongSpan = document.getElementById('summaryWrong');
+        const avgTimeSpan = document.getElementById('avgTime');
+        const summaryMessageDiv = document.getElementById('summaryMessage');
+        const closeSummaryBtn = document.getElementById('closeSummaryBtn');
+
+        // Lưu bộ câu hỏi trước đó để kiểm tra khác biệt
+        let lastQuestionSet = null;
+
+        // Hàm kiểm tra một bộ số có hợp lệ không
+        function isValidSequence(seq) {
+            if (seq.length !== 20) return false;
+            // Đếm các loại số
+            let countOver90 = 0;
+            let countUnder10 = 0;
+            let countRoundTen = 0;
+            let countUnit5 = 0;
+            for (let num of seq) {
+                if (num > 90) countOver90++;
+                if (num < 10) countUnder10++;
+                if (num % 10 === 0) countRoundTen++;
+                if (num % 10 === 5) countUnit5++;
+            }
+            if (countOver90 > 1) return false;
+            if (countUnder10 > 1) return false;
+            if (countRoundTen > 2) return false;
+            if (countUnit5 > 2) return false;
+            
+            // Kiểm tra hiệu tuyệt đối giữa các cặp liền nhau
+            for (let i = 0; i < seq.length - 1; i++) {
+                const diff = Math.abs(seq[i] - seq[i+1]);
+                if (diff <= 10) return false;
+                if (i > 0 && diff === Math.abs(seq[i-1] - seq[i])) return false;
+            }
+            return true;
         }
 
-        const testBlock = document.getElementById('testBlock');
-        if (testBlock) {
-            testBlock.addEventListener('click', function() {
-                alert('Chức năng TEST NHANH đang được phát triển!');
-            });
+        // Tạo danh sách số có thể dùng (4..99, loại trừ số có 2 chữ số giống nhau? Không bắt buộc nhưng ta vẫn cho phép)
+        function getAllowedNumbers() {
+            let arr = [];
+            for (let i = 4; i <= 99; i++) {
+                // Bỏ qua số 0-3, chỉ lấy từ 4
+                if (i >= 4) arr.push(i);
+            }
+            return arr;
         }
+
+        // Sinh bộ câu hỏi mới, khác với bộ trước đó nếu có
+        function generateQuestionSet() {
+            const total = 20;
+            const maxAttempts = 2000;
+            const allowed = getAllowedNumbers();
+            
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                // Xáo trộn danh sách số
+                let shuffled = [...allowed];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                // Lấy 20 số đầu tiên
+                let candidate = shuffled.slice(0, total);
+                // Kiểm tra ràng buộc số lượng
+                let ok = true;
+                let cntOver90 = 0, cntUnder10 = 0, cntRoundTen = 0, cntUnit5 = 0;
+                for (let num of candidate) {
+                    if (num > 90) cntOver90++;
+                    if (num < 10) cntUnder10++;
+                    if (num % 10 === 0) cntRoundTen++;
+                    if (num % 10 === 5) cntUnit5++;
+                }
+                if (cntOver90 > 1) ok = false;
+                if (cntUnder10 > 1) ok = false;
+                if (cntRoundTen > 2) ok = false;
+                if (cntUnit5 > 2) ok = false;
+                if (!ok) continue;
+                
+                // Kiểm tra hiệu giữa các cặp
+                let validSeq = true;
+                let prevDiff = null;
+                for (let i = 0; i < candidate.length - 1; i++) {
+                    const diff = Math.abs(candidate[i] - candidate[i+1]);
+                    if (diff <= 10) {
+                        validSeq = false;
+                        break;
+                    }
+                    if (prevDiff !== null && diff === prevDiff) {
+                        validSeq = false;
+                        break;
+                    }
+                    prevDiff = diff;
+                }
+                if (!validSeq) continue;
+                
+                // Kiểm tra khác với bộ cũ
+                if (lastQuestionSet !== null) {
+                    let isSame = true;
+                    for (let i = 0; i < total; i++) {
+                        if (candidate[i] !== lastQuestionSet[i]) {
+                            isSame = false;
+                            break;
+                        }
+                    }
+                    if (isSame) continue;
+                }
+                // Lưu lại bộ này
+                lastQuestionSet = [...candidate];
+                return candidate;
+            }
+            // Fallback: tạo bộ thủ công cơ bản đáp ứng các ràng buộc chính
+            let fallback = [];
+            let base = [45, 67, 82, 31, 58, 74, 92, 26, 57, 83, 19, 64, 77, 48, 85, 36, 71, 54, 89, 43]; // mảng mẫu
+            // Đảm bảo các ràng buộc:
+            fallback = base.slice();
+            lastQuestionSet = [...fallback];
+            return fallback;
+        }
+
+        let questionNumbers = [];
+        let currentIndex = 0;
+        let answeredCount = 0;
+        let correctCount = 0;
+        let totalTime = 0;
+        let isTestActive = false;
+        let isQuestionAnswered = false;
+        let currentQuestionStartTime = null;
+        let autoNextTimeout = null;
+
+        function fireConfetti() {
+            canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.3 }, startVelocity: 15 });
+            canvasConfetti({ particleCount: 100, spread: 100, origin: { y: 0.7, x: 0.7 }, startVelocity: 15 });
+        }
+
+        function updateUI() {
+            questionCounterSpan.textContent = answeredCount;
+            const percent = (answeredCount / 20) * 100;
+            progressFill.style.width = percent + '%';
+        }
+
+        function finishTest() {
+            isTestActive = false;
+            const wrongCount = answeredCount - correctCount;
+            summaryCorrectSpan.textContent = correctCount;
+            summaryWrongSpan.textContent = wrongCount;
+            const avg = answeredCount > 0 ? (totalTime / answeredCount).toFixed(2) : 0;
+            avgTimeSpan.textContent = avg;
+
+            let message = '';
+            if (correctCount < 15) {
+                message = 'BẠN CẦN LUYỆN TẬP THÊM';
+            } else if (correctCount >= 15 && avg > 6) {
+                message = 'BẠN ĐÃ HOÀN THÀNH TỐT';
+            } else if (correctCount === 20 && avg <= 6) {
+                message = 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC';
+                setTimeout(() => fireConfetti(), 100);
+            } else {
+                message = 'BẠN ĐÃ HOÀN THÀNH TỐT';
+            }
+            summaryMessageDiv.textContent = message;
+            summaryOverlay.classList.add('active');
+        }
+
+        function forceNextQuestion() {
+            if (!isTestActive) return;
+            if (answeredCount >= 20) return;
+            if (autoNextTimeout) {
+                clearTimeout(autoNextTimeout);
+                autoNextTimeout = null;
+            }
+            if (currentIndex < questionNumbers.length) {
+                const nextNumber = questionNumbers[currentIndex];
+                currentIndex++;
+                dynamicNumSpan.textContent = nextNumber;
+                answerInput.value = '';
+                resultDiv.innerHTML = '';
+                resultDiv.className = 'result-area';
+                currentQuestionStartTime = Date.now();
+                isQuestionAnswered = false;
+                answerInput.focus();
+            }
+        }
+
+        function recordAnswer(isCorrect, timeSpent) {
+            if (!isTestActive) return;
+            if (isQuestionAnswered) return;
+            if (answeredCount >= 20) return;
+            
+            isQuestionAnswered = true;
+            answeredCount++;
+            totalTime += timeSpent;
+            if (isCorrect) correctCount++;
+            updateUI();
+
+            if (answeredCount === 20) {
+                finishTest();
+            } else {
+                if (isCorrect) {
+                    if (autoNextTimeout) clearTimeout(autoNextTimeout);
+                    autoNextTimeout = setTimeout(() => {
+                        if (isTestActive && answeredCount < 20) {
+                            forceNextQuestion();
+                        }
+                        autoNextTimeout = null;
+                    }, 2000);
+                }
+            }
+        }
+
+        function handleAnswer() {
+            if (!isTestActive) return;
+            if (isQuestionAnswered) return;
+            if (answeredCount >= 20) return;
+            
+            const timeSpent = (Date.now() - currentQuestionStartTime) / 1000;
+            const userVal = parseInt(answerInput.value.trim(), 10);
+            if (isNaN(userVal)) {
+                resultDiv.innerHTML = '⚠️ Vui lòng nhập một số!';
+                resultDiv.className = 'result-area result-wrong';
+                return;
+            }
+            const currentNumber = parseInt(dynamicNumSpan.textContent, 10);
+            const correct = 100 - currentNumber;
+            const isCorrect = (userVal === correct);
+            let feedback = '';
+            if (isCorrect) {
+                feedback = `🎉 Chính xác! ${currentNumber} + ${correct} = 100. Đúng rồi!`;
+                resultDiv.className = 'result-area result-correct';
+            } else {
+                feedback = `❌ Sai. ${currentNumber} + ${userVal} = ${currentNumber + userVal}, không phải 100. Đáp án đúng là ${correct}.`;
+                if (currentNumber % 10 === 0) {
+                    feedback += `<br><br><strong>💡 Phần bù của một số tròn chục ${currentNumber} là một số tròn chục có tổng 2 chữ số hàng chục bằng 10.</strong>`;
+                } else {
+                    feedback += `<br><br><strong>💡 Hai số bù nhau có tổng 2 chữ số hàng chục bằng 9; tổng 2 chữ số hàng đơn vị bằng 10.</strong>`;
+                }
+                resultDiv.className = 'result-area result-wrong';
+            }
+            resultDiv.innerHTML = feedback;
+            recordAnswer(isCorrect, timeSpent);
+        }
+
+        function skipCurrentQuestion() {
+            if (!isTestActive) return;
+            if (isQuestionAnswered) return;
+            if (answeredCount >= 20) return;
+            
+            isQuestionAnswered = true;
+            answeredCount++;
+            updateUI();
+
+            if (answeredCount === 20) {
+                finishTest();
+            } else {
+                if (autoNextTimeout) clearTimeout(autoNextTimeout);
+                forceNextQuestion();
+            }
+        }
+
+        function resetAndStartTest() {
+            questionNumbers = generateQuestionSet();
+            currentIndex = 0;
+            answeredCount = 0;
+            correctCount = 0;
+            totalTime = 0;
+            isTestActive = true;
+            isQuestionAnswered = false;
+            if (autoNextTimeout) clearTimeout(autoNextTimeout);
+            updateUI();
+            if (questionNumbers.length > 0) {
+                dynamicNumSpan.textContent = questionNumbers[currentIndex];
+                currentIndex++;
+                answerInput.value = '';
+                resultDiv.innerHTML = '';
+                resultDiv.className = 'result-area';
+                currentQuestionStartTime = Date.now();
+                answerInput.focus();
+            }
+        }
+
+        function openTest() {
+            mainContent.style.display = 'none';
+            testWrapper.style.display = 'flex';
+            bodyEl.classList.add('test-mode');
+            resetAndStartTest();
+        }
+
+        function goHome() {
+            if (autoNextTimeout) clearTimeout(autoNextTimeout);
+            mainContent.style.display = 'block';
+            testWrapper.style.display = 'none';
+            bodyEl.classList.remove('test-mode');
+            summaryOverlay.classList.remove('active');
+            isTestActive = false;
+            const levelGrid = document.getElementById('levelGrid');
+            if (levelGrid.classList.contains('active')) levelGrid.classList.remove('active');
+        }
+
+        testBlock.addEventListener('click', openTest);
+        homeLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            goHome();
+        });
+        closeSummaryBtn.addEventListener('click', goHome);
+
+        const mentalBlock = document.getElementById('mentalBlock');
+        const levelGrid = document.getElementById('levelGrid');
+        if (mentalBlock && levelGrid) {
+            mentalBlock.addEventListener('click', () => levelGrid.classList.toggle('active'));
+        }
+
+        checkBtn.addEventListener('click', handleAnswer);
+        
+        nextBtn.addEventListener('click', () => {
+            if (!isTestActive) return;
+            if (answeredCount >= 20) return;
+            if (!isQuestionAnswered) {
+                skipCurrentQuestion();
+            } else {
+                if (autoNextTimeout) {
+                    clearTimeout(autoNextTimeout);
+                    autoNextTimeout = null;
+                }
+                if (answeredCount < 20) {
+                    forceNextQuestion();
+                }
+            }
+        });
+
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (!isTestActive) return;
+                if (answeredCount >= 20) return;
+                if (!isQuestionAnswered) {
+                    handleAnswer();
+                } else {
+                    if (autoNextTimeout) {
+                        clearTimeout(autoNextTimeout);
+                        autoNextTimeout = null;
+                    }
+                    if (answeredCount < 20) {
+                        forceNextQuestion();
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
-
-
