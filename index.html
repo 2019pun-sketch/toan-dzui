@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>TOÁN DZUI - Học toán thông minh</title>
     <style>
-        /* GIỮ NGUYÊN TOÀN BỘ CSS NHƯ BẢN TRƯỚC */
+        /* ---------- GIỮ NGUYÊN TOÀN BỘ CSS (KHÔNG THAY ĐỔI) ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,6 @@
             min-height: 100vh;
         }
 
-        /* BANNER CHUNG */
         .math-header {
             background: linear-gradient(95deg, #E24265, #e85d7c);
             width: 100%;
@@ -68,7 +67,6 @@
             transform: rotate(-0.3deg);
         }
 
-        /* Nội dung chính (các khối) */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -76,7 +74,6 @@
             background: white;
         }
 
-        /* Màn hình bài kiểm tra */
         .test-wrapper {
             display: none;
             flex-direction: column;
@@ -230,7 +227,6 @@
             transition: width 0.3s;
         }
 
-        /* Bảng tổng kết */
         .summary-overlay {
             position: fixed;
             top: 0;
@@ -433,7 +429,7 @@
         .card-8 .card-number { color: #007FFF; }
         .card-9 .card-number { color: #E64A19; }
         .card-test { background: linear-gradient(135deg, #0A1A9E, #3A4ADA); box-shadow: 0 2px 5px rgba(10,26,158,0.08); cursor: pointer; }
-        .card-mental { background: #A82828; }
+        .card-mental { background: #A82828; cursor: pointer; }
         .card-6 { background: linear-gradient(135deg, #48D1CC, #7EE0DC); box-shadow: 0 2px 5px rgba(72,209,204,0.08); }
         .card-7 { background: linear-gradient(135deg, #5BD185, #8BE3B0); box-shadow: 0 2px 5px rgba(91,209,133,0.08); }
         .card-8 { background: linear-gradient(135deg, #007FFF, #4DADFF); box-shadow: 0 2px 5px rgba(0,127,255,0.08); }
@@ -515,10 +511,10 @@
             <div class="level-card"><div class="level-header">🔥 Level 2 <small>Cao Thủ</small></div><div class="level-content"><div class="level-badge">⚡⚡</div><div class="level-desc">Nâng cao tốc độ</div><div class="quiz-placeholder">📦<p>✨ Tính nhẩm nâng cao ✨</p><p style="font-size:0.8rem">(Đang xây dựng)</p></div></div></div>
             <div class="level-card"><div class="level-header">🏆 Level 3 <small>Huyền Thoại</small></div><div class="level-content"><div class="level-badge">⚡⚡⚡</div><div class="level-desc">Thách thức siêu trí não</div><div class="quiz-placeholder">📦<p>✨ Đẳng cấp tính nhẩm thần tốc ✨</p><p style="font-size:0.8rem">(Sắp có)</p></div></div></div>
         </div>
-        <footer>✨ TOÁN DZUI - Nhấp vào TEST NHANH để làm bài "Phần bù Tới 100". ✨</footer>
+        <footer>✨ TOÁN DZUI - Nhấp vào TÍNH NHẨM NGẦU để làm bài "Phần bù Tới 100". ✨</footer>
     </div>
 
-    <!-- MÀN HÌNH BÀI KIỂM TRA -->
+    <!-- MÀN HÌNH BÀI KIỂM TRA (giữ nguyên nội dung) -->
     <div id="testWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -557,14 +553,15 @@
     </div>
 
     <script>
-        // DOM elements
+        // ==================== CHUYỂN SỰ KIỆN TỪ TEST NHANH SANG TÍNH NHẨM NGẦU ====================
         const mainContent = document.getElementById('mainContent');
         const testWrapper = document.getElementById('testWrapper');
         const testBlock = document.getElementById('testBlock');
+        const mentalBlock = document.getElementById('mentalBlock');
         const homeLogo = document.getElementById('homeLogo');
         const bodyEl = document.body;
 
-        // Test elements
+        // Các phần tử test (giữ nguyên)
         const dynamicNumSpan = document.getElementById('dynamicNum');
         const answerInput = document.getElementById('answerTest');
         const checkBtn = document.getElementById('checkTestBtn');
@@ -573,7 +570,6 @@
         const questionCounterSpan = document.getElementById('questionCounter');
         const progressFill = document.getElementById('progressFill');
 
-        // Summary elements
         const summaryOverlay = document.getElementById('summaryOverlay');
         const summaryCorrectSpan = document.getElementById('summaryCorrect');
         const summaryWrongSpan = document.getElementById('summaryWrong');
@@ -581,118 +577,105 @@
         const summaryMessageDiv = document.getElementById('summaryMessage');
         const closeSummaryBtn = document.getElementById('closeSummaryBtn');
 
-        // Lưu bộ câu hỏi trước đó để kiểm tra khác biệt
-        let lastQuestionSet = null;
+        // ==================== BỘ SINH CÂU HỎI ====================
+        let lastQuestionSet = null; // lưu bộ câu hỏi trước đó để so sánh
 
-        // Hàm kiểm tra một bộ số có hợp lệ không
-        function isValidSequence(seq) {
-            if (seq.length !== 20) return false;
-            // Đếm các loại số
-            let countOver90 = 0;
-            let countUnder10 = 0;
-            let countRoundTen = 0;
-            let countUnit5 = 0;
-            for (let num of seq) {
-                if (num > 90) countOver90++;
-                if (num < 10) countUnder10++;
-                if (num % 10 === 0) countRoundTen++;
-                if (num % 10 === 5) countUnit5++;
-            }
-            if (countOver90 > 1) return false;
-            if (countUnder10 > 1) return false;
-            if (countRoundTen > 2) return false;
-            if (countUnit5 > 2) return false;
-            
-            // Kiểm tra hiệu tuyệt đối giữa các cặp liền nhau
-            for (let i = 0; i < seq.length - 1; i++) {
-                const diff = Math.abs(seq[i] - seq[i+1]);
-                if (diff <= 10) return false;
-                if (i > 0 && diff === Math.abs(seq[i-1] - seq[i])) return false;
-            }
-            return true;
-        }
-
-        // Tạo danh sách số có thể dùng (4..99, loại trừ số có 2 chữ số giống nhau? Không bắt buộc nhưng ta vẫn cho phép)
-        function getAllowedNumbers() {
-            let arr = [];
-            for (let i = 4; i <= 99; i++) {
-                // Bỏ qua số 0-3, chỉ lấy từ 4
-                if (i >= 4) arr.push(i);
-            }
-            return arr;
-        }
-
-        // Sinh bộ câu hỏi mới, khác với bộ trước đó nếu có
         function generateQuestionSet() {
             const total = 20;
-            const maxAttempts = 2000;
-            const allowed = getAllowedNumbers();
+            const minNum = 4;
+            const maxNum = 99;
+            const maxAttempts = 1000;
             
-            for (let attempt = 0; attempt < maxAttempts; attempt++) {
-                // Xáo trộn danh sách số
-                let shuffled = [...allowed];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            function isValidPartial(seq, newNum) {
+                if (seq.includes(newNum)) return false;
+                if (seq.length > 0 && (newNum % 10 === seq[seq.length-1] % 10)) return false;
+                return true;
+            }
+            
+            function isFullValid(seq) {
+                if (seq.length !== total) return false;
+                // Đếm các loại đặc biệt
+                let roundTens = 0, unit5 = 0, lessThan10 = 0, greaterThan90 = 0;
+                for (let i = 0; i < seq.length; i++) {
+                    const num = seq[i];
+                    if (num % 10 === 0) roundTens++;
+                    if (num % 10 === 5) unit5++;
+                    if (num < 10) lessThan10++;
+                    if (num > 90) greaterThan90++;
                 }
-                // Lấy 20 số đầu tiên
-                let candidate = shuffled.slice(0, total);
-                // Kiểm tra ràng buộc số lượng
-                let ok = true;
-                let cntOver90 = 0, cntUnder10 = 0, cntRoundTen = 0, cntUnit5 = 0;
-                for (let num of candidate) {
-                    if (num > 90) cntOver90++;
-                    if (num < 10) cntUnder10++;
-                    if (num % 10 === 0) cntRoundTen++;
-                    if (num % 10 === 5) cntUnit5++;
-                }
-                if (cntOver90 > 1) ok = false;
-                if (cntUnder10 > 1) ok = false;
-                if (cntRoundTen > 2) ok = false;
-                if (cntUnit5 > 2) ok = false;
-                if (!ok) continue;
+                if (roundTens > 2) return false;
+                if (unit5 > 2) return false;
+                if (lessThan10 > 1) return false;
+                if (greaterThan90 > 1) return false;
                 
-                // Kiểm tra hiệu giữa các cặp
-                let validSeq = true;
+                // Kiểm tra hiệu liền nhau >10 và hiệu thay đổi liên tục (không trùng hiệu của cặp trước)
                 let prevDiff = null;
-                for (let i = 0; i < candidate.length - 1; i++) {
-                    const diff = Math.abs(candidate[i] - candidate[i+1]);
-                    if (diff <= 10) {
-                        validSeq = false;
-                        break;
-                    }
-                    if (prevDiff !== null && diff === prevDiff) {
-                        validSeq = false;
-                        break;
-                    }
+                for (let i = 0; i < seq.length-1; i++) {
+                    const diff = Math.abs(seq[i] - seq[i+1]);
+                    if (diff <= 10) return false;
+                    if (prevDiff !== null && diff === prevDiff) return false;
                     prevDiff = diff;
                 }
-                if (!validSeq) continue;
-                
-                // Kiểm tra khác với bộ cũ
-                if (lastQuestionSet !== null) {
-                    let isSame = true;
-                    for (let i = 0; i < total; i++) {
-                        if (candidate[i] !== lastQuestionSet[i]) {
-                            isSame = false;
-                            break;
-                        }
-                    }
-                    if (isSame) continue;
-                }
-                // Lưu lại bộ này
-                lastQuestionSet = [...candidate];
-                return candidate;
+                return true;
             }
-            // Fallback: tạo bộ thủ công cơ bản đáp ứng các ràng buộc chính
+            
+            // Thử sinh ngẫu nhiên
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                let seq = [];
+                let candidates = [];
+                for (let i = minNum; i <= maxNum; i++) {
+                    if (i % 10 !== Math.floor(i/10)) candidates.push(i);
+                }
+                // Xáo trộn
+                for (let i = candidates.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+                }
+                for (let num of candidates) {
+                    if (seq.length >= total) break;
+                    if (isValidPartial(seq, num)) {
+                        seq.push(num);
+                    }
+                }
+                if (seq.length === total && isFullValid(seq)) {
+                    // Đảm bảo bộ mới khác với bộ trước đó (nếu có)
+                    if (lastQuestionSet && JSON.stringify(seq) === JSON.stringify(lastQuestionSet)) {
+                        continue;
+                    }
+                    lastQuestionSet = seq.slice();
+                    return seq;
+                }
+            }
+            
+            // Fallback: tạo thủ công
             let fallback = [];
-            let base = [45, 67, 82, 31, 58, 74, 92, 26, 57, 83, 19, 64, 77, 48, 85, 36, 71, 54, 89, 43]; // mảng mẫu
-            // Đảm bảo các ràng buộc:
-            fallback = base.slice();
-            lastQuestionSet = [...fallback];
-            return fallback;
+            let used = new Set();
+            let tens = 0, unit5count = 0, small = 0, large = 0;
+            let prevDiff = null;
+            for (let i = minNum; i <= maxNum && fallback.length < total; i++) {
+                if (i % 10 === Math.floor(i/10)) continue;
+                if (i % 10 === 0 && tens >= 2) continue;
+                if (i % 10 === 5 && unit5count >= 2) continue;
+                if (i < 10 && small >= 1) continue;
+                if (i > 90 && large >= 1) continue;
+                if (used.has(i)) continue;
+                if (fallback.length > 0 && (fallback[fallback.length-1] % 10 === i % 10)) continue;
+                let diff = fallback.length > 0 ? Math.abs(fallback[fallback.length-1] - i) : 0;
+                if (fallback.length > 0 && diff <= 10) continue;
+                if (fallback.length > 1 && diff === prevDiff) continue;
+                if (i % 10 === 0) tens++;
+                if (i % 10 === 5) unit5count++;
+                if (i < 10) small++;
+                if (i > 90) large++;
+                used.add(i);
+                if (fallback.length > 0) prevDiff = diff;
+                fallback.push(i);
+            }
+            lastQuestionSet = fallback.slice(0,total);
+            return lastQuestionSet;
         }
 
+        // ==================== LOGIC BÀI KIỂM TRA ====================
         let questionNumbers = [];
         let currentIndex = 0;
         let answeredCount = 0;
@@ -872,21 +855,21 @@
             if (levelGrid.classList.contains('active')) levelGrid.classList.remove('active');
         }
 
-        testBlock.addEventListener('click', openTest);
+        // ==================== GÁN SỰ KIỆN ====================
+        // Khối TÍNH NHẨM NGẦU mở bài kiểm tra
+        mentalBlock.addEventListener('click', openTest);
+        // Khối TEST NHANH hiển thị thông báo (có thể thay đổi sau)
+        testBlock.addEventListener('click', () => {
+            alert('Chức năng TEST NHANH đang được phát triển!');
+        });
         homeLogo.addEventListener('click', (e) => {
             e.preventDefault();
             goHome();
         });
         closeSummaryBtn.addEventListener('click', goHome);
 
-        const mentalBlock = document.getElementById('mentalBlock');
-        const levelGrid = document.getElementById('levelGrid');
-        if (mentalBlock && levelGrid) {
-            mentalBlock.addEventListener('click', () => levelGrid.classList.toggle('active'));
-        }
-
+        // Các nút điều khiển test
         checkBtn.addEventListener('click', handleAnswer);
-        
         nextBtn.addEventListener('click', () => {
             if (!isTestActive) return;
             if (answeredCount >= 20) return;
@@ -902,7 +885,6 @@
                 }
             }
         });
-
         answerInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 if (!isTestActive) return;
@@ -920,6 +902,14 @@
                 }
             }
         });
+
+        // Xử lý khối mental ban đầu (ẩn/hiện level grid) - vẫn giữ nhưng mặc định ẩn
+        const originalMentalBlock = document.getElementById('mentalBlock');
+        const levelGrid = document.getElementById('levelGrid');
+        // Mặc định ấn vào mental sẽ mở bài test (đã gán ở trên), nếu muốn giữ tính năng toggle level thì có thể comment lại.
+        // Nhưng theo yêu cầu, chuyển test vào đây, nên bỏ toggle level cũ.
+        // Nếu vẫn muốn giữ level thì sẽ xung đột. Tôi sẽ loại bỏ toggle level vì không cần thiết.
+        // Đảm bảo không có event listener cũ (đã gán openTest rồi, không gán thêm).
     </script>
 </body>
 </html>
