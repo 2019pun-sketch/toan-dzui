@@ -181,7 +181,6 @@
         #monomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
         .minus { margin-right: 0.15em; }
         .solution-steps { margin-top: 10px; line-height: 1.8; background: #fff9e6; padding: 10px; border-radius: 12px; }
-        #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
 
         #multiplyMonomialQuizWrapper .question-text,
         #multiplyMonomialQuizWrapper .option label,
@@ -193,7 +192,6 @@
         #multiplyMonomialQuizWrapper .option label { font-size: 1.25rem; }
         #multiplyMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
         #multiplyMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
-        #multiplyMonomialQuizWrapper .btn-primary, #multiplyMonomialQuizWrapper .btn-secondary { font-family: inherit; }
 
         #divideMonomialQuizWrapper .question-text,
         #divideMonomialQuizWrapper .option label,
@@ -205,9 +203,23 @@
         #divideMonomialQuizWrapper .option label { font-size: 1.25rem; }
         #divideMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
         #divideMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
+
+        #squareMonomialQuizWrapper .question-text,
+        #squareMonomialQuizWrapper .option label,
+        #squareMonomialQuizWrapper .result-area,
+        #squareMonomialQuizWrapper .solution-steps {
+            font-family: 'Inter', sans-serif !important;
+            letter-spacing: 0.35px;
+        }
+        #squareMonomialQuizWrapper .option label { font-size: 1.25rem; }
+        #squareMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
+        #squareMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
+        #squareMonomialQuizWrapper .btn-primary, #squareMonomialQuizWrapper .btn-secondary { font-family: inherit; }
+
+        #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
+        #multiplyMonomialQuizWrapper .btn-primary, #multiplyMonomialQuizWrapper .btn-secondary { font-family: inherit; }
         #divideMonomialQuizWrapper .btn-primary, #divideMonomialQuizWrapper .btn-secondary { font-family: inherit; }
 
-        /* Phân số đẹp – đã sửa tên class để tránh lỗi thay thế dấu gạch ngang */
         .frac {
             display: inline-flex;
             flex-direction: column;
@@ -308,7 +320,22 @@
                         <div>5. Nhận biết Đa Thức</div><div>6. Tìm Hệ số và Bậc của Đa thức</div>
                     </div>
                 </div>
-                <div class="topic-item"><div class="topic-title">♘ Chủ đề 2: Hằng đẳng thức đáng nhớ</div><div class="sub-items"><div>1. Luyện tập trước khi học Hằng đẳng thức</div><div>2. Bình phương của một tổng, một hiệu</div><div>3. Hiệu của hai bình phương</div><div>4. Lập phương của một tổng, một hiệu</div><div>5. Tổng và hiệu của hai lập phương</div></div></div>
+                <div class="topic-item">
+                    <div class="topic-title">♘ Chủ đề 2: Hằng đẳng thức đáng nhớ</div>
+                    <div class="sub-items">
+                        <div>1. Luyện tập trước khi học Hằng đẳng thức</div>
+                        <ul>
+                            <li id="squareMonomialLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Bình phương của đơn thức</li>
+                            <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Lập phương của đơn thức</li>
+                            <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 2ab</li>
+                            <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 3a²b − 3ab²</li>
+                        </ul>
+                        <div>2. Bình phương của một tổng, một hiệu</div>
+                        <div>3. Hiệu của hai bình phương</div>
+                        <div>4. Lập phương của một tổng, một hiệu</div>
+                        <div>5. Tổng và hiệu của hai lập phương</div>
+                    </div>
+                </div>
                 <div class="topic-item"><div class="topic-title">♖ Chủ đề 3: Phân tích đa thức thành nhân tử</div><div class="sub-items"><div>1. Đặt Nhân tử chung</div><div>2. Sử dụng Hằng đẳng thức đáng nhớ</div><div>3. Nhóm hạng tử</div><div>4. Bài nâng cao</div></div></div>
                 <div class="topic-item"><div class="topic-title">♗ Chủ đề 4: Phân thức Đại số</div><div class="sub-items"><div>1. Tìm điều kiện xác định</div><div>2. Rút gọn</div></div></div>
             </div>
@@ -355,7 +382,7 @@
         </div>
     </div>
 
-    <!-- Quiz đơn thức -->
+    <!-- Quiz đơn thức (cộng trừ) -->
     <div id="monomialQuizWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -448,17 +475,47 @@
         </div>
     </div>
 
+    <!-- ==================== KHỐI QUIZ BÌNH PHƯƠNG ĐƠN THỨC ==================== -->
+    <div id="squareMonomialQuizWrapper" class="test-wrapper">
+        <div class="test-spacer-top"></div>
+        <div class="test-container">
+            <div class="test-header"><h2>⚔️ Bình phương của đơn thức</h2></div>
+            <div class="test-body">
+                <div class="progress-info">Câu hỏi: <span id="sqQuestionCounter">0</span>/<span id="sqTotalQ">15</span></div>
+                <div class="progress-bar-container"><div class="progress-fill" id="sqProgressFill"></div></div>
+                <div id="sqQuestionArea"></div>
+                <div class="button-group">
+                    <button id="sqCheckBtn" class="btn-primary">✅ Kiểm tra</button>
+                    <button id="sqNextBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
+                </div>
+                <div id="sqResultArea" class="result-area"></div>
+            </div>
+        </div>
+        <div class="test-spacer-bottom"></div>
+    </div>
+    <div id="sqSummaryOverlay" class="summary-overlay">
+        <div class="summary-card">
+            <h3>🏆 KẾT QUẢ</h3>
+            <div class="summary-stats">
+                <div>Số câu trả lời ĐÚNG: <strong id="sqSummaryCorrect">0</strong></div>
+                <div>Số câu trả lời SAI: <strong id="sqSummaryWrong">0</strong></div>
+                <div>Thời gian trả lời trung bình: <strong id="sqAvgTime">0</strong> giây/câu</div>
+            </div>
+            <div id="sqSummaryMessage" class="summary-message"></div>
+            <button id="sqCloseSummaryBtn" class="summary-btn">Về trang chủ</button>
+        </div>
+    </div>
+
     <script>
     (function() {
         // ==================== APP QUẢN LÝ MÀN HÌNH & DỌN DẸP ====================
         const App = {
-            activeQuiz: null, // 'complement100', 'monomial', 'multiplyMonomial', 'divideMonomial'
+            activeQuiz: null,
             cleanupFns: {},
             registerCleanup(name, fn) {
                 this.cleanupFns[name] = fn;
             },
             switchTo(screenId, quizName = null) {
-                // Ẩn tất cả màn hình chính
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('toan8Content').style.display = 'none';
                 document.getElementById('mentalContent').style.display = 'none';
@@ -466,9 +523,9 @@
                 document.getElementById('monomialQuizWrapper').style.display = 'none';
                 document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
                 document.getElementById('divideMonomialQuizWrapper').style.display = 'none';
+                document.getElementById('squareMonomialQuizWrapper').style.display = 'none';
                 document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
 
-                // Dừng quiz cũ nếu có
                 if (this.activeQuiz && this.cleanupFns[this.activeQuiz]) {
                     this.cleanupFns[this.activeQuiz]();
                 }
@@ -491,6 +548,8 @@
                     document.getElementById('multiplyMonomialQuizWrapper').style.display = 'flex';
                 } else if (screenId === 'divideMonomial') {
                     document.getElementById('divideMonomialQuizWrapper').style.display = 'flex';
+                } else if (screenId === 'squareMonomial') {
+                    document.getElementById('squareMonomialQuizWrapper').style.display = 'flex';
                 }
             },
             goHome() {
@@ -1268,11 +1327,10 @@
             });
         })();
 
-        // ==================== QUIZ CHIA ĐƠN THỨC (ĐÃ SỬA LỖI PHÂN SỐ) ====================
+        // ==================== QUIZ CHIA ĐƠN THỨC ====================
         (function() {
             const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
             function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
-            // Sửa lỗi: đổi tên class để không bị thay thế dấu gạch ngang
             function formatFractionHTML(numerator, denominator) {
                 if (denominator === 1) return String(numerator);
                 const absNum = Math.abs(numerator);
@@ -1534,6 +1592,283 @@
             document.addEventListener('keypress', function divEnterHandler(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'divideMonomial' || !isDivTestActive || divAnsweredCount >= currentDivQuestions.length) return; e.preventDefault(); if (!isDivCurrentAnswered) handleDivCheck(); else moveToNextDivQuestion(); });
             App.registerCleanup('divideMonomial', cleanupDivision);
             document.getElementById('divideMonomialLink').addEventListener('click', () => { App.switchTo('divideMonomial', 'divideMonomial'); startDivisionQuiz(); });
+        })();
+
+        // ==================== QUIZ BÌNH PHƯƠNG ĐƠN THỨC ====================
+        (function() {
+            const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
+            function toSuperscript(num) {
+                return String(num).split('').map(d => supMap[d] || d).join('');
+            }
+
+            function formatMonomialBase(coeff, exp, variable) {
+                if (coeff === 0) return '0';
+                let coeffStr = '';
+                if (coeff === 1) {
+                    coeffStr = '';
+                } else if (coeff === -1) {
+                    coeffStr = '-';
+                } else {
+                    coeffStr = String(coeff);
+                }
+                if (exp === 0) {
+                    return coeffStr || '1';
+                }
+                let varPart = variable;
+                if (exp > 1) varPart += toSuperscript(exp);
+                return coeffStr + varPart;
+            }
+
+            function formatMathTextLocal(text) {
+                const supToDigit = {
+                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
+                };
+                let formatted = text.replace(/-/g, '<span class="minus">−</span>');
+                return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
+            }
+
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function createSquareQuestion(variable, coeff) {
+                const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Tính: ";
+                const factorStr = formatMonomialBase(coeff, 1, variable);
+                const text = prefix + "(" + factorStr + ")² = ";
+                
+                const resultCoeff = coeff * coeff;
+                const resultExp = 2;
+                const correctAnswer = formatMonomialBase(resultCoeff, resultExp, variable);
+
+                function generateWrongOptions(correctCoeff, variable) {
+                    const optionsSet = new Set();
+                    const wrongCandidates = [];
+                    wrongCandidates.push(formatMonomialBase(correctCoeff * 2, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(-correctCoeff, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(correctCoeff, 1, variable));
+                    wrongCandidates.push(formatMonomialBase(Math.abs(coeff) * 2, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(coeff * coeff * coeff, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(coeff, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(resultCoeff, 4, variable));
+                    wrongCandidates.push(formatMonomialBase(resultCoeff, 0, variable));
+                    
+                    for (const w of wrongCandidates) {
+                        if (w !== correctAnswer && !optionsSet.has(w)) {
+                            optionsSet.add(w);
+                        }
+                        if (optionsSet.size >= 3) break;
+                    }
+                    
+                    while (optionsSet.size < 3) {
+                        const fakeCoeff = randomInt(-20, 20);
+                        if (fakeCoeff === 0) continue;
+                        const fake = formatMonomialBase(fakeCoeff, 2, variable);
+                        if (fake !== correctAnswer && !optionsSet.has(fake)) {
+                            optionsSet.add(fake);
+                        }
+                    }
+                    return Array.from(optionsSet).slice(0, 3);
+                }
+
+                const distractors = generateWrongOptions(resultCoeff, variable);
+                const options = [correctAnswer, ...distractors];
+                const shuffled = shuffleArrayLocal(options);
+                const correctIndex = shuffled.indexOf(correctAnswer);
+
+                const solutionSteps = [];
+                solutionSteps.push(`(${formatMonomialBase(coeff, 1, variable)})²`);
+                solutionSteps.push(`= (${coeff})² ⋅ (${variable})²`);
+                solutionSteps.push(`= ${coeff * coeff}${variable}²`);
+
+                return {
+                    text: text,
+                    options: shuffled,
+                    correct: correctIndex,
+                    correctAnswer: correctAnswer,
+                    solution: solutionSteps
+                };
+            }
+
+            function shuffleArrayLocal(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function generateSquareQuestions() {
+                const questions = [];
+                const variables = ['x', 'y', 'a', 'b'];
+                const coeffsTier1 = [-2, -3, -4, 2, 3, 4];
+                const coeffsTier2 = [5, -5, 6, -6];
+                
+                const tier1Questions = [];
+                for (let i = 0; i < 11; i++) {
+                    const coeff = coeffsTier1[i % coeffsTier1.length];
+                    const variable = variables[Math.floor(Math.random() * variables.length)];
+                    tier1Questions.push(createSquareQuestion(variable, coeff));
+                }
+                
+                const tier2Questions = [];
+                for (let i = 0; i < 4; i++) {
+                    const coeff = coeffsTier2[i];
+                    const variable = variables[Math.floor(Math.random() * variables.length)];
+                    tier2Questions.push(createSquareQuestion(variable, coeff));
+                }
+                
+                const allQuestions = [...tier1Questions, ...tier2Questions];
+                return shuffleArrayLocal(allQuestions);
+            }
+
+            let currentSqQuestions = [], currentSqIndex = 0, sqAnsweredCount = 0, sqCorrectCount = 0;
+            let sqTotalTime = 0, isSqTestActive = false, isSqCurrentAnswered = false, sqStartTime = null;
+            let sqAutoTimeout = null, sqFinishTimeout = null;
+
+            const sqQuestionArea = document.getElementById('sqQuestionArea');
+            const sqCounterSpan = document.getElementById('sqQuestionCounter');
+            const sqProgressFill = document.getElementById('sqProgressFill');
+            const sqResultArea = document.getElementById('sqResultArea');
+            document.getElementById('sqTotalQ').textContent = "15";
+
+            function updateSqUI() {
+                sqCounterSpan.textContent = sqAnsweredCount;
+                sqProgressFill.style.width = (sqAnsweredCount / currentSqQuestions.length * 100) + '%';
+            }
+
+            function renderSqQuestion() {
+                if (!isSqTestActive || currentSqIndex >= currentSqQuestions.length) return;
+                const q = currentSqQuestions[currentSqIndex];
+                let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
+                q.options.forEach((opt, idx) => {
+                    const letter = String.fromCharCode(65+idx);
+                    html += `<div class="option"><input type="radio" name="sq_option" value="${idx}" id="sq_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="sq_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
+                });
+                html += `</div></div>`;
+                sqQuestionArea.innerHTML = html;
+                document.querySelectorAll('#sqQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
+                    const radio = opt.querySelector('input[type="radio"]');
+                    if (radio && !radio.disabled) radio.checked = true;
+                }));
+                sqStartTime = Date.now(); isSqCurrentAnswered = false;
+                sqResultArea.innerHTML = ''; sqResultArea.className = 'result-area';
+            }
+
+            function finishSqTest() {
+                isSqTestActive = false;
+                const wrong = sqAnsweredCount - sqCorrectCount;
+                const avg = (sqTotalTime / sqAnsweredCount).toFixed(2);
+                document.getElementById('sqSummaryCorrect').textContent = sqCorrectCount;
+                document.getElementById('sqSummaryWrong').textContent = wrong;
+                document.getElementById('sqAvgTime').textContent = avg;
+                const msg = sqCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (sqCorrectCount === currentSqQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
+                document.getElementById('sqSummaryMessage').textContent = msg;
+                if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('sqSummaryOverlay').classList.add('active');
+            }
+
+            function scheduleFinishSqTest(delay) {
+                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
+                sqFinishTimeout = setTimeout(finishSqTest, delay);
+            }
+
+            function recordSqAnswer(isCorrect, timeSpent) {
+                if (!isSqTestActive || isSqCurrentAnswered || sqAnsweredCount >= currentSqQuestions.length) return;
+                isSqCurrentAnswered = true;
+                sqAnsweredCount++;
+                sqTotalTime += timeSpent;
+                if (isCorrect) sqCorrectCount++;
+                updateSqUI();
+                document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true);
+                if (sqAnsweredCount === currentSqQuestions.length) {
+                    scheduleFinishSqTest(isCorrect ? 3000 : 5000);
+                } else if (isCorrect) {
+                    if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
+                    sqAutoTimeout = setTimeout(() => {
+                        if (isSqTestActive && sqAnsweredCount < currentSqQuestions.length) {
+                            currentSqIndex++;
+                            renderSqQuestion();
+                        }
+                        sqAutoTimeout = null;
+                    }, 3000);
+                }
+            }
+
+            function handleSqCheck() {
+                if (!isSqTestActive || isSqCurrentAnswered || sqAnsweredCount >= currentSqQuestions.length) return;
+                const selected = document.querySelector('input[name="sq_option"]:checked');
+                if (!selected) { sqResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; sqResultArea.className = 'result-area result-wrong'; return; }
+                const selectedVal = parseInt(selected.value);
+                const q = currentSqQuestions[currentSqIndex];
+                const isCorrect = (selectedVal === q.correct);
+                const timeSpent = (Date.now() - sqStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct);
+                const correctAnswerText = formatMathTextLocal(q.options[q.correct]);
+                if (isCorrect) {
+                    sqResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
+                    sqResultArea.className = 'result-area result-correct';
+                } else {
+                    let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>');
+                    sqResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
+                    sqResultArea.className = 'result-area result-wrong';
+                }
+                recordSqAnswer(isCorrect, timeSpent);
+            }
+
+            function moveToNextSqQuestion() {
+                if (!isSqTestActive) return;
+                if (sqAnsweredCount >= currentSqQuestions.length) return;
+                if (!isSqCurrentAnswered) {
+                    isSqCurrentAnswered = true;
+                    sqAnsweredCount++;
+                    updateSqUI();
+                    document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true);
+                    if (sqAnsweredCount === currentSqQuestions.length) scheduleFinishSqTest(5000);
+                    else { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); currentSqIndex++; renderSqQuestion(); }
+                } else {
+                    if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
+                    if (sqAnsweredCount < currentSqQuestions.length) { currentSqIndex++; renderSqQuestion(); }
+                }
+            }
+
+            function startSquareQuiz() {
+                if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
+                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
+                currentSqQuestions = generateSquareQuestions();
+                currentSqIndex = 0; sqAnsweredCount = 0; sqCorrectCount = 0; sqTotalTime = 0;
+                isSqTestActive = true; isSqCurrentAnswered = false;
+                updateSqUI();
+                renderSqQuestion();
+            }
+
+            function cleanupSquare() {
+                isSqTestActive = false;
+                if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
+                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
+                document.getElementById('sqSummaryOverlay').classList.remove('active');
+            }
+
+            document.getElementById('sqCheckBtn').addEventListener('click', handleSqCheck);
+            document.getElementById('sqNextBtn').addEventListener('click', moveToNextSqQuestion);
+            document.getElementById('sqCloseSummaryBtn').addEventListener('click', () => App.goHome());
+
+            document.addEventListener('keypress', function sqEnterHandler(e) {
+                if (e.key !== 'Enter') return;
+                if (App.activeQuiz !== 'squareMonomial') return;
+                if (!isSqTestActive) return;
+                if (sqAnsweredCount >= currentSqQuestions.length) return;
+                e.preventDefault();
+                if (!isSqCurrentAnswered) handleSqCheck();
+                else moveToNextSqQuestion();
+            });
+
+            App.registerCleanup('squareMonomial', cleanupSquare);
+
+            document.getElementById('squareMonomialLink').addEventListener('click', () => {
+                App.switchTo('squareMonomial', 'squareMonomial');
+                startSquareQuiz();
+            });
         })();
 
         // ==================== ĐIỀU HƯỚNG CHUNG ====================
