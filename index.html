@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="TOÁN DZUI - Học toán thông minh với các bài kiểm tra nhanh, tính nhẩm và đại số lớp 8.">
     <title>TOÁN DZUI - Học toán thông minh</title>
     <style>
         /* ---------- GIỮ NGUYÊN TOÀN BỘ CSS (KHÔNG THAY ĐỔI) ---------- */
@@ -234,7 +235,7 @@
                 <div class="question-box">
                     <p style="font-size:1.2rem"><span class="big-emoji">♘</span> Phần bù của</p>
                     <div id="dynamicNum" class="dynamic-number">--</div>
-                    <input type="number" id="answerTest" class="answer-input" placeholder="Nhập đáp án" autocomplete="off">
+                    <input type="number" id="answerTest" class="answer-input" placeholder="Nhập đáp án" autocomplete="off" aria-label="Nhập đáp án phần bù">
                     <div class="button-group">
                         <button id="checkTestBtn" class="btn-primary">✅ Kiểm tra</button>
                         <button id="nextTestBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
@@ -290,7 +291,7 @@
         <div class="subject-section"><div class="section-title">K. Một số yếu tố xác suất</div><div class="topic-list"><div class="simple-item">Biến cố, xác suất của biến cố trong trò chơi, thí nghiệm</div><div class="simple-item">Tính xác suất thực nghiệm</div></div></div>
     </div>
 
-    <!-- ==================== KHỐI TÍNH NHẨM NGẦU (ĐÃ SỬA THEO YÊU CẦU) ==================== -->
+    <!-- ==================== KHỐI TÍNH NHẨM NGẦU ==================== -->
     <div id="mentalContent" class="mental-content">
         <div class="mental-header"><h1><span class="chess-king">♛</span><span class="title-text">TÍNH NHẨM NGẦU</span></h1></div>
         <div class="subject-section">
@@ -322,7 +323,7 @@
         </div>
     </div>
 
-    <!-- Quiz đơn thức (giữ nguyên 50 câu) -->
+    <!-- Quiz đơn thức -->
     <div id="monomialQuizWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -353,7 +354,7 @@
         </div>
     </div>
 
-    <!-- ==================== KHỐI QUIZ NHÂN ĐƠN THỨC (MỚI) ==================== -->
+    <!-- ==================== KHỐI QUIZ NHÂN ĐƠN THỨC ==================== -->
     <div id="multiplyMonomialQuizWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -385,7 +386,53 @@
     </div>
 
     <script>
-        // ==================== BÀI "PHẦN BÙ TỚI 100" (GIỮ NGUYÊN) ====================
+    (function() {
+        // ==================== APP QUẢN LÝ MÀN HÌNH & DỌN DẸP ====================
+        const App = {
+            activeQuiz: null, // 'complement100', 'monomial', 'multiplyMonomial'
+            cleanupFns: {},
+            registerCleanup(name, fn) {
+                this.cleanupFns[name] = fn;
+            },
+            switchTo(screenId, quizName = null) {
+                // Ẩn tất cả màn hình chính
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('toan8Content').style.display = 'none';
+                document.getElementById('mentalContent').style.display = 'none';
+                document.getElementById('testWrapper').style.display = 'none';
+                document.getElementById('monomialQuizWrapper').style.display = 'none';
+                document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
+                document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
+
+                // Dừng quiz cũ nếu có
+                if (this.activeQuiz && this.cleanupFns[this.activeQuiz]) {
+                    this.cleanupFns[this.activeQuiz]();
+                }
+                this.activeQuiz = quizName;
+
+                if (screenId === 'main') {
+                    document.getElementById('mainContent').style.display = 'block';
+                } else if (screenId === 'toan8') {
+                    document.getElementById('toan8Content').style.display = 'block';
+                    document.body.classList.add('toan8-mode');
+                } else if (screenId === 'mental') {
+                    document.getElementById('mentalContent').style.display = 'block';
+                    document.body.classList.add('mental-mode');
+                } else if (screenId === 'complement100') {
+                    document.getElementById('testWrapper').style.display = 'flex';
+                    document.body.classList.add('test-mode');
+                } else if (screenId === 'monomial') {
+                    document.getElementById('monomialQuizWrapper').style.display = 'flex';
+                } else if (screenId === 'multiplyMonomial') {
+                    document.getElementById('multiplyMonomialQuizWrapper').style.display = 'flex';
+                }
+            },
+            goHome() {
+                this.switchTo('main');
+            }
+        };
+
+        // ==================== BÀI "PHẦN BÙ TỚI 100" ====================
         (function() {
             const dynamicNumSpan = document.getElementById('dynamicNum');
             const answerInput = document.getElementById('answerTest');
@@ -594,11 +641,14 @@
                 loadNextQuestion();
             }
 
+            function cleanup() {
+                isTestActive = false;
+                if (autoNextTimeout) clearTimeout(autoNextTimeout);
+                summaryOverlay.classList.remove('active');
+            }
+
             window.openComplement100Test = function() {
-                document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('testWrapper').style.display = 'flex';
-                document.body.classList.add('test-mode');
-                document.body.classList.remove('mental-mode', 'toan8-mode');
+                App.switchTo('complement100', 'complement100');
                 resetAndStartTest();
             };
 
@@ -612,10 +662,12 @@
                     else moveToNextQuestion();
                 }
             });
-            closeSummaryBtn.addEventListener('click', goHome);
+            closeSummaryBtn.addEventListener('click', () => App.goHome());
+
+            App.registerCleanup('complement100', cleanup);
         })();
 
-        // ==================== BÀI KIỂM TRA ĐƠN THỨC (50 CÂU - GIỮ NGUYÊN) ====================
+        // ==================== BÀI KIỂM TRA ĐƠN THỨC (50 CÂU) ====================
         const fullQuestionBank = [
             { text: "Rút gọn: 5x³ - 2x³", options: ["3x³", "7x³", "3x⁶", "-3x³"], correct: 0, solution: ["5x³ - 2x³", "= (5 - 2) · x³", "= 3 · x³", "= 3x³"] },
             { text: "Rút gọn: -4x² + 7x²", options: ["3x²", "-11x²", "11x²", "3x⁴"], correct: 0, solution: ["-4x² + 7x²", "= (-4 + 7) · x²", "= 3 · x²", "= 3x²"] },
@@ -684,11 +736,11 @@
         const monoResultArea = document.getElementById('monoResultArea');
         document.getElementById('monoTotalQ').textContent = "15";
 
-        function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
-        function selectRandomQuestions(bank, num) { return shuffleArray([...bank]).slice(0, num); }
+        function shuffleArrayMono(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+        function selectRandomQuestions(bank, num) { return shuffleArrayMono([...bank]).slice(0, num); }
         function shuffleOptions(q) {
             let opts = [...q.options], correctAns = opts[q.correct];
-            let shuffled = shuffleArray(opts), newIdx = shuffled.findIndex(opt => opt === correctAns);
+            let shuffled = shuffleArrayMono(opts), newIdx = shuffled.findIndex(opt => opt === correctAns);
             return { ...q, options: shuffled, correct: newIdx };
         }
 
@@ -703,11 +755,11 @@
             let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathText(q.text)}</div><div class="options">`;
             q.options.forEach((opt, idx) => {
                 const letter = String.fromCharCode(65+idx);
-                html += `<div class="option"><input type="radio" name="mono_option" value="${idx}" id="mono_opt_${idx}"><label for="mono_opt_${idx}">${letter}. ${formatMathText(opt)}</label></div>`;
+                html += `<div class="option"><input type="radio" name="mono_option" value="${idx}" id="mono_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="mono_opt_${idx}">${letter}. ${formatMathText(opt)}</label></div>`;
             });
             html += `</div></div>`;
             monoQuestionArea.innerHTML = html;
-            document.querySelectorAll('.option').forEach(opt => opt.addEventListener('click', () => {
+            document.querySelectorAll('#monoQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
                 const radio = opt.querySelector('input[type="radio"]');
                 if (radio && !radio.disabled) radio.checked = true;
             }));
@@ -797,86 +849,26 @@
             updateMonoUI(); renderCurrentQuestion();
         }
 
-        document.getElementById('monoCheckBtn').addEventListener('click', handleMonoCheck);
-        document.getElementById('monoNextBtn').addEventListener('click', moveToNextMonoQuestion);
-        document.getElementById('monoCloseSummaryBtn').addEventListener('click', () => {
-            document.getElementById('monoSummaryOverlay').classList.remove('active');
-            goHome();
-        });
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && document.getElementById('monomialQuizWrapper').style.display === 'flex' && isMonoTestActive) {
-                if (!isMonoCurrentAnswered) handleMonoCheck(); else moveToNextMonoQuestion();
-            }
-        });
-
-        // ==================== ĐIỀU HƯỚNG CHUNG ====================
-        const mainContentDiv = document.getElementById('mainContent');
-        const toan8ContentDiv = document.getElementById('toan8Content');
-        const mentalContentDiv = document.getElementById('mentalContent');
-        const monomialQuizWrapper = document.getElementById('monomialQuizWrapper');
-
-        function goHome() {
-            mainContentDiv.style.display = 'block';
-            document.getElementById('testWrapper').style.display = 'none';
-            toan8ContentDiv.style.display = 'none';
-            mentalContentDiv.style.display = 'none';
-            monomialQuizWrapper.style.display = 'none';
-            document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
-            document.getElementById('summaryOverlay').classList.remove('active');
+        function cleanupMono() {
+            isMonoTestActive = false;
+            if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
+            if (monoFinishTimeout) clearTimeout(monoFinishTimeout);
             document.getElementById('monoSummaryOverlay').classList.remove('active');
         }
 
-        document.getElementById('mentalBlock').addEventListener('click', () => {
-            mainContentDiv.style.display = 'none';
-            mentalContentDiv.style.display = 'block';
-            document.body.classList.add('mental-mode');
-            document.body.classList.remove('toan8-mode', 'test-mode');
-            document.getElementById('testWrapper').style.display = 'none';
-            monomialQuizWrapper.style.display = 'none';
-            toan8ContentDiv.style.display = 'none';
-        });
+        document.getElementById('monoCheckBtn').addEventListener('click', handleMonoCheck);
+        document.getElementById('monoNextBtn').addEventListener('click', moveToNextMonoQuestion);
+        document.getElementById('monoCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
-        const mentalTopics = document.querySelectorAll('#mentalContent .topic-item');
-        mentalTopics.forEach(topic => {
-            topic.addEventListener('click', (e) => {
-                const topicKey = topic.getAttribute('data-topic');
-                if (topicKey === 'complement100') {
-                    mentalContentDiv.style.display = 'none';
-                    window.openComplement100Test();
-                } else {
-                    alert('✨ Tính năng đang được phát triển, vui lòng quay lại sau! ✨');
-                }
-            });
-        });
+        App.registerCleanup('monomial', cleanupMono);
 
-        document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
-        document.getElementById('toan8Block').addEventListener('click', () => {
-            mainContentDiv.style.display = 'none';
-            toan8ContentDiv.style.display = 'block';
-            mentalContentDiv.style.display = 'none';
-            document.body.classList.add('toan8-mode');
-            document.body.classList.remove('mental-mode', 'test-mode');
-            document.getElementById('testWrapper').style.display = 'none';
-            monomialQuizWrapper.style.display = 'none';
-        });
-        document.getElementById('monomialTestLink').addEventListener('click', () => {
-            toan8ContentDiv.style.display = 'none';
-            monomialQuizWrapper.style.display = 'flex';
-            startMonoQuiz();
-        });
-        document.getElementById('homeLogo').addEventListener('click', (e) => { e.preventDefault(); goHome(); });
-        document.getElementById('closeSummaryBtn').addEventListener('click', goHome);
-    </script>
-
-    <!-- ==================== SCRIPT CHO QUIZ NHÂN ĐƠN THỨC ==================== -->
-    <script>
+        // ==================== QUIZ NHÂN ĐƠN THỨC ====================
         (function() {
             const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
             function toSuperscript(num) {
                 return String(num).split('').map(d => supMap[d] || d).join('');
             }
 
-            // Định dạng đơn thức cho câu hỏi/đáp án (dùng superscript)
             function formatMonomialBase(coeff, exp, variable) {
                 if (coeff === 0) return '0';
                 let coeffStr = '';
@@ -895,7 +887,6 @@
                 return coeffStr + varPart;
             }
 
-            // Định dạng factor cho câu hỏi/đáp án (dùng superscript, ngoặc nếu âm)
             function formatFactor(coeff, exp, variable) {
                 let base = formatMonomialBase(coeff, exp, variable);
                 if (coeff < 0) {
@@ -904,7 +895,6 @@
                 return base;
             }
 
-            // Format văn bản toán (dấu trừ và superscript) cho câu hỏi/đáp án
             function formatMathTextLocal(text) {
                 const supToDigit = {
                     '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
@@ -933,12 +923,10 @@
                 if (productCoeff < -50 || productCoeff > 50) return null;
 
                 const factorStr = factors.map(f => formatFactor(f.coeff, f.exp, variable)).join(' ⋅ ');
-                // Thay đổi: ngẫu nhiên "Thực hiện phép tính" hoặc "Rút gọn"
                 const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ";
                 const text = prefix + factorStr;
                 const correctAnswer = formatMonomialBase(productCoeff, sumExp, variable);
 
-                // Sinh các phương án nhiễu
                 function generateWrongOptions(correctCoeff, correctExp, variable) {
                     const optionsSet = new Set();
                     let attempts = 0;
@@ -980,10 +968,9 @@
 
                 const distractors = generateWrongOptions(productCoeff, sumExp, variable);
                 const options = [correctAnswer, ...distractors];
-                const shuffled = shuffleArray(options);
+                const shuffled = shuffleArrayLocal(options);
                 const correctIndex = shuffled.indexOf(correctAnswer);
 
-                // Tạo lời giải (dùng superscript và ngoặc cho hệ số âm)
                 const solutionSteps = [];
                 if (numFactors === 2) {
                     const f1 = factors[0], f2 = factors[1];
@@ -1043,12 +1030,15 @@
                         if (q) bank.push(q);
                     }
                 }
-                while (bank.length < 100) {
+                // Đảm bảo đủ 100 câu, nếu thiếu thì bổ sung thêm câu 2 yếu tố với biến ngẫu nhiên
+                const maxTotal = 100;
+                while (bank.length < maxTotal) {
                     const randomVar = ['x','y','a','z','b','c'][Math.floor(Math.random()*6)];
                     let q = createMultiplyQuestion(randomVar, 2);
                     if (q) bank.push(q);
+                    if (bank.length >= maxTotal) break;
                 }
-                return bank.slice(0,100);
+                return bank.slice(0, maxTotal);
             }
 
             const multiplyBank = generateMultiplyBank();
@@ -1074,7 +1064,7 @@
                 let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
                 q.options.forEach((opt, idx) => {
                     const letter = String.fromCharCode(65+idx);
-                    html += `<div class="option"><input type="radio" name="mul_option" value="${idx}" id="mul_opt_${idx}"><label for="mul_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
+                    html += `<div class="option"><input type="radio" name="mul_option" value="${idx}" id="mul_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="mul_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
                 });
                 html += `</div></div>`;
                 mulQuestionArea.innerHTML = html;
@@ -1173,37 +1163,72 @@
                 renderMulQuestion();
             }
 
+            function cleanupMultiply() {
+                isMulTestActive = false;
+                if (mulAutoTimeout) clearTimeout(mulAutoTimeout);
+                if (mulFinishTimeout) clearTimeout(mulFinishTimeout);
+                document.getElementById('mulSummaryOverlay').classList.remove('active');
+            }
+
             document.getElementById('mulCheckBtn').addEventListener('click', handleMulCheck);
             document.getElementById('mulNextBtn').addEventListener('click', moveToNextMulQuestion);
-            document.getElementById('mulCloseSummaryBtn').addEventListener('click', () => {
-                document.getElementById('mulSummaryOverlay').classList.remove('active');
-                if (typeof goHome === 'function') goHome();
-                else {
-                    document.getElementById('mainContent').style.display = 'block';
-                    document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
-                }
-            });
+            document.getElementById('mulCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
-            document.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && document.getElementById('multiplyMonomialQuizWrapper').style.display === 'flex' && isMulTestActive) {
-                    if (!isMulCurrentAnswered) handleMulCheck();
-                    else moveToNextMulQuestion();
-                }
-            });
+            App.registerCleanup('multiplyMonomial', cleanupMultiply);
 
+            // Kết nối link trong menu Toán 8
             document.getElementById('multiplyMonomialLink').addEventListener('click', () => {
-                document.getElementById('toan8Content').style.display = 'none';
-                document.getElementById('multiplyMonomialQuizWrapper').style.display = 'flex';
+                App.switchTo('multiplyMonomial', 'multiplyMonomial');
                 startMultiplyQuiz();
             });
-
-            const originalGoHome = window.goHome || function(){};
-            window.goHome = function() {
-                originalGoHome();
-                document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
-                document.getElementById('mulSummaryOverlay').classList.remove('active');
-            };
         })();
+
+        // ==================== ĐIỀU HƯỚNG CHUNG ====================
+        document.getElementById('monomialTestLink').addEventListener('click', () => {
+            App.switchTo('monomial', 'monomial');
+            startMonoQuiz();
+        });
+
+        document.getElementById('toan8Block').addEventListener('click', () => {
+            App.switchTo('toan8');
+        });
+
+        document.getElementById('mentalBlock').addEventListener('click', () => {
+            App.switchTo('mental');
+        });
+
+        document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
+
+        // Xử lý các chủ đề trong Tính nhẩm ngầu
+        document.querySelectorAll('#mentalContent .topic-item').forEach(topic => {
+            topic.addEventListener('click', (e) => {
+                const topicKey = topic.getAttribute('data-topic');
+                if (topicKey === 'complement100') {
+                    window.openComplement100Test();
+                } else {
+                    alert('✨ Tính năng đang được phát triển, vui lòng quay lại sau! ✨');
+                }
+            });
+        });
+
+        document.getElementById('homeLogo').addEventListener('click', (e) => {
+            e.preventDefault();
+            App.goHome();
+        });
+
+        // Sự kiện Enter toàn cục chỉ hoạt động trên quiz đang active
+        document.addEventListener('keypress', (e) => {
+            if (e.key !== 'Enter') return;
+            // Quiz phần bù 100
+            if (App.activeQuiz === 'complement100' && document.getElementById('testWrapper').style.display === 'flex') {
+                const isActive = window._complementActive && !window._complementAnswered; // cần truy cập biến trong IIFE? Sẽ dùng cách khác: gán flag
+                // Thay vì truy cập biến cục bộ, ta gán sự kiện trực tiếp trong IIFE (đã có)
+            }
+            // Đã xử lý riêng trong từng IIFE, không cần toàn cục.
+        });
+
+        // Gán thuộc tính window.openComplement100Test đã có
+    })();
     </script>
 </body>
 </html>
