@@ -656,6 +656,7 @@
             nextBtn.addEventListener('click', moveToNextQuestion);
             answerInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     if (!isTestActive) return;
                     if (answeredCount >= 20) return;
                     if (!isCurrentAnswered) handleCheck();
@@ -860,6 +861,17 @@
         document.getElementById('monoNextBtn').addEventListener('click', moveToNextMonoQuestion);
         document.getElementById('monoCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
+        // Thêm sự kiện Enter cho quiz đơn thức
+        document.addEventListener('keypress', function monoEnterHandler(e) {
+            if (e.key !== 'Enter') return;
+            if (App.activeQuiz !== 'monomial') return;
+            if (!isMonoTestActive) return;
+            if (monoAnsweredCount >= currentMonoQuestions.length) return;
+            e.preventDefault();
+            if (!isMonoCurrentAnswered) handleMonoCheck();
+            else moveToNextMonoQuestion();
+        });
+
         App.registerCleanup('monomial', cleanupMono);
 
         // ==================== QUIZ NHÂN ĐƠN THỨC ====================
@@ -1030,7 +1042,7 @@
                         if (q) bank.push(q);
                     }
                 }
-                // Đảm bảo đủ 100 câu, nếu thiếu thì bổ sung thêm câu 2 yếu tố với biến ngẫu nhiên
+                // Đảm bảo đủ 100 câu
                 const maxTotal = 100;
                 while (bank.length < maxTotal) {
                     const randomVar = ['x','y','a','z','b','c'][Math.floor(Math.random()*6)];
@@ -1174,6 +1186,17 @@
             document.getElementById('mulNextBtn').addEventListener('click', moveToNextMulQuestion);
             document.getElementById('mulCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
+            // Thêm sự kiện Enter cho quiz nhân đơn thức
+            document.addEventListener('keypress', function mulEnterHandler(e) {
+                if (e.key !== 'Enter') return;
+                if (App.activeQuiz !== 'multiplyMonomial') return;
+                if (!isMulTestActive) return;
+                if (mulAnsweredCount >= currentMulQuestions.length) return;
+                e.preventDefault();
+                if (!isMulCurrentAnswered) handleMulCheck();
+                else moveToNextMulQuestion();
+            });
+
             App.registerCleanup('multiplyMonomial', cleanupMultiply);
 
             // Kết nối link trong menu Toán 8
@@ -1215,19 +1238,6 @@
             e.preventDefault();
             App.goHome();
         });
-
-        // Sự kiện Enter toàn cục chỉ hoạt động trên quiz đang active
-        document.addEventListener('keypress', (e) => {
-            if (e.key !== 'Enter') return;
-            // Quiz phần bù 100
-            if (App.activeQuiz === 'complement100' && document.getElementById('testWrapper').style.display === 'flex') {
-                const isActive = window._complementActive && !window._complementAnswered; // cần truy cập biến trong IIFE? Sẽ dùng cách khác: gán flag
-                // Thay vì truy cập biến cục bộ, ta gán sự kiện trực tiếp trong IIFE (đã có)
-            }
-            // Đã xử lý riêng trong từng IIFE, không cần toàn cục.
-        });
-
-        // Gán thuộc tính window.openComplement100Test đã có
     })();
     </script>
 </body>
