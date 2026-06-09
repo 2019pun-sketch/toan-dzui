@@ -6,629 +6,147 @@
     <title>TOÁN DZUI - Học toán thông minh</title>
     <style>
         /* ---------- GIỮ NGUYÊN TOÀN BỘ CSS (KHÔNG THAY ĐỔI) ---------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: white;
-            color: #05445E;
-            padding: 0;
-            line-height: 1.5;
+            background: white; color: #05445E; padding: 0; line-height: 1.5;
             font-family: 'Segoe UI', 'Quicksand', 'Poppins', system-ui, -apple-system, sans-serif;
-            min-height: 100vh;
-            transition: background 0.2s ease;
+            min-height: 100vh; transition: background 0.2s ease;
         }
-
-        body.toan8-mode {
-            background: #C1EEFF;
-        }
-
+        body.toan8-mode { background: #C1EEFF; }
         .math-header {
-            background: linear-gradient(95deg, #E24265, #e85d7c);
-            width: 100%;
-            padding: 12px 0 14px 0;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #ff99b0;
-            transition: margin-bottom 0.2s ease;
-            position: relative;
-            z-index: 10;
+            background: linear-gradient(95deg, #E24265, #e85d7c); width: 100%; padding: 12px 0 14px 0;
+            margin-bottom: 40px; border-bottom: 1px solid #ff99b0; transition: margin-bottom 0.2s ease;
+            position: relative; z-index: 10;
         }
-
-        body.toan8-mode .math-header {
-            margin-bottom: 0;
-        }
-
-        body.test-mode .math-header {
-            margin-bottom: 0;
-        }
-
-        .header-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-        }
-
-        .home-link {
-            text-decoration: none;
-            display: inline-block;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            margin-left: 2.5em;
-        }
-        
-        .home-link:hover {
-            transform: scale(1.02);
-        }
-
+        body.toan8-mode .math-header, body.test-mode .math-header { margin-bottom: 0; }
+        .header-inner { max-width: 1400px; margin: 0 auto; padding: 0 20px; width: 100%; }
+        .home-link { text-decoration: none; display: inline-block; cursor: pointer; transition: transform 0.2s ease; margin-left: 2.5em; }
+        .home-link:hover { transform: scale(1.02); }
         .math-title {
-            font-family: 'Kalam', 'Comic Neue', cursive;
-            font-size: 36px;
-            font-weight: 700;
-            color: white;
-            letter-spacing: -1px;
-            word-spacing: -2px;
-            line-height: 1.2;
-            display: inline-block;
-            transform: rotate(-0.3deg);
+            font-family: 'Kalam', 'Comic Neue', cursive; font-size: 36px; font-weight: 700; color: white;
+            letter-spacing: -1px; word-spacing: -2px; line-height: 1.2; display: inline-block; transform: rotate(-0.3deg);
         }
-
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-            background: white;
-        }
-
-        .test-wrapper {
-            display: none;
-            flex-direction: column;
-            background: #C1EEFF;
-            width: 100%;
-            min-height: calc(100vh - 70px);
-            padding: 0 20px;
-        }
-
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 0 20px; background: white; }
+        .test-wrapper { display: none; flex-direction: column; background: #C1EEFF; width: 100%; min-height: calc(100vh - 70px); padding: 0 20px; }
         .test-spacer-top { flex: 1; }
-        .test-container {
-            max-width: 650px;
-            width: 100%;
-            margin: 0 auto;
-            background: white;
-            border-radius: 32px;
-            overflow: hidden;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.1);
-            animation: fadeInUp 0.3s ease;
-        }
+        .test-container { max-width: 650px; width: 100%; margin: 0 auto; background: white; border-radius: 32px; overflow: hidden; box-shadow: 0 20px 35px rgba(0,0,0,0.1); animation: fadeInUp 0.3s ease; }
         .test-spacer-bottom { flex: 2; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .test-header {
-            background: #F7859B;
-            padding: 20px 25px;
-            text-align: center;
-        }
-        .test-header h2 {
-            font-family: 'Baloo 2', cursive;
-            font-size: 1.8rem;
-            color: white;
-            margin: 0;
-            letter-spacing: 1px;
-        }
-
-        .test-body {
-            padding: 30px 25px;
-        }
-        .info-box {
-            background: #f0f7ff;
-            border-radius: 24px;
-            padding: 18px;
-            margin-bottom: 25px;
-            text-align: center;
-            border-left: 5px solid #F7859B;
-        }
-        .question-box {
-            background: #fff9ef;
-            border-radius: 28px;
-            padding: 25px 20px;
-            text-align: center;
-        }
-        .dynamic-number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #0A1A9E;
-            margin: 15px 0;
-            font-family: 'Baloo 2', cursive;
-        }
-        .answer-input {
-            width: 80%;
-            padding: 14px;
-            font-size: 1.3rem;
-            text-align: center;
-            border: 2px solid #ddd;
-            border-radius: 60px;
-            margin: 20px 0;
-            outline: none;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .answer-input:focus {
-            border-color: #0A1A9E;
-        }
-        .answer-input:read-only {
-            background: #f5f5f5;
-            color: #888;
-            cursor: default;
-            border-color: #ddd;
-        }
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .btn-primary, .btn-secondary {
-            background: #F7859B;
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 60px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary:hover, .btn-secondary:hover {
-            background: #e06a7e;
-            transform: scale(0.97);
-        }
-        .result-area {
-            margin-top: 20px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            padding: 12px;
-            border-radius: 16px;
-            background: #f0f0f0;
-            text-align: left;
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .test-header { background: #F7859B; padding: 20px 25px; text-align: center; }
+        .test-header h2 { font-family: 'Baloo 2', cursive; font-size: 1.8rem; color: white; margin: 0; letter-spacing: 1px; }
+        .test-body { padding: 30px 25px; }
+        .info-box { background: #f0f7ff; border-radius: 24px; padding: 18px; margin-bottom: 25px; text-align: center; border-left: 5px solid #F7859B; }
+        .question-box { background: #fff9ef; border-radius: 28px; padding: 25px 20px; text-align: center; }
+        .dynamic-number { font-size: 3rem; font-weight: 800; color: #0A1A9E; margin: 15px 0; font-family: 'Baloo 2', cursive; }
+        .answer-input { width: 80%; padding: 14px; font-size: 1.3rem; text-align: center; border: 2px solid #ddd; border-radius: 60px; margin: 20px 0; outline: none; font-weight: bold; transition: 0.2s; }
+        .answer-input:focus { border-color: #0A1A9E; }
+        .answer-input:read-only { background: #f5f5f5; color: #888; cursor: default; border-color: #ddd; }
+        .button-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn-primary, .btn-secondary { background: #F7859B; color: white; border: none; padding: 12px 28px; border-radius: 60px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover, .btn-secondary:hover { background: #e06a7e; transform: scale(0.97); }
+        .result-area { margin-top: 20px; font-size: 1.2rem; font-weight: 500; padding: 12px; border-radius: 16px; background: #f0f0f0; text-align: left; }
         .result-correct { background: #c8f0e1; color: #0b5e3a; }
         .result-wrong { background: #ffe0e0; color: #b91c1c; }
-
-        .big-emoji, .big-emoji-sun {
-            font-size: 3.6rem;
-            display: inline-block;
-            vertical-align: middle;
-            line-height: 1;
-            margin-right: 5px;
-        }
-
-        .info-text-highlight {
-            color: #E24A68;
-            font-weight: bold;
-            font-size: 1.44rem;
-        }
-
-        .progress-info {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #0A1A9E;
-        }
-        .progress-bar-container {
-            background: #e0e0e0;
-            border-radius: 20px;
-            height: 10px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .progress-fill {
-            background: #F7859B;
-            height: 10px;
-            border-radius: 20px;
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .summary-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.2s;
-        }
-        .summary-overlay.active {
-            visibility: visible;
-            opacity: 1;
-        }
-        .summary-card {
-            background: white;
-            max-width: 500px;
-            width: 90%;
-            border-radius: 32px;
-            padding: 30px 25px;
-            text-align: center;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            animation: fadeInUp 0.3s;
-        }
-        .summary-card h3 {
-            font-size: 2rem;
-            color: #E24265;
-            margin-bottom: 20px;
-        }
-        .summary-stats {
-            font-size: 1.2rem;
-            text-align: left;
-            margin: 20px 0;
-            line-height: 2;
-        }
-        .summary-message {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 40px;
-            color: #E24A68;
-        }
-        .summary-btn {
-            background: #C1EEFF;
-            color: #05445E;
-            border: none;
-            padding: 12px 28px;
-            border-radius: 20px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .summary-btn:hover {
-            background: #a8d9f0;
-        }
-
+        .big-emoji, .big-emoji-sun { font-size: 3.6rem; display: inline-block; vertical-align: middle; line-height: 1; margin-right: 5px; }
+        .info-text-highlight { color: #E24A68; font-weight: bold; font-size: 1.44rem; }
+        .progress-info { text-align: center; margin-bottom: 15px; font-size: 1rem; font-weight: bold; color: #0A1A9E; }
+        .progress-bar-container { background: #e0e0e0; border-radius: 20px; height: 10px; width: 100%; margin-bottom: 20px; }
+        .progress-fill { background: #F7859B; height: 10px; border-radius: 20px; width: 0%; transition: width 0.3s; }
+        .summary-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+        .summary-overlay.active { visibility: visible; opacity: 1; }
+        .summary-card { background: white; max-width: 500px; width: 90%; border-radius: 32px; padding: 30px 25px; text-align: center; box-shadow: 0 20px 35px rgba(0,0,0,0.2); animation: fadeInUp 0.3s; }
+        .summary-card h3 { font-size: 2rem; color: #E24265; margin-bottom: 20px; }
+        .summary-stats { font-size: 1.2rem; text-align: left; margin: 20px 0; line-height: 2; }
+        .summary-message { font-size: 1.5rem; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 40px; color: #E24A68; }
+        .summary-btn { background: #C1EEFF; color: #05445E; border: none; padding: 12px 28px; border-radius: 20px; font-size: 1.1rem; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.2s; }
+        .summary-btn:hover { background: #a8d9f0; }
         @media (max-width: 550px) {
-            .math-title { font-size: 28px; }
-            .home-link { margin-left: 1.2em; }
-            .test-header h2 { font-size: 1.3rem; }
-            .dynamic-number { font-size: 2rem; }
-            .answer-input { width: 95%; font-size: 1.1rem; }
-            .btn-primary, .btn-secondary { padding: 8px 20px; font-size: 0.9rem; }
-            .test-wrapper { padding: 0 15px; }
-            .big-emoji, .big-emoji-sun { font-size: 2.7rem; }
-            .info-text-highlight { font-size: 1.2rem; }
-            .result-area { font-size: 1rem; }
-            .chess-king { font-size: 4rem !important; }
+            .math-title { font-size: 28px; } .home-link { margin-left: 1.2em; } .test-header h2 { font-size: 1.3rem; }
+            .dynamic-number { font-size: 2rem; } .answer-input { width: 95%; font-size: 1.1rem; }
+            .btn-primary, .btn-secondary { padding: 8px 20px; font-size: 0.9rem; } .test-wrapper { padding: 0 15px; }
+            .big-emoji, .big-emoji-sun { font-size: 2.7rem; } .info-text-highlight { font-size: 1.2rem; }
+            .result-area { font-size: 1rem; } .chess-king { font-size: 4rem !important; }
         }
-
-        /* Các style cho khối chính (giữ nguyên) */
-        .row-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(267px, 293px));
-            gap: 40px;
-            margin-bottom: 50px;
-            justify-content: center;
-        }
+        .row-grid { display: grid; grid-template-columns: repeat(3, minmax(267px, 293px)); gap: 40px; margin-bottom: 50px; justify-content: center; }
         @media (max-width: 1000px) { .row-grid { grid-template-columns: repeat(2, minmax(240px, 260px)); } }
         @media (max-width: 650px) { .row-grid { grid-template-columns: 1fr; } }
-        .card {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            transition: transform 0.2s ease, box-shadow 0.2s;
-            cursor: default;
-            position: relative;
-            overflow: visible;
-        }
+        .card { width: 100%; aspect-ratio: 1 / 1; border-radius: 4px; display: flex; align-items: center; justify-content: center; text-align: center; transition: transform 0.2s ease, box-shadow 0.2s; cursor: default; position: relative; overflow: visible; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
-        .white-frame {
-            position: absolute;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            width: 80%;
-            height: 20%;
-        }
+        .white-frame { position: absolute; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 80%; height: 20%; }
         .card-test .white-frame { top: 15%; left: 10%; border-radius: 20px 8px 20px 8px; }
-        .card-test .deco-circle {
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            background: rgba(255,255,255,0.35);
-            border-radius: 50%;
-            top: 5%;
-            right: 8%;
-            z-index: 1;
-        }
+        .card-test .deco-circle { position: absolute; width: 45px; height: 45px; background: rgba(255,255,255,0.35); border-radius: 50%; top: 5%; right: 8%; z-index: 1; }
         .card-7 .white-frame { top: 15%; right: 10%; border-radius: 8px 20px 8px 20px; }
-        .card-7 .deco-circle {
-            position: absolute;
-            width: 55px;
-            height: 55px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            top: 30%;
-            left: 3%;
-            z-index: 1;
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
-        }
+        .card-7 .deco-circle { position: absolute; width: 55px; height: 55px; background: rgba(255,255,255,0.3); border-radius: 50%; top: 30%; left: 3%; z-index: 1; box-shadow: 0 0 0 3px rgba(255,255,255,0.2); }
         .card-6 .white-frame { top: 40%; left: 15%; border-radius: 30px 8px 30px 8px; }
-        .card-6 .deco-square {
-            position: absolute;
-            width: 42px;
-            height: 42px;
-            background: rgba(255,255,255,0.3);
-            top: 38%;
-            left: 5%;
-            z-index: 1;
-            border-radius: 10px;
-            transform: rotate(10deg);
-        }
+        .card-6 .deco-square { position: absolute; width: 42px; height: 42px; background: rgba(255,255,255,0.3); top: 38%; left: 5%; z-index: 1; border-radius: 10px; transform: rotate(10deg); }
         .card-mental .white-frame { width: 94%; top: 55%; left: 3%; border-radius: 4px; }
-        .card-mental .deco-circle {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 50%;
-            top: 42%;
-            right: 2%;
-            z-index: 1;
-        }
+        .card-mental .deco-circle { position: absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.25); border-radius: 50%; top: 42%; right: 2%; z-index: 1; }
         .card-8 .white-frame { bottom: 20%; left: 15%; border-radius: 8px 30px 8px 30px; }
-        .card-8 .deco-square {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.3);
-            bottom: 5%;
-            right: 10%;
-            z-index: 1;
-            border-radius: 12px;
-            transform: rotate(15deg);
-            opacity: 0.95;
-        }
+        .card-8 .deco-square { position: absolute; width: 60px; height: 60px; background: rgba(255,255,255,0.3); bottom: 5%; right: 10%; z-index: 1; border-radius: 12px; transform: rotate(15deg); opacity: 0.95; }
         .card-9 .white-frame { top: 25%; right: 10%; border-radius: 15px; width: 75%; }
-        .card-9 .deco-circle {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: rgba(255,255,255,0.35);
-            border-radius: 50%;
-            top: 12%;
-            right: 5%;
-            z-index: 1;
-        }
-        .card-number {
-            font-family: 'Baloo 2', 'Comic Neue', 'Quicksand', sans-serif;
-            font-size: 33px;
-            font-weight: 800;
-            text-align: center;
-            z-index: 5;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            display: block;
-        }
+        .card-9 .deco-circle { position: absolute; width: 50px; height: 50px; background: rgba(255,255,255,0.35); border-radius: 50%; top: 12%; right: 5%; z-index: 1; }
+        .card-number { font-family: 'Baloo 2', 'Comic Neue', 'Quicksand', sans-serif; font-size: 33px; font-weight: 800; text-align: center; z-index: 5; padding: 0; margin: 0; width: 100%; display: block; }
         .card-mental .card-number { font-size: 30px; }
-        .card-test .card-number { color: #0A1A9E; }
-        .card-mental .card-number { color: #A82828; }
-        .card-6 .card-number { color: #48D1CC; }
-        .card-7 .card-number { color: #2A8F4A; }
-        .card-8 .card-number { color: #007FFF; }
-        .card-9 .card-number { color: #E64A19; }
+        .card-test .card-number { color: #0A1A9E; } .card-mental .card-number { color: #A82828; } .card-6 .card-number { color: #48D1CC; }
+        .card-7 .card-number { color: #2A8F4A; } .card-8 .card-number { color: #007FFF; } .card-9 .card-number { color: #E64A19; }
         .card-test { background: linear-gradient(135deg, #0A1A9E, #3A4ADA); box-shadow: 0 2px 5px rgba(10,26,158,0.08); cursor: pointer; }
         .card-mental { background: #A82828; cursor: pointer; }
-        .card-6 { background: linear-gradient(135deg, #48D1CC, #7EE0DC); box-shadow: 0 2px 5px rgba(72,209,204,0.08); }
-        .card-7 { background: linear-gradient(135deg, #5BD185, #8BE3B0); box-shadow: 0 2px 5px rgba(91,209,133,0.08); }
-        .card-8 { background: linear-gradient(135deg, #007FFF, #4DADFF); box-shadow: 0 2px 5px rgba(0,127,255,0.08); }
-        .card-9 { background: linear-gradient(135deg, #E64A19, #E67E3A); box-shadow: 0 1.94px 4.85px rgba(230,74,25,0.0776); }
-
-        .level-grid {
-            display: none;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 40px;
-            margin-bottom: 20px;
-        }
+        .card-6 { background: linear-gradient(135deg, #48D1CC, #7EE0DC); } .card-7 { background: linear-gradient(135deg, #5BD185, #8BE3B0); }
+        .card-8 { background: linear-gradient(135deg, #007FFF, #4DADFF); } .card-9 { background: linear-gradient(135deg, #E64A19, #E67E3A); }
+        .level-grid { display: none; flex-wrap: wrap; gap: 30px; justify-content: center; margin-top: 40px; margin-bottom: 20px; }
         .level-grid.active { display: flex; }
-        .level-card {
-            flex: 1;
-            min-width: 260px;
-            background: #fefdf6;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid #ffe0a3;
-        }
+        .level-card { flex: 1; min-width: 260px; background: #fefdf6; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #ffe0a3; }
         .level-card:hover { transform: scale(1.02); }
-        .level-header {
-            background: linear-gradient(115deg, #ffb347, #ff8c1a);
-            padding: 18px 16px;
-            text-align: center;
-            color: white;
-            font-size: 1.7rem;
-            font-family: 'Baloo 2', cursive;
-        }
+        .level-header { background: linear-gradient(115deg, #ffb347, #ff8c1a); padding: 18px 16px; text-align: center; color: white; font-size: 1.7rem; font-family: 'Baloo 2', cursive; }
         .level-header small { font-size: 0.9rem; display: block; opacity: 0.9; }
-        .level-content { padding: 20px; text-align: center; }
-        .level-badge { font-size: 3rem; margin-bottom: 8px; }
-        .level-desc {
-            background: #fff2df;
-            display: inline-block;
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-        }
-        .quiz-placeholder {
-            background: #faf2e6;
-            border-radius: 32px;
-            padding: 20px 12px;
-            border: 2px dashed #ffc489;
-            color: #b97f2e;
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding-bottom: 20px;
-            color: #2b6f94;
-            font-size: 0.85rem;
-        }
-
-        /* ---------- MÀN HÌNH NỘI DUNG TOÁN 8 ---------- */
-        .toan8-content {
-            display: none;
-            background: #C1EEFF;
-            width: 100%;
-            min-height: calc(100vh - 72px);
-            padding: 40px 20px 40px;
-        }
-        .toan8-header h1 {
-            font-family: 'Baloo 2', cursive;
-            font-size: 2.2rem;
-            color: #0A1A9E;
-            margin-bottom: 25px;
-            padding-left: 0;
-            border-left: none;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        .level-content { padding: 20px; text-align: center; } .level-badge { font-size: 3rem; margin-bottom: 8px; }
+        .level-desc { background: #fff2df; display: inline-block; padding: 6px 18px; border-radius: 40px; font-size: 0.85rem; }
+        .quiz-placeholder { background: #faf2e6; border-radius: 32px; padding: 20px 12px; border: 2px dashed #ffc489; color: #b97f2e; }
+        footer { text-align: center; margin-top: 30px; padding-bottom: 20px; color: #2b6f94; font-size: 0.85rem; }
+        .toan8-content { display: none; background: #C1EEFF; width: 100%; min-height: calc(100vh - 72px); padding: 40px 20px 40px; }
+        .toan8-header h1 { font-family: 'Baloo 2', cursive; font-size: 2.2rem; color: #0A1A9E; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
         .chess-king { font-size: 5.28rem; line-height: 1; display: inline-block; }
         .toan8-header h1 .title-text { font-size: 2.2rem; font-weight: bold; }
-        @media (max-width: 780px) {
-            .chess-king { font-size: 3.5rem; }
-            .toan8-header h1 .title-text { font-size: 1.6rem; }
+        @media (max-width: 780px) { .chess-king { font-size: 3.5rem; } .toan8-header h1 .title-text { font-size: 1.6rem; } }
+        .subject-section { margin-bottom: 30px; background: transparent; }
+        .section-title { background: transparent; color: #E24265; padding: 12px 0; font-size: 1.6rem; font-weight: bold; font-family: 'Baloo 2', cursive; border-bottom: 2px solid #F7859B; margin-bottom: 15px; }
+        .topic-list { padding: 0; } .topic-item { margin-bottom: 20px; }
+        .topic-title { font-size: 1.3rem; font-weight: bold; color: #0A1A9E; margin-bottom: 10px; cursor: pointer; }
+        .topic-title:hover { text-decoration: underline; color: #E24265; }
+        .sub-items, .sub-items ul { list-style: none; padding-left: 20px; }
+        .sub-items li, .sub-items ul li { margin: 6px 0; font-size: 1rem; color: #05445E; }
+        .simple-item { font-size: 1.1rem; padding: 6px 0; color: #05445E; }
+        .options { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 6px; justify-content: center; }
+        .option { flex: 1 1 200px; background: #f4fbf4; border-radius: 12px; border: 1.5px solid #cfe3cf; cursor: pointer; transition: 0.1s; }
+        .option:hover { background: #e9f3e9; border-color: #6cac6c; }
+        .option input { display: none; }
+        .option label { display: block; padding: 12px; font-size: 1rem; font-weight: 500; text-align: center; border-radius: 12px; cursor: pointer; color: #1f542f; font-family: monospace; }
+        .option input:checked + label { background: #C1EEFF; color: #05445E; }
+
+        /* SỬA đổi: khi đã trả lời, các option không được chọn sẽ mờ đi */
+        .option input:disabled:not(:checked) + label {
+            opacity: 0.7; cursor: default; background: #f0f0f0;
         }
-        .subject-section {
-            margin-bottom: 30px;
-            background: transparent;
-        }
-        .section-title {
-            background: transparent;
-            color: #E24265;
-            padding: 12px 0;
-            font-size: 1.6rem;
-            font-weight: bold;
-            font-family: 'Baloo 2', cursive;
-            border-bottom: 2px solid #F7859B;
-            margin-bottom: 15px;
-        }
-        .topic-list {
-            padding: 0;
-        }
-        .topic-item {
-            margin-bottom: 20px;
-            border-left: none;
-            padding-left: 0;
-        }
-        .topic-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #0A1A9E;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .topic-title:hover {
-            text-decoration: underline;
-            color: #E24265;
-        }
-        .sub-items, .sub-items ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-        .sub-items li, .sub-items ul li {
-            margin: 6px 0;
-            font-size: 1rem;
-            color: #05445E;
-            padding-left: 0;
-            list-style: none;
-        }
-        .simple-item {
-            font-size: 1.1rem;
-            padding: 6px 0;
-            color: #05445E;
-            border-bottom: none;
+        /* Option được chọn vẫn giữ nguyên màu Light Blue dù đã disable */
+        .option input:disabled:checked + label {
+            background: #C1EEFF; color: #05445E; opacity: 1; cursor: default;
         }
 
-        /* Class cho options của bài đơn thức (dùng chung style) */
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-top: 6px;
-            justify-content: center;
-        }
-        .option {
-            flex: 1 1 200px;
-            background: #f4fbf4;
-            border-radius: 12px;
-            border: 1.5px solid #cfe3cf;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        .option:hover {
-            background: #e9f3e9;
-            border-color: #6cac6c;
-        }
-        .option input {
-            display: none;
-        }
-        .option label {
-            display: block;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: center;
-            border-radius: 12px;
-            cursor: pointer;
-            color: #1f542f;
-            font-family: monospace;
-        }
-        .option input:checked + label {
-            background: #C1EEFF;
-            color: #05445E;
-        }
-
-        /* ---------- RIÊNG CHO KHỐI ĐƠN THỨC: DÙNG FONT INTER ---------- */
+        /* ---------- RIÊNG CHO KHỐI ĐƠN THỨC ---------- */
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
-
         #monomialQuizWrapper .question-text,
         #monomialQuizWrapper .option label,
         #monomialQuizWrapper .result-area,
-        #monomialQuizWrapper .explanation,
-        #monomialQuizWrapper .feedback-detail,
-        #monomialQuizWrapper .result-panel {
+        #monomialQuizWrapper .solution-steps {
             font-family: 'Inter', sans-serif !important;
+            letter-spacing: 0.35px;
         }
-        /* Giữ nguyên font cho các thành phần khác không bị ảnh hưởng */
-        #monomialQuizWrapper .btn-primary,
-        #monomialQuizWrapper .btn-secondary {
-            font-family: inherit; /* kế thừa font hệ thống, không ép Inter */
-        }
+        #monomialQuizWrapper .option label { font-size: 1.25rem; }
+        #monomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
+        #monomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
+        .minus { margin-right: 0.15em; }
+        .solution-steps { margin-top: 10px; line-height: 1.8; background: #fff9e6; padding: 10px; border-radius: 12px; }
+        #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Kalam:wght@400;700&family=Comic+Neue:wght@400;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
@@ -657,7 +175,7 @@
         <footer>✨ TOÁN DZUI - Nhấp vào TÍNH NHẨM NGẦU để làm bài "Phần bù Tới 100". ✨</footer>
     </div>
 
-    <!-- ==================== KHỐI "PHẦN BÙ TỚI 100" (GIỮ NGUYÊN) ==================== -->
+    <!-- ==================== KHỐI "PHẦN BÙ TỚI 100" (ĐÃ SỬA LỖI & ĐẢM BẢO NGUYÊN TẮC) ==================== -->
     <div id="testWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -680,8 +198,6 @@
         </div>
         <div class="test-spacer-bottom"></div>
     </div>
-
-    <!-- Bảng tổng kết cho "Phần bù tới 100" -->
     <div id="summaryOverlay" class="summary-overlay">
         <div class="summary-card">
             <h3>🏆 KẾT QUẢ</h3>
@@ -695,11 +211,9 @@
         </div>
     </div>
 
-    <!-- ==================== MÀN HÌNH NỘI DUNG TOÁN 8 ==================== -->
+    <!-- Toán 8 content -->
     <div id="toan8Content" class="toan8-content">
-        <div class="toan8-header">
-            <h1><span class="chess-king">♔</span><span class="title-text">TOÁN 8</span></h1>
-        </div>
+        <div class="toan8-header"><h1><span class="chess-king">♔</span><span class="title-text">TOÁN 8</span></h1></div>
         <div class="subject-section">
             <div class="section-title">A. Biểu thức Đại số</div>
             <div class="topic-list">
@@ -710,10 +224,8 @@
                         <ul><li id="monomialTestLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.1. Cộng Trừ các đơn thức một biến đồng dạng</li><li>1.2. Nhân hai đơn thức một biến</li><li>1.3. Chia hai đơn thức một biến</li></ul>
                         <strong>2. Đơn thức Nhiều Biến</strong>
                         <ul><li>2.1. Cộng Trừ các đa thức nhiều biến đồng dạng</li><li>2.2. Nhân hai đơn thức nhiều biến</li><li>2.3. Chia hai đơn thức nhiều biến</li></ul>
-                        <div>3. Nhận biết Đơn Thức</div>
-                        <div>4. Tìm Hệ số và Bậc của Đơn thức</div>
-                        <div>5. Nhận biết Đa Thức</div>
-                        <div>6. Tìm Hệ số và Bậc của Đa thức</div>
+                        <div>3. Nhận biết Đơn Thức</div><div>4. Tìm Hệ số và Bậc của Đơn thức</div>
+                        <div>5. Nhận biết Đa Thức</div><div>6. Tìm Hệ số và Bậc của Đa thức</div>
                     </div>
                 </div>
                 <div class="topic-item"><div class="topic-title">♘ Chủ đề 2: Hằng đẳng thức đáng nhớ</div><div class="sub-items"><div>1. Luyện tập trước khi học Hằng đẳng thức</div><div>2. Bình phương của một tổng, một hiệu</div><div>3. Hiệu của hai bình phương</div><div>4. Lập phương của một tổng, một hiệu</div><div>5. Tổng và hiệu của hai lập phương</div></div></div>
@@ -731,11 +243,11 @@
         <div class="subject-section"><div class="section-title">K. Một số yếu tố xác suất</div><div class="topic-list"><div class="simple-item">Biến cố, xác suất của biến cố trong trò chơi, thí nghiệm</div><div class="simple-item">Tính xác suất thực nghiệm</div></div></div>
     </div>
 
-    <!-- ==================== KHỐI "CỘNG TRỪ ĐƠN THỨC ĐỒNG DẠNG" (SỬ DỤNG LẠI CLASS CỦA HỆ, FONT INTER) ==================== -->
+    <!-- Quiz đơn thức -->
     <div id="monomialQuizWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
-            <div class="test-header"><h2>📐 Cộng trừ đơn thức đồng dạng</h2></div>
+            <div class="test-header"><h2>⚔️ Cộng trừ các đơn thức một biến đồng dạng</h2></div>
             <div class="test-body">
                 <div class="progress-info">Câu hỏi: <span id="monoQuestionCounter">0</span>/<span id="monoTotalQ">15</span></div>
                 <div class="progress-bar-container"><div class="progress-fill" id="monoProgressFill"></div></div>
@@ -749,8 +261,6 @@
         </div>
         <div class="test-spacer-bottom"></div>
     </div>
-
-    <!-- Bảng tổng kết riêng cho bài đơn thức -->
     <div id="monoSummaryOverlay" class="summary-overlay">
         <div class="summary-card">
             <h3>🏆 KẾT QUẢ</h3>
@@ -765,9 +275,8 @@
     </div>
 
     <script>
-        // ==================== BÀI "PHẦN BÙ TỚI 100" (GIỮ NGUYÊN) ====================
+        // ==================== BÀI "PHẦN BÙ TỚI 100" (ĐÃ SỬA LỖI & ĐẢM BẢO NGUYÊN TẮC) ====================
         (function() {
-            // DOM elements for phan bu
             const dynamicNumSpan = document.getElementById('dynamicNum');
             const answerInput = document.getElementById('answerTest');
             const checkBtn = document.getElementById('checkTestBtn');
@@ -797,83 +306,102 @@
                 const total = 20;
                 const minNum = 4;
                 const maxNum = 99;
-                const maxAttempts = 1000;
                 
-                function isValidPartial(seq, newNum) {
-                    if (seq.includes(newNum)) return false;
-                    if (seq.length > 0 && (newNum % 10 === seq[seq.length-1] % 10)) return false;
-                    return true;
-                }
-                
-                function isFullValid(seq) {
-                    if (seq.length !== total) return false;
-                    let roundTens = 0, unit5 = 0, lessThan10 = 0, greaterThan90 = 0;
-                    for (let i = 0; i < seq.length; i++) {
-                        const num = seq[i];
-                        if (num % 10 === 0) roundTens++;
-                        if (num % 10 === 5) unit5++;
-                        if (num < 10) lessThan10++;
-                        if (num > 90) greaterThan90++;
+                // Tạo danh sách ứng viên đã lọc (loại bỏ số có hai chữ số giống nhau)
+                const allCandidates = [];
+                for (let i = minNum; i <= maxNum; i++) {
+                    if (i % 10 !== Math.floor(i / 10)) {
+                        allCandidates.push(i);
                     }
-                    if (roundTens > 2) return false;
-                    if (unit5 > 2) return false;
-                    if (lessThan10 > 1) return false;
-                    if (greaterThan90 > 1) return false;
-                    let prevDiff = null;
-                    for (let i = 0; i < seq.length-1; i++) {
-                        const diff = Math.abs(seq[i] - seq[i+1]);
+                }
+
+                // Hàm kiểm tra một số có thể thêm vào dãy hiện tại không
+                function isValidAddition(seq, num, counters) {
+                    if (seq.includes(num)) return false;
+                    if (seq.length > 0 && (num % 10 === seq[seq.length-1] % 10)) return false;
+                    
+                    const newCounters = { ...counters };
+                    if (num % 10 === 0) newCounters.roundTens++;
+                    if (num % 10 === 5) newCounters.unit5++;
+                    if (num < 10) newCounters.lessThan10++;
+                    if (num > 90) newCounters.greaterThan90++;
+                    
+                    if (newCounters.roundTens > 2) return false;
+                    if (newCounters.unit5 > 2) return false;
+                    if (newCounters.lessThan10 > 1) return false;
+                    if (newCounters.greaterThan90 > 1) return false;
+                    
+                    if (seq.length > 0) {
+                        const diff = Math.abs(seq[seq.length-1] - num);
                         if (diff <= 10) return false;
-                        if (prevDiff !== null && diff === prevDiff) return false;
-                        prevDiff = diff;
+                        if (seq.length >= 2) {
+                            const prevDiff = Math.abs(seq[seq.length-2] - seq[seq.length-1]);
+                            if (diff === prevDiff) return false;
+                        }
                     }
                     return true;
                 }
-                
-                for (let attempt = 0; attempt < maxAttempts; attempt++) {
-                    let seq = [];
-                    let candidates = [];
-                    for (let i = minNum; i <= maxNum; i++) {
-                        if (i % 10 !== Math.floor(i/10)) candidates.push(i);
+
+                // Thử tạo ngẫu nhiên nhiều lần (tối đa 10000 lần)
+                for (let attempt = 0; attempt < 10000; attempt++) {
+                    const seq = [];
+                    const counters = { roundTens: 0, unit5: 0, lessThan10: 0, greaterThan90: 0 };
+                    const used = new Set();
+                    let failed = false;
+                    
+                    while (seq.length < total && !failed) {
+                        // Lọc các ứng viên khả dụng
+                        const available = allCandidates.filter(num => !used.has(num) && isValidAddition(seq, num, counters));
+                        if (available.length === 0) {
+                            failed = true;
+                            break;
+                        }
+                        const randIndex = Math.floor(Math.random() * available.length);
+                        const chosen = available[randIndex];
+                        seq.push(chosen);
+                        used.add(chosen);
+                        // Cập nhật counters
+                        if (chosen % 10 === 0) counters.roundTens++;
+                        if (chosen % 10 === 5) counters.unit5++;
+                        if (chosen < 10) counters.lessThan10++;
+                        if (chosen > 90) counters.greaterThan90++;
                     }
-                    for (let i = candidates.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-                    }
-                    for (let num of candidates) {
-                        if (seq.length >= total) break;
-                        if (isValidPartial(seq, num)) seq.push(num);
-                    }
-                    if (seq.length === total && isFullValid(seq)) {
+                    
+                    if (!failed && seq.length === total) {
+                        // Kiểm tra trùng với lần trước (nếu có)
                         if (lastQuestionSet && JSON.stringify(seq) === JSON.stringify(lastQuestionSet)) continue;
                         lastQuestionSet = seq.slice();
                         return seq;
                     }
                 }
-                let fallback = [];
-                let used = new Set();
-                let tens = 0, unit5count = 0, small = 0, large = 0;
-                let prevDiff = null;
-                for (let i = minNum; i <= maxNum && fallback.length < total; i++) {
-                    if (i % 10 === Math.floor(i/10)) continue;
-                    if (i % 10 === 0 && tens >= 2) continue;
-                    if (i % 10 === 5 && unit5count >= 2) continue;
-                    if (i < 10 && small >= 1) continue;
-                    if (i > 90 && large >= 1) continue;
-                    if (used.has(i)) continue;
-                    if (fallback.length > 0 && (fallback[fallback.length-1] % 10 === i % 10)) continue;
-                    let diff = fallback.length > 0 ? Math.abs(fallback[fallback.length-1] - i) : 0;
-                    if (fallback.length > 0 && diff <= 10) continue;
-                    if (fallback.length > 1 && diff === prevDiff) continue;
-                    if (i % 10 === 0) tens++;
-                    if (i % 10 === 5) unit5count++;
-                    if (i < 10) small++;
-                    if (i > 90) large++;
-                    used.add(i);
-                    if (fallback.length > 0) prevDiff = diff;
-                    fallback.push(i);
+
+                // Trường hợp cực kỳ hy hữu không tìm được sau 10000 lần,
+                // tạo một mảng fallback đảm bảo hợp lệ bằng thuật toán tương tự nhưng không giới hạn lần thử
+                while (true) {
+                    const seq = [];
+                    const counters = { roundTens: 0, unit5: 0, lessThan10: 0, greaterThan90: 0 };
+                    const used = new Set();
+                    let failed = false;
+                    while (seq.length < total) {
+                        const available = allCandidates.filter(num => !used.has(num) && isValidAddition(seq, num, counters));
+                        if (available.length === 0) {
+                            failed = true;
+                            break;
+                        }
+                        const chosen = available[Math.floor(Math.random() * available.length)];
+                        seq.push(chosen);
+                        used.add(chosen);
+                        if (chosen % 10 === 0) counters.roundTens++;
+                        if (chosen % 10 === 5) counters.unit5++;
+                        if (chosen < 10) counters.lessThan10++;
+                        if (chosen > 90) counters.greaterThan90++;
+                    }
+                    if (!failed && seq.length === total) {
+                        if (lastQuestionSet && JSON.stringify(seq) === JSON.stringify(lastQuestionSet)) continue;
+                        lastQuestionSet = seq.slice();
+                        return seq;
+                    }
                 }
-                lastQuestionSet = fallback.slice(0,total);
-                return lastQuestionSet;
             }
 
             function updateUI() {
@@ -997,7 +525,6 @@
                 resetAndStartTest();
             }
 
-            // Gán sự kiện
             document.getElementById('mentalBlock').addEventListener('click', openTest);
             checkBtn.addEventListener('click', handleCheck);
             nextBtn.addEventListener('click', moveToNextQuestion);
@@ -1009,145 +536,128 @@
                     else moveToNextQuestion();
                 }
             });
+            closeSummaryBtn.addEventListener('click', goHome);
         })();
 
-        // ==================== BÀI KIỂM TRA ĐƠN THỨC (FONT INTER) ====================
+        // ==================== BÀI KIỂM TRA ĐƠN THỨC (ĐÃ SỬA ĐÁP ÁN TRÙNG) ====================
         const fullQuestionBank = [
-            { text: "Rút gọn: 5x³ - 2x³", options: ["3x³", "7x³", "3x⁶", "-3x³"], correct: 0, explanation: "5 - 2 = 3, giữ nguyên x³" },
-            { text: "Rút gọn: -4x² + 7x²", options: ["3x²", "-11x²", "11x²", "3x⁴"], correct: 0, explanation: "-4 + 7 = 3, giữ x²" },
-            { text: "Rút gọn: 9y - 12y", options: ["-3y", "3y", "-3", "-21y"], correct: 0, explanation: "9 - 12 = -3, giữ y" },
-            { text: "Rút gọn: -2z⁵ - (-6z⁵)", options: ["4z⁵", "-8z⁵", "8z⁵", "-4z⁵"], correct: 0, explanation: "-2 - (-6) = 4" },
-            { text: "Rút gọn: 7a² - 2a²", options: ["5a²", "9a²", "5a⁴", "-5a²"], correct: 0, explanation: "7 - 2 = 5" },
-            { text: "Rút gọn: -5b + 8b", options: ["3b", "13b", "-3b", "3"], correct: 0, explanation: "-5 + 8 = 3" },
-            { text: "Rút gọn: c³ + (-3c³)", options: ["-2c³", "4c³", "-2c⁶", "2c³"], correct: 0, explanation: "1 - 3 = -2" },
-            { text: "Rút gọn: -6x⁴ - (-2x⁴)", options: ["-4x⁴", "-8x⁴", "4x⁴", "-4x⁸"], correct: 0, explanation: "-6 - (-2) = -4" },
-            { text: "Rút gọn: 4y - 4y", options: ["0", "8y", "-8y", "y"], correct: 0, explanation: "4 - 4 = 0" },
-            { text: "Rút gọn: 2z⁵ - (-3z⁵)", options: ["5z⁵", "-z⁵", "5z¹⁰", "-5z⁵"], correct: 0, explanation: "2 - (-3) = 5" },
-            { text: "Rút gọn: -8a² + 3a²", options: ["-5a²", "-11a²", "5a²", "-5a⁴"], correct: 0, explanation: "-8 + 3 = -5" },
-            { text: "Rút gọn: 12b - 5b", options: ["7b", "17b", "7", "-7b"], correct: 0, explanation: "12 - 5 = 7" },
-            { text: "Rút gọn: -c⁶ - 2c⁶", options: ["-3c⁶", "-c⁶", "-3c¹²", "3c⁶"], correct: 0, explanation: "-1 - 2 = -3" },
-            { text: "Rút gọn: 3x - (-4x)", options: ["7x", "-x", "7", "-7x"], correct: 0, explanation: "3 - (-4) = 7" },
-            { text: "Rút gọn: 6y³ + 2y³", options: ["8y³", "4y³", "8y⁶", "12y³"], correct: 0, explanation: "6 + 2 = 8" },
-            { text: "Rút gọn: -3z² - 5z²", options: ["-8z²", "2z²", "-8z⁴", "8z²"], correct: 0, explanation: "-3 - 5 = -8" },
-            { text: "Rút gọn: 7a³ - 9a³", options: ["-2a³", "2a³", "-2a⁶", "16a³"], correct: 0, explanation: "7 - 9 = -2" },
-            { text: "Rút gọn: 5b⁴ + (-2b⁴)", options: ["3b⁴", "7b⁴", "3b⁸", "-3b⁴"], correct: 0, explanation: "5 - 2 = 3" },
-            { text: "Rút gọn: -x⁷ + 4x⁷", options: ["3x⁷", "-3x⁷", "3x¹⁴", "5x⁷"], correct: 0, explanation: "-1 + 4 = 3" },
-            { text: "Rút gọn: 2y⁸ - 7y⁸", options: ["-5y⁸", "5y⁸", "-5y¹⁶", "9y⁸"], correct: 0, explanation: "2 - 7 = -5" },
-            { text: "Rút gọn: 3z + (-8z)", options: ["-5z", "5z", "-5", "11z"], correct: 0, explanation: "3 - 8 = -5" },
-            { text: "Rút gọn: -6a - 4a", options: ["-10a", "10a", "-10", "2a"], correct: 0, explanation: "-6 - 4 = -10" },
-            { text: "Rút gọn: 8b - (-3b)", options: ["11b", "5b", "11", "-5b"], correct: 0, explanation: "8 - (-3) = 11" },
-            { text: "Rút gọn: -c² - (-c²)", options: ["0", "2c²", "-2c²", "c⁴"], correct: 0, explanation: "-1 - (-1) = 0" },
-            { text: "Rút gọn: 9x⁶ + (-5x⁶)", options: ["4x⁶", "14x⁶", "4x¹²", "-4x⁶"], correct: 0, explanation: "9 - 5 = 4" },
-            { text: "Rút gọn: -y⁴ - 6y⁴", options: ["-7y⁴", "7y⁴", "-7y⁸", "5y⁴"], correct: 0, explanation: "-1 - 6 = -7" },
-            { text: "Rút gọn: 5z³ - (-2z³)", options: ["7z³", "3z³", "7z⁶", "3z³"], correct: 0, explanation: "5 - (-2) = 7" },
-            { text: "Rút gọn: -4a⁵ + a⁵", options: ["-3a⁵", "3a⁵", "-3a¹⁰", "5a⁵"], correct: 0, explanation: "-4 + 1 = -3" },
-            { text: "Rút gọn: 10b² - 15b²", options: ["-5b²", "5b²", "-5b⁴", "25b²"], correct: 0, explanation: "10 - 15 = -5" },
-            { text: "Rút gọn: c⁴ - (-6c⁴)", options: ["7c⁴", "5c⁴", "7c⁸", "-5c⁴"], correct: 0, explanation: "1 - (-6) = 7" },
-            { text: "Thực hiện phép tính: 3x⁹ - 8x⁹", options: ["-5x⁹", "5x⁹", "-5x¹⁸", "11x⁹"], correct: 0, explanation: "3 - 8 = -5" },
-            { text: "Thực hiện phép tính: -2y² - (-9y²)", options: ["7y²", "-7y²", "7y⁴", "11y²"], correct: 0, explanation: "-2 - (-9) = 7" },
-            { text: "Thực hiện phép tính: 4z⁷ + (-z⁷)", options: ["3z⁷", "5z⁷", "3z¹⁴", "-3z⁷"], correct: 0, explanation: "4 - 1 = 3" },
-            { text: "Thực hiện phép tính: -5a³ - (-2a³)", options: ["-3a³", "3a³", "-3a⁶", "7a³"], correct: 0, explanation: "-5 - (-2) = -3" },
-            { text: "Thực hiện phép tính: 6b⁶ - 6b⁶", options: ["0", "12b⁶", "-12b⁶", "b⁶"], correct: 0, explanation: "6 - 6 = 0" },
-            { text: "Thực hiện phép tính: -7c - (-c)", options: ["-6c", "6c", "-6", "8c"], correct: 0, explanation: "-7 - (-1) = -6" },
-            { text: "Thực hiện phép tính: 2x³ - (-5x³)", options: ["7x³", "3x³", "7x⁶", "-3x³"], correct: 0, explanation: "2 - (-5) = 7" },
-            { text: "Thực hiện phép tính: -y⁵ + 4y⁵", options: ["3y⁵", "-3y⁵", "3y¹⁰", "5y⁵"], correct: 0, explanation: "-1 + 4 = 3" },
-            { text: "Thực hiện phép tính: 8z² - 10z²", options: ["-2z²", "2z²", "-2z⁴", "18z²"], correct: 0, explanation: "8 - 10 = -2" },
-            { text: "Thực hiện phép tính: -3a⁴ - (-4a⁴)", options: ["a⁴", "-a⁴", "a⁸", "7a⁴"], correct: 0, explanation: "-3 - (-4) = 1" },
-            { text: "Thực hiện phép tính: 5x² + 3x² - 2x²", options: ["6x²", "10x²", "6x⁶", "-6x²"], correct: 0, explanation: "5 + 3 - 2 = 6" },
-            { text: "Thực hiện phép tính: -4y³ + 7y³ - y³", options: ["2y³", "-2y³", "2y⁹", "12y³"], correct: 0, explanation: "-4 + 7 - 1 = 2" },
-            { text: "Thực hiện phép tính: 6z - 3z + 2z", options: ["5z", "11z", "5", "z"], correct: 0, explanation: "6 - 3 + 2 = 5" },
-            { text: "Thực hiện phép tính: a⁴ + 2a⁴ - 5a⁴", options: ["-2a⁴", "2a⁴", "-2a⁸", "8a⁴"], correct: 0, explanation: "1 + 2 - 5 = -2" },
-            { text: "Thực hiện phép tính: 7b² - 4b² - b²", options: ["2b²", "12b²", "2b⁴", "-2b²"], correct: 0, explanation: "7 - 4 - 1 = 2" },
-            { text: "Thực hiện phép tính: -3c⁵ + 2c⁵ - 6c⁵", options: ["-7c⁵", "7c⁵", "-7c¹⁰", "11c⁵"], correct: 0, explanation: "-3 + 2 - 6 = -7" },
-            { text: "Thực hiện phép tính: 9x³ - 5x³ - 2x³", options: ["2x³", "16x³", "2x⁹", "-2x³"], correct: 0, explanation: "9 - 5 - 2 = 2" },
-            { text: "Thực hiện phép tính: -y² + 4y² - 7y²", options: ["-4y²", "4y²", "-4y⁴", "10y²"], correct: 0, explanation: "-1 + 4 - 7 = -4" },
-            { text: "Thực hiện phép tính: 5z⁶ - 8z⁶ + 3z⁶", options: ["0", "16z⁶", "0", "6z⁶"], correct: 0, explanation: "5 - 8 + 3 = 0" },
-            { text: "Thực hiện phép tính: -2a³ + 6a³ - 3a³", options: ["a³", "11a³", "a⁹", "-a³"], correct: 0, explanation: "-2 + 6 - 3 = 1" }
+            { text: "Rút gọn: 5x³ - 2x³", options: ["3x³", "7x³", "3x⁶", "-3x³"], correct: 0, solution: ["5x³ - 2x³", "= (5 - 2) · x³", "= 3 · x³", "= 3x³"] },
+            { text: "Rút gọn: -4x² + 7x²", options: ["3x²", "-11x²", "11x²", "3x⁴"], correct: 0, solution: ["-4x² + 7x²", "= (-4 + 7) · x²", "= 3 · x²", "= 3x²"] },
+            { text: "Rút gọn: 9y - 12y", options: ["-3y", "3y", "-3", "-21y"], correct: 0, solution: ["9y - 12y", "= (9 - 12) · y", "= -3 · y", "= -3y"] },
+            { text: "Rút gọn: -2z⁵ - (-6z⁵)", options: ["4z⁵", "-8z⁵", "8z⁵", "-4z⁵"], correct: 0, solution: ["-2z⁵ - (-6z⁵)", "= -2z⁵ + 6z⁵", "= (-2 + 6) · z⁵", "= (4) · z⁵", "= 4z⁵"] },
+            { text: "Rút gọn: 7a² - 2a²", options: ["5a²", "9a²", "5a⁴", "-5a²"], correct: 0, solution: ["7a² - 2a²", "= (7 - 2) · a²", "= 5 · a²", "= 5a²"] },
+            { text: "Rút gọn: -5b + 8b", options: ["3b", "13b", "-3b", "3"], correct: 0, solution: ["-5b + 8b", "= (-5 + 8) · b", "= 3 · b", "= 3b"] },
+            { text: "Rút gọn: c³ + (-3c³)", options: ["-2c³", "4c³", "-2c⁶", "2c³"], correct: 0, solution: ["c³ + (-3c³)", "= c³ - 3c³", "= (1 - 3) · c³", "= -2 · c³", "= -2c³"] },
+            { text: "Rút gọn: -6x⁴ - (-2x⁴)", options: ["-4x⁴", "-8x⁴", "4x⁴", "-4x⁸"], correct: 0, solution: ["-6x⁴ - (-2x⁴)", "= -6x⁴ + 2x⁴", "= (-6 + 2) · x⁴", "= -4 · x⁴", "= -4x⁴"] },
+            { text: "Rút gọn: 4y - 4y", options: ["0", "8y", "-8y", "y"], correct: 0, solution: ["4y - 4y", "= (4 - 4) · y", "= 0 · y", "= 0"] },
+            { text: "Rút gọn: 2z⁵ - (-3z⁵)", options: ["5z⁵", "-z⁵", "5z¹⁰", "-5z⁵"], correct: 0, solution: ["2z⁵ - (-3z⁵)", "= 2z⁵ + 3z⁵", "= (2 + 3) · z⁵", "= 5 · z⁵", "= 5z⁵"] },
+            { text: "Rút gọn: -8a² + 3a²", options: ["-5a²", "-11a²", "5a²", "-5a⁴"], correct: 0, solution: ["-8a² + 3a²", "= (-8 + 3) · a²", "= -5 · a²", "= -5a²"] },
+            { text: "Rút gọn: 12b - 5b", options: ["7b", "17b", "7", "-7b"], correct: 0, solution: ["12b - 5b", "= (12 - 5) · b", "= 7 · b", "= 7b"] },
+            { text: "Rút gọn: -c⁶ - 2c⁶", options: ["-3c⁶", "-c⁶", "-3c¹²", "3c⁶"], correct: 0, solution: ["-c⁶ - 2c⁶", "= (-1 - 2) · c⁶", "= -3 · c⁶", "= -3c⁶"] },
+            { text: "Rút gọn: 3x - (-4x)", options: ["7x", "-x", "7", "-7x"], correct: 0, solution: ["3x - (-4x)", "= 3x + 4x", "= (3 + 4) · x", "= 7 · x", "= 7x"] },
+            { text: "Rút gọn: 6y³ + 2y³", options: ["8y³", "4y³", "8y⁶", "12y³"], correct: 0, solution: ["6y³ + 2y³", "= (6 + 2) · y³", "= 8 · y³", "= 8y³"] },
+            { text: "Rút gọn: -3z² - 5z²", options: ["-8z²", "2z²", "-8z⁴", "8z²"], correct: 0, solution: ["-3z² - 5z²", "= (-3 - 5) · z²", "= -8 · z²", "= -8z²"] },
+            { text: "Rút gọn: 7a³ - 9a³", options: ["-2a³", "2a³", "-2a⁶", "16a³"], correct: 0, solution: ["7a³ - 9a³", "= (7 - 9) · a³", "= -2 · a³", "= -2a³"] },
+            { text: "Rút gọn: 5b⁴ + (-2b⁴)", options: ["3b⁴", "7b⁴", "3b⁸", "-3b⁴"], correct: 0, solution: ["5b⁴ + (-2b⁴)", "= 5b⁴ - 2b⁴", "= (5 - 2) · b⁴", "= 3 · b⁴", "= 3b⁴"] },
+            { text: "Rút gọn: -x⁷ + 4x⁷", options: ["3x⁷", "-3x⁷", "3x¹⁴", "5x⁷"], correct: 0, solution: ["-x⁷ + 4x⁷", "= (-1 + 4) · x⁷", "= 3 · x⁷", "= 3x⁷"] },
+            { text: "Rút gọn: 2y⁸ - 7y⁸", options: ["-5y⁸", "5y⁸", "-5y¹⁶", "9y⁸"], correct: 0, solution: ["2y⁸ - 7y⁸", "= (2 - 7) · y⁸", "= -5 · y⁸", "= -5y⁸"] },
+            { text: "Rút gọn: 3z + (-8z)", options: ["-5z", "5z", "-5", "11z"], correct: 0, solution: ["3z + (-8z)", "= 3z - 8z", "= (3 - 8) · z", "= -5 · z", "= -5z"] },
+            { text: "Rút gọn: -6a - 4a", options: ["-10a", "10a", "-10", "2a"], correct: 0, solution: ["-6a - 4a", "= (-6 - 4) · a", "= -10 · a", "= -10a"] },
+            { text: "Rút gọn: 8b - (-3b)", options: ["11b", "5b", "11", "-5b"], correct: 0, solution: ["8b - (-3b)", "= 8b + 3b", "= (8 + 3) · b", "= 11 · b", "= 11b"] },
+            { text: "Rút gọn: -c² - (-c²)", options: ["0", "2c²", "-2c²", "c⁴"], correct: 0, solution: ["-c² - (-c²)", "= -c² + c²", "= (-1 + 1) · c²", "= 0 · c²", "= 0"] },
+            { text: "Rút gọn: 9x⁶ + (-5x⁶)", options: ["4x⁶", "14x⁶", "4x¹²", "-4x⁶"], correct: 0, solution: ["9x⁶ + (-5x⁶)", "= 9x⁶ - 5x⁶", "= (9 - 5) · x⁶", "= 4 · x⁶", "= 4x⁶"] },
+            { text: "Rút gọn: -y⁴ - 6y⁴", options: ["-7y⁴", "7y⁴", "-7y⁸", "5y⁴"], correct: 0, solution: ["-y⁴ - 6y⁴", "= (-1 - 6) · y⁴", "= -7 · y⁴", "= -7y⁴"] },
+            { text: "Rút gọn: 5z³ - (-2z³)", options: ["7z³", "3z³", "7z⁶", "3z³"], correct: 0, solution: ["5z³ - (-2z³)", "= 5z³ + 2z³", "= (5 + 2) · z³", "= 7 · z³", "= 7z³"] },
+            { text: "Rút gọn: -4a⁵ + a⁵", options: ["-3a⁵", "3a⁵", "-3a¹⁰", "5a⁵"], correct: 0, solution: ["-4a⁵ + a⁵", "= (-4 + 1) · a⁵", "= -3 · a⁵", "= -3a⁵"] },
+            { text: "Rút gọn: 10b² - 15b²", options: ["-5b²", "5b²", "-5b⁴", "25b²"], correct: 0, solution: ["10b² - 15b²", "= (10 - 15) · b²", "= -5 · b²", "= -5b²"] },
+            { text: "Rút gọn: c⁴ - (-6c⁴)", options: ["7c⁴", "5c⁴", "7c⁸", "-5c⁴"], correct: 0, solution: ["c⁴ - (-6c⁴)", "= c⁴ + 6c⁴", "= (1 + 6) · c⁴", "= 7 · c⁴", "= 7c⁴"] },
+            { text: "Thực hiện phép tính: 3x⁹ - 8x⁹", options: ["-5x⁹", "5x⁹", "-5x¹⁸", "11x⁹"], correct: 0, solution: ["3x⁹ - 8x⁹", "= (3 - 8) · x⁹", "= -5 · x⁹", "= -5x⁹"] },
+            { text: "Thực hiện phép tính: -2y² - (-9y²)", options: ["7y²", "-7y²", "7y⁴", "11y²"], correct: 0, solution: ["-2y² - (-9y²)", "= -2y² + 9y²", "= (-2 + 9) · y²", "= 7 · y²", "= 7y²"] },
+            { text: "Thực hiện phép tính: 4z⁷ + (-z⁷)", options: ["3z⁷", "5z⁷", "3z¹⁴", "-3z⁷"], correct: 0, solution: ["4z⁷ + (-z⁷)", "= 4z⁷ - z⁷", "= (4 - 1) · z⁷", "= 3 · z⁷", "= 3z⁷"] },
+            { text: "Thực hiện phép tính: -5a³ - (-2a³)", options: ["-3a³", "3a³", "-3a⁶", "7a³"], correct: 0, solution: ["-5a³ - (-2a³)", "= -5a³ + 2a³", "= (-5 + 2) · a³", "= -3 · a³", "= -3a³"] },
+            { text: "Thực hiện phép tính: 6b⁶ - 6b⁶", options: ["0", "12b⁶", "-12b⁶", "b⁶"], correct: 0, solution: ["6b⁶ - 6b⁶", "= (6 - 6) · b⁶", "= 0 · b⁶", "= 0"] },
+            { text: "Thực hiện phép tính: -7c - (-c)", options: ["-6c", "6c", "-6", "8c"], correct: 0, solution: ["-7c - (-c)", "= -7c + c", "= (-7 + 1) · c", "= -6 · c", "= -6c"] },
+            { text: "Thực hiện phép tính: 2x³ - (-5x³)", options: ["7x³", "3x³", "7x⁶", "-3x³"], correct: 0, solution: ["2x³ - (-5x³)", "= 2x³ + 5x³", "= (2 + 5) · x³", "= 7 · x³", "= 7x³"] },
+            { text: "Thực hiện phép tính: -y⁵ + 4y⁵", options: ["3y⁵", "-3y⁵", "3y¹⁰", "5y⁵"], correct: 0, solution: ["-y⁵ + 4y⁵", "= (-1 + 4) · y⁵", "= 3 · y⁵", "= 3y⁵"] },
+            { text: "Thực hiện phép tính: 8z² - 10z²", options: ["-2z²", "2z²", "-2z⁴", "18z²"], correct: 0, solution: ["8z² - 10z²", "= (8 - 10) · z²", "= -2 · z²", "= -2z²"] },
+            { text: "Thực hiện phép tính: -3a⁴ - (-4a⁴)", options: ["a⁴", "-a⁴", "a⁸", "7a⁴"], correct: 0, solution: ["-3a⁴ - (-4a⁴)", "= -3a⁴ + 4a⁴", "= (-3 + 4) · a⁴", "= 1 · a⁴", "= a⁴"] },
+            { text: "Thực hiện phép tính: 5x² + 3x² - 2x²", options: ["6x²", "10x²", "6x⁶", "-6x²"], correct: 0, solution: ["5x² + 3x² - 2x²", "= (5 + 3 - 2) · x²", "= 6 · x²", "= 6x²"] },
+            { text: "Thực hiện phép tính: -4y³ + 7y³ - y³", options: ["2y³", "-2y³", "2y⁹", "12y³"], correct: 0, solution: ["-4y³ + 7y³ - y³", "= (-4 + 7 - 1) · y³", "= 2 · y³", "= 2y³"] },
+            { text: "Thực hiện phép tính: 6z - 3z + 2z", options: ["5z", "11z", "5", "z"], correct: 0, solution: ["6z - 3z + 2z", "= (6 - 3 + 2) · z", "= 5 · z", "= 5z"] },
+            { text: "Thực hiện phép tính: a⁴ + 2a⁴ - 5a⁴", options: ["-2a⁴", "2a⁴", "-2a⁸", "8a⁴"], correct: 0, solution: ["a⁴ + 2a⁴ - 5a⁴", "= (1 + 2 - 5) · a⁴", "= -2 · a⁴", "= -2a⁴"] },
+            { text: "Thực hiện phép tính: 7b² - 4b² - b²", options: ["2b²", "12b²", "2b⁴", "-2b²"], correct: 0, solution: ["7b² - 4b² - b²", "= (7 - 4 - 1) · b²", "= 2 · b²", "= 2b²"] },
+            { text: "Thực hiện phép tính: -3c⁵ + 2c⁵ - 6c⁵", options: ["-7c⁵", "7c⁵", "-7c¹⁰", "11c⁵"], correct: 0, solution: ["-3c⁵ + 2c⁵ - 6c⁵", "= (-3 + 2 - 6) · c⁵", "= -7 · c⁵", "= -7c⁵"] },
+            { text: "Thực hiện phép tính: 9x³ - 5x³ - 2x³", options: ["2x³", "16x³", "2x⁹", "-2x³"], correct: 0, solution: ["9x³ - 5x³ - 2x³", "= (9 - 5 - 2) · x³", "= 2 · x³", "= 2x³"] },
+            { text: "Thực hiện phép tính: -y² + 4y² - 7y²", options: ["-4y²", "4y²", "-4y⁴", "10y²"], correct: 0, solution: ["-y² + 4y² - 7y²", "= (-1 + 4 - 7) · y²", "= -4 · y²", "= -4y²"] },
+            // Câu đã sửa: thay "0" thứ hai bằng "z⁶" để tránh trùng lặp
+            { text: "Thực hiện phép tính: 5z⁶ - 8z⁶ + 3z⁶", options: ["0", "16z⁶", "z⁶", "6z⁶"], correct: 0, solution: ["5z⁶ - 8z⁶ + 3z⁶", "= (5 - 8 + 3) · z⁶", "= 0 · z⁶", "= 0"] },
+            { text: "Thực hiện phép tính: -2a³ + 6a³ - 3a³", options: ["a³", "11a³", "a⁹", "-a³"], correct: 0, solution: ["-2a³ + 6a³ - 3a³", "= (-2 + 6 - 3) · a³", "= 1 · a³", "= a³"] }
         ];
 
-        let currentMonoQuestions = [];
-        let currentMonoIndex = 0;
-        let monoAnsweredCount = 0;
-        let monoCorrectCount = 0;
-        let monoTotalTime = 0;
-        let isMonoTestActive = false;
-        let isMonoCurrentAnswered = false;
-        let monoStartTime = null;
-        let monoAutoTimeout = null;
+        function formatMathText(text) {
+            let formatted = text.replace(/-/g, '<span class="minus">−</span>');
+            const supMap = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' };
+            return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supMap[m]}</sup>`);
+        }
 
+        let currentMonoQuestions = [], currentMonoIndex = 0, monoAnsweredCount = 0, monoCorrectCount = 0;
+        let monoTotalTime = 0, isMonoTestActive = false, isMonoCurrentAnswered = false, monoStartTime = null;
+        let monoAutoTimeout = null, monoFinishTimeout = null;
         const monoQuestionArea = document.getElementById('monoQuestionArea');
         const monoCounterSpan = document.getElementById('monoQuestionCounter');
-        const monoTotalSpan = document.getElementById('monoTotalQ');
         const monoProgressFill = document.getElementById('monoProgressFill');
         const monoResultArea = document.getElementById('monoResultArea');
-        const monoCheckBtn = document.getElementById('monoCheckBtn');
-        const monoNextBtn = document.getElementById('monoNextBtn');
-        const monoSummaryOverlay = document.getElementById('monoSummaryOverlay');
-        const monoSummaryCorrect = document.getElementById('monoSummaryCorrect');
-        const monoSummaryWrong = document.getElementById('monoSummaryWrong');
-        const monoAvgTime = document.getElementById('monoAvgTime');
-        const monoSummaryMessage = document.getElementById('monoSummaryMessage');
-        const monoCloseSummaryBtn = document.getElementById('monoCloseSummaryBtn');
+        document.getElementById('monoTotalQ').textContent = "15";
 
-        monoTotalSpan.textContent = "15";
-
-        function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        function selectRandomQuestions(bank, num) {
-            let shuffled = shuffleArray([...bank]);
-            return shuffled.slice(0, num);
-        }
-
-        function shuffleOptions(question) {
-            let opts = [...question.options];
-            let correctAnswer = opts[question.correct];
-            let shuffledOpts = shuffleArray([...opts]);
-            let newCorrectIndex = shuffledOpts.findIndex(opt => opt === correctAnswer);
-            return {
-                text: question.text,
-                options: shuffledOpts,
-                correct: newCorrectIndex,
-                explanation: question.explanation
-            };
+        function shuffleArray(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+        function selectRandomQuestions(bank, num) { return shuffleArray([...bank]).slice(0, num); }
+        function shuffleOptions(q) {
+            let opts = [...q.options], correctAns = opts[q.correct];
+            let shuffled = shuffleArray(opts), newIdx = shuffled.findIndex(opt => opt === correctAns);
+            return { ...q, options: shuffled, correct: newIdx };
         }
 
         function updateMonoUI() {
             monoCounterSpan.textContent = monoAnsweredCount;
-            const percent = (monoAnsweredCount / currentMonoQuestions.length) * 100;
-            monoProgressFill.style.width = percent + '%';
+            monoProgressFill.style.width = (monoAnsweredCount / currentMonoQuestions.length * 100) + '%';
         }
 
         function renderCurrentQuestion() {
             if (!isMonoTestActive || currentMonoIndex >= currentMonoQuestions.length) return;
             const q = currentMonoQuestions[currentMonoIndex];
-            let html = `<div class="question-box" style="text-align:center;">
-                            <div class="question-text" style="font-size:1.4rem; font-weight:bold; margin-bottom:20px;">${q.text}</div>
-                            <div class="options">`;
+            let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathText(q.text)}</div><div class="options">`;
             q.options.forEach((opt, idx) => {
                 const letter = String.fromCharCode(65+idx);
-                html += `<div class="option">
-                            <input type="radio" name="mono_option" value="${idx}" id="mono_opt_${idx}">
-                            <label for="mono_opt_${idx}">${letter}. ${opt}</label>
-                         </div>`;
+                html += `<div class="option"><input type="radio" name="mono_option" value="${idx}" id="mono_opt_${idx}"><label for="mono_opt_${idx}">${letter}. ${formatMathText(opt)}</label></div>`;
             });
             html += `</div></div>`;
             monoQuestionArea.innerHTML = html;
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.addEventListener('click', (e) => {
-                    const radio = opt.querySelector('input[type="radio"]');
-                    if (radio) radio.checked = true;
-                });
-            });
-            monoStartTime = Date.now();
-            isMonoCurrentAnswered = false;
-            monoResultArea.innerHTML = '';
-            monoResultArea.className = 'result-area';
+            document.querySelectorAll('.option').forEach(opt => opt.addEventListener('click', () => {
+                const radio = opt.querySelector('input[type="radio"]');
+                if (radio && !radio.disabled) radio.checked = true;
+            }));
+            monoStartTime = Date.now(); isMonoCurrentAnswered = false;
+            monoResultArea.innerHTML = ''; monoResultArea.className = 'result-area';
+        }
+
+        function finishMonoTest() {
+            isMonoTestActive = false;
+            const wrong = monoAnsweredCount - monoCorrectCount, avg = (monoTotalTime / monoAnsweredCount).toFixed(2);
+            document.getElementById('monoSummaryCorrect').textContent = monoCorrectCount;
+            document.getElementById('monoSummaryWrong').textContent = wrong;
+            document.getElementById('monoAvgTime').textContent = avg;
+            const msg = monoCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (monoCorrectCount === currentMonoQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
+            document.getElementById('monoSummaryMessage').textContent = msg;
+            if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('monoSummaryOverlay').classList.add('active');
+        }
+
+        function scheduleFinishMonoTest(delay) {
+            if (monoFinishTimeout) clearTimeout(monoFinishTimeout);
+            monoFinishTimeout = setTimeout(() => {
+                finishMonoTest();
+                monoFinishTimeout = null;
+            }, delay);
         }
 
         function recordMonoAnswer(isCorrect, timeSpent) {
@@ -1157,8 +667,12 @@
             monoTotalTime += timeSpent;
             if (isCorrect) monoCorrectCount++;
             updateMonoUI();
+
+            document.querySelectorAll('input[name="mono_option"]').forEach(radio => radio.disabled = true);
+
             if (monoAnsweredCount === currentMonoQuestions.length) {
-                finishMonoTest();
+                const delay = isCorrect ? 3000 : 5000;
+                scheduleFinishMonoTest(delay);
             } else {
                 if (isCorrect) {
                     if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
@@ -1168,7 +682,7 @@
                             renderCurrentQuestion();
                         }
                         monoAutoTimeout = null;
-                    }, 2000);
+                    }, 3000);
                 }
             }
         }
@@ -1176,19 +690,18 @@
         function handleMonoCheck() {
             if (!isMonoTestActive || isMonoCurrentAnswered || monoAnsweredCount >= currentMonoQuestions.length) return;
             const selected = document.querySelector('input[name="mono_option"]:checked');
-            if (!selected) {
-                monoResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!';
+            if (!selected) { monoResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; monoResultArea.className = 'result-area result-wrong'; return; }
+            const selectedVal = parseInt(selected.value), q = currentMonoQuestions[currentMonoIndex];
+            const isCorrect = (selectedVal === q.correct), timeSpent = (Date.now() - monoStartTime) / 1000;
+            const correctLetter = String.fromCharCode(65 + q.correct), correctAnswerText = formatMathText(q.options[q.correct]);
+            if (isCorrect) {
+                monoResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
+                monoResultArea.className = 'result-area result-correct';
+            } else {
+                let stepsHtml = q.solution.map(step => formatMathText(step)).join('<br>');
+                monoResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
                 monoResultArea.className = 'result-area result-wrong';
-                return;
             }
-            const selectedVal = parseInt(selected.value);
-            const q = currentMonoQuestions[currentMonoIndex];
-            const isCorrect = (selectedVal === q.correct);
-            const timeSpent = (Date.now() - monoStartTime) / 1000;
-            const correctLetter = String.fromCharCode(65 + q.correct);
-            let feedback = isCorrect ? `🎉 Chính xác! Đáp án đúng: ${correctLetter}.` : `❌ Sai. Đáp án đúng là ${correctLetter}. ${q.explanation}`;
-            monoResultArea.innerHTML = feedback;
-            monoResultArea.className = isCorrect ? 'result-area result-correct' : 'result-area result-wrong';
             recordMonoAnswer(isCorrect, timeSpent);
         }
 
@@ -1199,8 +712,9 @@
                 isMonoCurrentAnswered = true;
                 monoAnsweredCount++;
                 updateMonoUI();
+                document.querySelectorAll('input[name="mono_option"]').forEach(radio => radio.disabled = true);
                 if (monoAnsweredCount === currentMonoQuestions.length) {
-                    finishMonoTest();
+                    scheduleFinishMonoTest(5000);
                 } else {
                     if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
                     currentMonoIndex++;
@@ -1215,90 +729,55 @@
             }
         }
 
-        function finishMonoTest() {
-            isMonoTestActive = false;
-            const wrongCount = monoAnsweredCount - monoCorrectCount;
-            monoSummaryCorrect.textContent = monoCorrectCount;
-            monoSummaryWrong.textContent = wrongCount;
-            const avg = monoAnsweredCount > 0 ? (monoTotalTime / monoAnsweredCount).toFixed(2) : 0;
-            monoAvgTime.textContent = avg;
-            let message = '';
-            if (monoCorrectCount < 12) message = 'BẠN CẦN LUYỆN TẬP THÊM';
-            else if (monoCorrectCount >= 12 && avg > 6) message = 'BẠN ĐÃ HOÀN THÀNH TỐT';
-            else if (monoCorrectCount === currentMonoQuestions.length && avg <= 6) message = 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC';
-            else message = 'BẠN ĐÃ HOÀN THÀNH TỐT';
-            monoSummaryMessage.textContent = message;
-            if (message === 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC') {
-                canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            }
-            monoSummaryOverlay.classList.add('active');
-        }
-
         function startMonoQuiz() {
-            const selectedRaw = selectRandomQuestions(fullQuestionBank, 15);
-            currentMonoQuestions = selectedRaw.map(q => shuffleOptions(q));
-            currentMonoIndex = 0;
-            monoAnsweredCount = 0;
-            monoCorrectCount = 0;
-            monoTotalTime = 0;
-            isMonoTestActive = true;
-            isMonoCurrentAnswered = false;
             if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
-            updateMonoUI();
-            renderCurrentQuestion();
+            if (monoFinishTimeout) clearTimeout(monoFinishTimeout);
+            currentMonoQuestions = selectRandomQuestions(fullQuestionBank, 15).map(q => shuffleOptions(q));
+            currentMonoIndex = 0; monoAnsweredCount = 0; monoCorrectCount = 0; monoTotalTime = 0;
+            isMonoTestActive = true; isMonoCurrentAnswered = false;
+            updateMonoUI(); renderCurrentQuestion();
         }
 
-        // Sự kiện cho các nút
-        monoCheckBtn.addEventListener('click', handleMonoCheck);
-        monoNextBtn.addEventListener('click', moveToNextMonoQuestion);
-        monoCloseSummaryBtn.addEventListener('click', () => {
-            monoSummaryOverlay.classList.remove('active');
+        document.getElementById('monoCheckBtn').addEventListener('click', handleMonoCheck);
+        document.getElementById('monoNextBtn').addEventListener('click', moveToNextMonoQuestion);
+        document.getElementById('monoCloseSummaryBtn').addEventListener('click', () => {
+            document.getElementById('monoSummaryOverlay').classList.remove('active');
             goHome();
         });
         document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && monomialQuizWrapper.style.display === 'flex' && isMonoTestActive) {
-                if (!isMonoCurrentAnswered) handleMonoCheck();
-                else moveToNextMonoQuestion();
+            if (e.key === 'Enter' && document.getElementById('monomialQuizWrapper').style.display === 'flex' && isMonoTestActive) {
+                if (!isMonoCurrentAnswered) handleMonoCheck(); else moveToNextMonoQuestion();
             }
         });
 
-        // ==================== TÍCH HỢP VỚI CÁC KHỐI CHÍNH ====================
+        // ==================== ĐIỀU HƯỚNG CHUNG ====================
         const mainContentDiv = document.getElementById('mainContent');
         const toan8ContentDiv = document.getElementById('toan8Content');
-        const toan8BlockBtn = document.getElementById('toan8Block');
-        const homeLogoLink = document.getElementById('homeLogo');
-        const testWrapperOld = document.getElementById('testWrapper');
-        const mentalBlockBtn = document.getElementById('mentalBlock');
-        const testBlockBtn = document.getElementById('testBlock');
-        const closeSummaryBtn = document.getElementById('closeSummaryBtn');
         const monomialQuizWrapper = document.getElementById('monomialQuizWrapper');
-        const monomialTestLink = document.getElementById('monomialTestLink');
 
         function goHome() {
             mainContentDiv.style.display = 'block';
-            testWrapperOld.style.display = 'none';
+            document.getElementById('testWrapper').style.display = 'none';
             toan8ContentDiv.style.display = 'none';
             monomialQuizWrapper.style.display = 'none';
             document.body.classList.remove('test-mode', 'toan8-mode');
-            const summaryOverlay = document.getElementById('summaryOverlay');
-            if (summaryOverlay) summaryOverlay.classList.remove('active');
-            if (monoSummaryOverlay) monoSummaryOverlay.classList.remove('active');
+            document.getElementById('summaryOverlay').classList.remove('active');
+            document.getElementById('monoSummaryOverlay').classList.remove('active');
         }
 
-        // Không gán lại event cho mentalBlock vì phần bù đã xử lý rồi, tránh trùng
-        testBlockBtn.addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
-        toan8BlockBtn.addEventListener('click', () => {
+        document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
+        document.getElementById('toan8Block').addEventListener('click', () => {
             mainContentDiv.style.display = 'none';
             toan8ContentDiv.style.display = 'block';
             document.body.classList.add('toan8-mode');
         });
-        monomialTestLink.addEventListener('click', () => {
+        document.getElementById('monomialTestLink').addEventListener('click', () => {
             toan8ContentDiv.style.display = 'none';
             monomialQuizWrapper.style.display = 'flex';
             startMonoQuiz();
         });
-        homeLogoLink.addEventListener('click', (e) => { e.preventDefault(); goHome(); });
-        closeSummaryBtn.addEventListener('click', goHome);
+        document.getElementById('homeLogo').addEventListener('click', (e) => { e.preventDefault(); goHome(); });
+        document.getElementById('closeSummaryBtn').addEventListener('click', goHome);
     </script>
 </body>
 </html>
