@@ -13,12 +13,13 @@
             min-height: 100vh; transition: background 0.2s ease;
         }
         body.toan8-mode { background: #C1EEFF; }
+        body.mental-mode { background: #C1EEFF; }
         .math-header {
             background: linear-gradient(95deg, #E24265, #e85d7c); width: 100%; padding: 12px 0 14px 0;
             margin-bottom: 40px; border-bottom: 1px solid #ff99b0; transition: margin-bottom 0.2s ease;
             position: relative; z-index: 10;
         }
-        body.toan8-mode .math-header, body.test-mode .math-header { margin-bottom: 0; }
+        body.toan8-mode .math-header, body.test-mode .math-header, body.mental-mode .math-header { margin-bottom: 0; }
         .header-inner { max-width: 1400px; margin: 0 auto; padding: 0 20px; width: 100%; }
         .home-link { text-decoration: none; display: inline-block; cursor: pointer; transition: transform 0.2s ease; margin-left: 2.5em; }
         .home-link:hover { transform: scale(1.02); }
@@ -103,16 +104,58 @@
         .level-desc { background: #fff2df; display: inline-block; padding: 6px 18px; border-radius: 40px; font-size: 0.85rem; }
         .quiz-placeholder { background: #faf2e6; border-radius: 32px; padding: 20px 12px; border: 2px dashed #ffc489; color: #b97f2e; }
         footer { text-align: center; margin-top: 30px; padding-bottom: 20px; color: #2b6f94; font-size: 0.85rem; }
-        .toan8-content { display: none; background: #C1EEFF; width: 100%; min-height: calc(100vh - 72px); padding: 40px 20px 40px; }
-        .toan8-header h1 { font-family: 'Baloo 2', cursive; font-size: 2.2rem; color: #0A1A9E; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
+        .toan8-content, .mental-content {
+            display: none;
+            background: #C1EEFF;
+            width: 100%;
+            min-height: calc(100vh - 72px);
+            padding: 40px 20px 40px;
+        }
+        .toan8-header h1, .mental-header h1 {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2.2rem;
+            color: #0A1A9E;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
         .chess-king { font-size: 5.28rem; line-height: 1; display: inline-block; }
-        .toan8-header h1 .title-text { font-size: 2.2rem; font-weight: bold; }
-        @media (max-width: 780px) { .chess-king { font-size: 3.5rem; } .toan8-header h1 .title-text { font-size: 1.6rem; } }
+        .toan8-header h1 .title-text, .mental-header h1 .title-text { font-size: 2.2rem; font-weight: bold; }
+        @media (max-width: 780px) {
+            .chess-king { font-size: 3.5rem; }
+            .toan8-header h1 .title-text, .mental-header h1 .title-text { font-size: 1.6rem; }
+        }
         .subject-section { margin-bottom: 30px; background: transparent; }
-        .section-title { background: transparent; color: #E24265; padding: 12px 0; font-size: 1.6rem; font-weight: bold; font-family: 'Baloo 2', cursive; border-bottom: 2px solid #F7859B; margin-bottom: 15px; }
-        .topic-list { padding: 0; } .topic-item { margin-bottom: 20px; }
-        .topic-title { font-size: 1.3rem; font-weight: bold; color: #0A1A9E; margin-bottom: 10px; cursor: pointer; }
-        .topic-title:hover { text-decoration: underline; color: #E24265; }
+        .section-title {
+            background: transparent;
+            color: #E24265;
+            padding: 12px 0;
+            font-size: 1.6rem;
+            font-weight: bold;
+            font-family: 'Baloo 2', cursive;
+            border-bottom: 2px solid #F7859B;
+            margin-bottom: 15px;
+        }
+        .topic-list { padding: 0; }
+        .topic-item {
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 20px;
+            padding: 12px 20px;
+            transition: transform 0.1s ease;
+            cursor: pointer;
+        }
+        .topic-item:hover {
+            transform: translateX(6px);
+            background: #fef9e6;
+        }
+        .topic-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #0A1A9E;
+            margin-bottom: 6px;
+        }
         .sub-items, .sub-items ul { list-style: none; padding-left: 20px; }
         .sub-items li, .sub-items ul li { margin: 6px 0; font-size: 1rem; color: #05445E; }
         .simple-item { font-size: 1.1rem; padding: 6px 0; color: #05445E; }
@@ -122,17 +165,8 @@
         .option input { display: none; }
         .option label { display: block; padding: 12px; font-size: 1rem; font-weight: 500; text-align: center; border-radius: 12px; cursor: pointer; color: #1f542f; font-family: monospace; }
         .option input:checked + label { background: #C1EEFF; color: #05445E; }
-
-        /* SỬA đổi: khi đã trả lời, các option không được chọn sẽ mờ đi */
-        .option input:disabled:not(:checked) + label {
-            opacity: 0.7; cursor: default; background: #f0f0f0;
-        }
-        /* Option được chọn vẫn giữ nguyên màu Light Blue dù đã disable */
-        .option input:disabled:checked + label {
-            background: #C1EEFF; color: #05445E; opacity: 1; cursor: default;
-        }
-
-        /* ---------- RIÊNG CHO KHỐI ĐƠN THỨC ---------- */
+        .option input:disabled:not(:checked) + label { opacity: 0.7; cursor: default; background: #f0f0f0; }
+        .option input:disabled:checked + label { background: #C1EEFF; color: #05445E; opacity: 1; cursor: default; }
         @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
         #monomialQuizWrapper .question-text,
         #monomialQuizWrapper .option label,
@@ -172,10 +206,10 @@
             <div class="level-card"><div class="level-header">🔥 Level 2 <small>Cao Thủ</small></div><div class="level-content"><div class="level-badge">⚡⚡</div><div class="level-desc">Nâng cao tốc độ</div><div class="quiz-placeholder">📦<p>✨ Tính nhẩm nâng cao ✨</p><p style="font-size:0.8rem">(Đang xây dựng)</p></div></div></div>
             <div class="level-card"><div class="level-header">🏆 Level 3 <small>Huyền Thoại</small></div><div class="level-content"><div class="level-badge">⚡⚡⚡</div><div class="level-desc">Thách thức siêu trí não</div><div class="quiz-placeholder">📦<p>✨ Đẳng cấp tính nhẩm thần tốc ✨</p><p style="font-size:0.8rem">(Sắp có)</p></div></div></div>
         </div>
-        <footer>✨ TOÁN DZUI - Nhấp vào TÍNH NHẨM NGẦU để làm bài "Phần bù Tới 100". ✨</footer>
+        <footer>✨ TOÁN DZUI - Nhấp vào TÍNH NHẨM NGẦU để chọn chủ đề luyện tập. ✨</footer>
     </div>
 
-    <!-- ==================== KHỐI "PHẦN BÙ TỚI 100" (ĐÃ SỬA LỖI & ĐẢM BẢO NGUYÊN TẮC) ==================== -->
+    <!-- ==================== KHỐI "PHẦN BÙ TỚI 100" ==================== -->
     <div id="testWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -243,7 +277,39 @@
         <div class="subject-section"><div class="section-title">K. Một số yếu tố xác suất</div><div class="topic-list"><div class="simple-item">Biến cố, xác suất của biến cố trong trò chơi, thí nghiệm</div><div class="simple-item">Tính xác suất thực nghiệm</div></div></div>
     </div>
 
-    <!-- Quiz đơn thức -->
+    <!-- ==================== KHỐI TÍNH NHẨM NGẦU (ĐÃ SỬA THEO YÊU CẦU) ==================== -->
+    <div id="mentalContent" class="mental-content">
+        <div class="mental-header"><h1><span class="chess-king">♛</span><span class="title-text">TÍNH NHẨM NGẦU</span></h1></div>
+        <div class="subject-section">
+            <div class="section-title">🔢 PHÉP CỘNG & TRỪ</div>
+            <div class="topic-list">
+                <div class="topic-item" data-topic="complement100"><div class="topic-title">♟️ Phần bù tới 100</div></div>
+                <div class="topic-item" data-topic="complement1000"><div class="topic-title">♟️ Phần bù tới 1000</div></div>
+                <div class="topic-item" data-topic="add2digit"><div class="topic-title">♟️ Phép cộng 2 số có 2 chữ số</div></div>
+                <div class="topic-item" data-topic="add3digit2digit"><div class="topic-title">♟️ Phép cộng số có 3 chữ số với số có 2 chữ số</div></div>
+                <div class="topic-item" data-topic="add3digit"><div class="topic-title">♟️ Phép cộng 2 số có 3 chữ số</div></div>
+                <div class="topic-item" data-topic="subround"><div class="topic-title">♟️ Phép trừ có số bị trừ là số tròn trăm, tròn nghìn</div></div>
+                <div class="topic-item" data-topic="sub2digit"><div class="topic-title">♟️ Phép trừ số có 2 chữ số cho số có 2 chữ số</div></div>
+                <div class="topic-item" data-topic="sub3digit2digit"><div class="topic-title">♟️ Phép trừ số có 3 chữ số cho số có 2 chữ số</div></div>
+            </div>
+        </div>
+        <div class="subject-section">
+            <div class="section-title">🔢 NHÂN, CHIA & BIẾN ĐỔI NHANH</div>
+            <div class="topic-list">
+                <div class="topic-item" data-topic="doubleDivide"><div class="topic-title">♟️ Gấp đôi một số, chia 5, 50, 25 một số</div></div>
+                <div class="topic-item" data-topic="halfMultiply"><div class="topic-title">♟️ Chia hai một số, nhân 5, 50, 25 một số</div></div>
+            </div>
+        </div>
+        <div class="subject-section">
+            <div class="section-title">🔢 SỐ NGUYÊN</div>
+            <div class="topic-list">
+                <div class="topic-item" data-topic="intAddSub"><div class="topic-title">♟️ Cộng Trừ Số Nguyên</div></div>
+                <div class="topic-item" data-topic="intMulDiv"><div class="topic-title">♟️ Nhân Chia Số Nguyên</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz đơn thức (giữ nguyên 50 câu) -->
     <div id="monomialQuizWrapper" class="test-wrapper">
         <div class="test-spacer-top"></div>
         <div class="test-container">
@@ -275,7 +341,7 @@
     </div>
 
     <script>
-        // ==================== BÀI "PHẦN BÙ TỚI 100" (ĐÃ SỬA LỖI & ĐẢM BẢO NGUYÊN TẮC) ====================
+        // ==================== BÀI "PHẦN BÙ TỚI 100" (GIỮ NGUYÊN) ====================
         (function() {
             const dynamicNumSpan = document.getElementById('dynamicNum');
             const answerInput = document.getElementById('answerTest');
@@ -306,31 +372,22 @@
                 const total = 20;
                 const minNum = 4;
                 const maxNum = 99;
-                
-                // Tạo danh sách ứng viên đã lọc (loại bỏ số có hai chữ số giống nhau)
                 const allCandidates = [];
                 for (let i = minNum; i <= maxNum; i++) {
-                    if (i % 10 !== Math.floor(i / 10)) {
-                        allCandidates.push(i);
-                    }
+                    if (i % 10 !== Math.floor(i / 10)) allCandidates.push(i);
                 }
-
-                // Hàm kiểm tra một số có thể thêm vào dãy hiện tại không
                 function isValidAddition(seq, num, counters) {
                     if (seq.includes(num)) return false;
                     if (seq.length > 0 && (num % 10 === seq[seq.length-1] % 10)) return false;
-                    
                     const newCounters = { ...counters };
                     if (num % 10 === 0) newCounters.roundTens++;
                     if (num % 10 === 5) newCounters.unit5++;
                     if (num < 10) newCounters.lessThan10++;
                     if (num > 90) newCounters.greaterThan90++;
-                    
                     if (newCounters.roundTens > 2) return false;
                     if (newCounters.unit5 > 2) return false;
                     if (newCounters.lessThan10 > 1) return false;
                     if (newCounters.greaterThan90 > 1) return false;
-                    
                     if (seq.length > 0) {
                         const diff = Math.abs(seq[seq.length-1] - num);
                         if (diff <= 10) return false;
@@ -341,42 +398,28 @@
                     }
                     return true;
                 }
-
-                // Thử tạo ngẫu nhiên nhiều lần (tối đa 10000 lần)
                 for (let attempt = 0; attempt < 10000; attempt++) {
                     const seq = [];
                     const counters = { roundTens: 0, unit5: 0, lessThan10: 0, greaterThan90: 0 };
                     const used = new Set();
                     let failed = false;
-                    
                     while (seq.length < total && !failed) {
-                        // Lọc các ứng viên khả dụng
                         const available = allCandidates.filter(num => !used.has(num) && isValidAddition(seq, num, counters));
-                        if (available.length === 0) {
-                            failed = true;
-                            break;
-                        }
-                        const randIndex = Math.floor(Math.random() * available.length);
-                        const chosen = available[randIndex];
+                        if (available.length === 0) { failed = true; break; }
+                        const chosen = available[Math.floor(Math.random() * available.length)];
                         seq.push(chosen);
                         used.add(chosen);
-                        // Cập nhật counters
                         if (chosen % 10 === 0) counters.roundTens++;
                         if (chosen % 10 === 5) counters.unit5++;
                         if (chosen < 10) counters.lessThan10++;
                         if (chosen > 90) counters.greaterThan90++;
                     }
-                    
                     if (!failed && seq.length === total) {
-                        // Kiểm tra trùng với lần trước (nếu có)
                         if (lastQuestionSet && JSON.stringify(seq) === JSON.stringify(lastQuestionSet)) continue;
                         lastQuestionSet = seq.slice();
                         return seq;
                     }
                 }
-
-                // Trường hợp cực kỳ hy hữu không tìm được sau 10000 lần,
-                // tạo một mảng fallback đảm bảo hợp lệ bằng thuật toán tương tự nhưng không giới hạn lần thử
                 while (true) {
                     const seq = [];
                     const counters = { roundTens: 0, unit5: 0, lessThan10: 0, greaterThan90: 0 };
@@ -384,10 +427,7 @@
                     let failed = false;
                     while (seq.length < total) {
                         const available = allCandidates.filter(num => !used.has(num) && isValidAddition(seq, num, counters));
-                        if (available.length === 0) {
-                            failed = true;
-                            break;
-                        }
+                        if (available.length === 0) { failed = true; break; }
                         const chosen = available[Math.floor(Math.random() * available.length)];
                         seq.push(chosen);
                         used.add(chosen);
@@ -406,8 +446,7 @@
 
             function updateUI() {
                 questionCounterSpan.textContent = answeredCount;
-                const percent = (answeredCount / 20) * 100;
-                progressFill.style.width = percent + '%';
+                progressFill.style.width = (answeredCount / 20) * 100 + '%';
             }
 
             function finishTest() {
@@ -430,8 +469,7 @@
                 if (!isTestActive) return;
                 if (answeredCount >= 20) return;
                 if (currentIndex >= currentQuestions.length) return;
-                const nextNum = currentQuestions[currentIndex];
-                currentIndex++;
+                const nextNum = currentQuestions[currentIndex++];
                 dynamicNumSpan.textContent = nextNum;
                 answerInput.value = '';
                 resultDiv.innerHTML = '';
@@ -449,16 +487,10 @@
                 totalTime += timeSpent;
                 if (isCorrect) correctCount++;
                 updateUI();
-                if (answeredCount === 20) {
-                    finishTest();
-                } else {
-                    if (isCorrect) {
-                        if (autoNextTimeout) clearTimeout(autoNextTimeout);
-                        autoNextTimeout = setTimeout(() => {
-                            if (isTestActive && answeredCount < 20) loadNextQuestion();
-                            autoNextTimeout = null;
-                        }, 2000);
-                    }
+                if (answeredCount === 20) finishTest();
+                else if (isCorrect) {
+                    if (autoNextTimeout) clearTimeout(autoNextTimeout);
+                    autoNextTimeout = setTimeout(() => { if (isTestActive && answeredCount < 20) loadNextQuestion(); autoNextTimeout = null; }, 2000);
                 }
             }
 
@@ -518,14 +550,14 @@
                 loadNextQuestion();
             }
 
-            function openTest() {
+            window.openComplement100Test = function() {
                 document.getElementById('mainContent').style.display = 'none';
                 document.getElementById('testWrapper').style.display = 'flex';
                 document.body.classList.add('test-mode');
+                document.body.classList.remove('mental-mode', 'toan8-mode');
                 resetAndStartTest();
-            }
+            };
 
-            document.getElementById('mentalBlock').addEventListener('click', openTest);
             checkBtn.addEventListener('click', handleCheck);
             nextBtn.addEventListener('click', moveToNextQuestion);
             answerInput.addEventListener('keypress', (e) => {
@@ -539,7 +571,7 @@
             closeSummaryBtn.addEventListener('click', goHome);
         })();
 
-        // ==================== BÀI KIỂM TRA ĐƠN THỨC (ĐÃ SỬA ĐÁP ÁN TRÙNG) ====================
+        // ==================== BÀI KIỂM TRA ĐƠN THỨC (50 CÂU - GIỮ NGUYÊN) ====================
         const fullQuestionBank = [
             { text: "Rút gọn: 5x³ - 2x³", options: ["3x³", "7x³", "3x⁶", "-3x³"], correct: 0, solution: ["5x³ - 2x³", "= (5 - 2) · x³", "= 3 · x³", "= 3x³"] },
             { text: "Rút gọn: -4x² + 7x²", options: ["3x²", "-11x²", "11x²", "3x⁴"], correct: 0, solution: ["-4x² + 7x²", "= (-4 + 7) · x²", "= 3 · x²", "= 3x²"] },
@@ -589,7 +621,6 @@
             { text: "Thực hiện phép tính: -3c⁵ + 2c⁵ - 6c⁵", options: ["-7c⁵", "7c⁵", "-7c¹⁰", "11c⁵"], correct: 0, solution: ["-3c⁵ + 2c⁵ - 6c⁵", "= (-3 + 2 - 6) · c⁵", "= -7 · c⁵", "= -7c⁵"] },
             { text: "Thực hiện phép tính: 9x³ - 5x³ - 2x³", options: ["2x³", "16x³", "2x⁹", "-2x³"], correct: 0, solution: ["9x³ - 5x³ - 2x³", "= (9 - 5 - 2) · x³", "= 2 · x³", "= 2x³"] },
             { text: "Thực hiện phép tính: -y² + 4y² - 7y²", options: ["-4y²", "4y²", "-4y⁴", "10y²"], correct: 0, solution: ["-y² + 4y² - 7y²", "= (-1 + 4 - 7) · y²", "= -4 · y²", "= -4y²"] },
-            // Câu đã sửa: thay "0" thứ hai bằng "z⁶" để tránh trùng lặp
             { text: "Thực hiện phép tính: 5z⁶ - 8z⁶ + 3z⁶", options: ["0", "16z⁶", "z⁶", "6z⁶"], correct: 0, solution: ["5z⁶ - 8z⁶ + 3z⁶", "= (5 - 8 + 3) · z⁶", "= 0 · z⁶", "= 0"] },
             { text: "Thực hiện phép tính: -2a³ + 6a³ - 3a³", options: ["a³", "11a³", "a⁹", "-a³"], correct: 0, solution: ["-2a³ + 6a³ - 3a³", "= (-2 + 6 - 3) · a³", "= 1 · a³", "= a³"] }
         ];
@@ -654,10 +685,7 @@
 
         function scheduleFinishMonoTest(delay) {
             if (monoFinishTimeout) clearTimeout(monoFinishTimeout);
-            monoFinishTimeout = setTimeout(() => {
-                finishMonoTest();
-                monoFinishTimeout = null;
-            }, delay);
+            monoFinishTimeout = setTimeout(finishMonoTest, delay);
         }
 
         function recordMonoAnswer(isCorrect, timeSpent) {
@@ -667,23 +695,18 @@
             monoTotalTime += timeSpent;
             if (isCorrect) monoCorrectCount++;
             updateMonoUI();
-
             document.querySelectorAll('input[name="mono_option"]').forEach(radio => radio.disabled = true);
-
             if (monoAnsweredCount === currentMonoQuestions.length) {
-                const delay = isCorrect ? 3000 : 5000;
-                scheduleFinishMonoTest(delay);
-            } else {
-                if (isCorrect) {
-                    if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
-                    monoAutoTimeout = setTimeout(() => {
-                        if (isMonoTestActive && monoAnsweredCount < currentMonoQuestions.length) {
-                            currentMonoIndex++;
-                            renderCurrentQuestion();
-                        }
-                        monoAutoTimeout = null;
-                    }, 3000);
-                }
+                scheduleFinishMonoTest(isCorrect ? 3000 : 5000);
+            } else if (isCorrect) {
+                if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
+                monoAutoTimeout = setTimeout(() => {
+                    if (isMonoTestActive && monoAnsweredCount < currentMonoQuestions.length) {
+                        currentMonoIndex++;
+                        renderCurrentQuestion();
+                    }
+                    monoAutoTimeout = null;
+                }, 3000);
             }
         }
 
@@ -713,19 +736,11 @@
                 monoAnsweredCount++;
                 updateMonoUI();
                 document.querySelectorAll('input[name="mono_option"]').forEach(radio => radio.disabled = true);
-                if (monoAnsweredCount === currentMonoQuestions.length) {
-                    scheduleFinishMonoTest(5000);
-                } else {
-                    if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
-                    currentMonoIndex++;
-                    renderCurrentQuestion();
-                }
+                if (monoAnsweredCount === currentMonoQuestions.length) scheduleFinishMonoTest(5000);
+                else { if (monoAutoTimeout) clearTimeout(monoAutoTimeout); currentMonoIndex++; renderCurrentQuestion(); }
             } else {
                 if (monoAutoTimeout) clearTimeout(monoAutoTimeout);
-                if (monoAnsweredCount < currentMonoQuestions.length) {
-                    currentMonoIndex++;
-                    renderCurrentQuestion();
-                }
+                if (monoAnsweredCount < currentMonoQuestions.length) { currentMonoIndex++; renderCurrentQuestion(); }
             }
         }
 
@@ -753,23 +768,52 @@
         // ==================== ĐIỀU HƯỚNG CHUNG ====================
         const mainContentDiv = document.getElementById('mainContent');
         const toan8ContentDiv = document.getElementById('toan8Content');
+        const mentalContentDiv = document.getElementById('mentalContent');
         const monomialQuizWrapper = document.getElementById('monomialQuizWrapper');
 
         function goHome() {
             mainContentDiv.style.display = 'block';
             document.getElementById('testWrapper').style.display = 'none';
             toan8ContentDiv.style.display = 'none';
+            mentalContentDiv.style.display = 'none';
             monomialQuizWrapper.style.display = 'none';
-            document.body.classList.remove('test-mode', 'toan8-mode');
+            document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
             document.getElementById('summaryOverlay').classList.remove('active');
             document.getElementById('monoSummaryOverlay').classList.remove('active');
         }
+
+        document.getElementById('mentalBlock').addEventListener('click', () => {
+            mainContentDiv.style.display = 'none';
+            mentalContentDiv.style.display = 'block';
+            document.body.classList.add('mental-mode');
+            document.body.classList.remove('toan8-mode', 'test-mode');
+            document.getElementById('testWrapper').style.display = 'none';
+            monomialQuizWrapper.style.display = 'none';
+            toan8ContentDiv.style.display = 'none';
+        });
+
+        const mentalTopics = document.querySelectorAll('#mentalContent .topic-item');
+        mentalTopics.forEach(topic => {
+            topic.addEventListener('click', (e) => {
+                const topicKey = topic.getAttribute('data-topic');
+                if (topicKey === 'complement100') {
+                    mentalContentDiv.style.display = 'none';
+                    window.openComplement100Test();
+                } else {
+                    alert('✨ Tính năng đang được phát triển, vui lòng quay lại sau! ✨');
+                }
+            });
+        });
 
         document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
         document.getElementById('toan8Block').addEventListener('click', () => {
             mainContentDiv.style.display = 'none';
             toan8ContentDiv.style.display = 'block';
+            mentalContentDiv.style.display = 'none';
             document.body.classList.add('toan8-mode');
+            document.body.classList.remove('mental-mode', 'test-mode');
+            document.getElementById('testWrapper').style.display = 'none';
+            monomialQuizWrapper.style.display = 'none';
         });
         document.getElementById('monomialTestLink').addEventListener('click', () => {
             toan8ContentDiv.style.display = 'none';
