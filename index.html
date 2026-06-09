@@ -183,7 +183,6 @@
         .solution-steps { margin-top: 10px; line-height: 1.8; background: #fff9e6; padding: 10px; border-radius: 12px; }
         #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
 
-        /* Nhân đơn thức quiz kế thừa toàn bộ style từ quiz đơn thức */
         #multiplyMonomialQuizWrapper .question-text,
         #multiplyMonomialQuizWrapper .option label,
         #multiplyMonomialQuizWrapper .result-area,
@@ -195,6 +194,35 @@
         #multiplyMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
         #multiplyMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
         #multiplyMonomialQuizWrapper .btn-primary, #multiplyMonomialQuizWrapper .btn-secondary { font-family: inherit; }
+
+        #divideMonomialQuizWrapper .question-text,
+        #divideMonomialQuizWrapper .option label,
+        #divideMonomialQuizWrapper .result-area,
+        #divideMonomialQuizWrapper .solution-steps {
+            font-family: 'Inter', sans-serif !important;
+            letter-spacing: 0.35px;
+        }
+        #divideMonomialQuizWrapper .option label { font-size: 1.25rem; }
+        #divideMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
+        #divideMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
+        #divideMonomialQuizWrapper .btn-primary, #divideMonomialQuizWrapper .btn-secondary { font-family: inherit; }
+
+        /* Phân số đẹp – đã sửa tên class để tránh lỗi thay thế dấu gạch ngang */
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            line-height: 1.2;
+            margin: 0 2px;
+        }
+        .frac .fracNum {
+            border-bottom: 1.5px solid currentColor;
+            padding-bottom: 1px;
+        }
+        .frac .fracDen {
+            padding-top: 1px;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Kalam:wght@400;700&family=Comic+Neue:wght@400;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
@@ -269,7 +297,11 @@
                     <div class="topic-title">♙ Chủ đề 1: Các phép toán với đa thức một biến/nhiều biến</div>
                     <div class="sub-items">
                         <strong>1. Đơn thức Một Biến</strong>
-                        <ul><li id="monomialTestLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.1. Cộng Trừ các đơn thức một biến đồng dạng</li><li id="multiplyMonomialLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.2. Nhân hai đơn thức một biến</li><li>1.3. Chia hai đơn thức một biến</li></ul>
+                        <ul>
+                            <li id="monomialTestLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.1. Cộng Trừ các đơn thức một biến đồng dạng</li>
+                            <li id="multiplyMonomialLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.2. Nhân hai đơn thức một biến</li>
+                            <li id="divideMonomialLink" class="clickable-quiz" style="cursor:pointer; color:#E24265; font-weight:bold;">1.3. Chia hai đơn thức một biến</li>
+                        </ul>
                         <strong>2. Đơn thức Nhiều Biến</strong>
                         <ul><li>2.1. Cộng Trừ các đa thức nhiều biến đồng dạng</li><li>2.2. Nhân hai đơn thức nhiều biến</li><li>2.3. Chia hai đơn thức nhiều biến</li></ul>
                         <div>3. Nhận biết Đơn Thức</div><div>4. Tìm Hệ số và Bậc của Đơn thức</div>
@@ -385,11 +417,42 @@
         </div>
     </div>
 
+    <!-- ==================== KHỐI QUIZ CHIA ĐƠN THỨC ==================== -->
+    <div id="divideMonomialQuizWrapper" class="test-wrapper">
+        <div class="test-spacer-top"></div>
+        <div class="test-container">
+            <div class="test-header"><h2>⚔️ Chia hai đơn thức một biến</h2></div>
+            <div class="test-body">
+                <div class="progress-info">Câu hỏi: <span id="divQuestionCounter">0</span>/<span id="divTotalQ">15</span></div>
+                <div class="progress-bar-container"><div class="progress-fill" id="divProgressFill"></div></div>
+                <div id="divQuestionArea"></div>
+                <div class="button-group">
+                    <button id="divCheckBtn" class="btn-primary">✅ Kiểm tra</button>
+                    <button id="divNextBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
+                </div>
+                <div id="divResultArea" class="result-area"></div>
+            </div>
+        </div>
+        <div class="test-spacer-bottom"></div>
+    </div>
+    <div id="divSummaryOverlay" class="summary-overlay">
+        <div class="summary-card">
+            <h3>🏆 KẾT QUẢ</h3>
+            <div class="summary-stats">
+                <div>Số câu trả lời ĐÚNG: <strong id="divSummaryCorrect">0</strong></div>
+                <div>Số câu trả lời SAI: <strong id="divSummaryWrong">0</strong></div>
+                <div>Thời gian trả lời trung bình: <strong id="divAvgTime">0</strong> giây/câu</div>
+            </div>
+            <div id="divSummaryMessage" class="summary-message"></div>
+            <button id="divCloseSummaryBtn" class="summary-btn">Về trang chủ</button>
+        </div>
+    </div>
+
     <script>
     (function() {
         // ==================== APP QUẢN LÝ MÀN HÌNH & DỌN DẸP ====================
         const App = {
-            activeQuiz: null, // 'complement100', 'monomial', 'multiplyMonomial'
+            activeQuiz: null, // 'complement100', 'monomial', 'multiplyMonomial', 'divideMonomial'
             cleanupFns: {},
             registerCleanup(name, fn) {
                 this.cleanupFns[name] = fn;
@@ -402,6 +465,7 @@
                 document.getElementById('testWrapper').style.display = 'none';
                 document.getElementById('monomialQuizWrapper').style.display = 'none';
                 document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
+                document.getElementById('divideMonomialQuizWrapper').style.display = 'none';
                 document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
 
                 // Dừng quiz cũ nếu có
@@ -425,6 +489,8 @@
                     document.getElementById('monomialQuizWrapper').style.display = 'flex';
                 } else if (screenId === 'multiplyMonomial') {
                     document.getElementById('multiplyMonomialQuizWrapper').style.display = 'flex';
+                } else if (screenId === 'divideMonomial') {
+                    document.getElementById('divideMonomialQuizWrapper').style.display = 'flex';
                 }
             },
             goHome() {
@@ -861,7 +927,6 @@
         document.getElementById('monoNextBtn').addEventListener('click', moveToNextMonoQuestion);
         document.getElementById('monoCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
-        // Thêm sự kiện Enter cho quiz đơn thức
         document.addEventListener('keypress', function monoEnterHandler(e) {
             if (e.key !== 'Enter') return;
             if (App.activeQuiz !== 'monomial') return;
@@ -1042,7 +1107,6 @@
                         if (q) bank.push(q);
                     }
                 }
-                // Đảm bảo đủ 100 câu
                 const maxTotal = 100;
                 while (bank.length < maxTotal) {
                     const randomVar = ['x','y','a','z','b','c'][Math.floor(Math.random()*6)];
@@ -1186,7 +1250,6 @@
             document.getElementById('mulNextBtn').addEventListener('click', moveToNextMulQuestion);
             document.getElementById('mulCloseSummaryBtn').addEventListener('click', () => App.goHome());
 
-            // Thêm sự kiện Enter cho quiz nhân đơn thức
             document.addEventListener('keypress', function mulEnterHandler(e) {
                 if (e.key !== 'Enter') return;
                 if (App.activeQuiz !== 'multiplyMonomial') return;
@@ -1199,45 +1262,293 @@
 
             App.registerCleanup('multiplyMonomial', cleanupMultiply);
 
-            // Kết nối link trong menu Toán 8
             document.getElementById('multiplyMonomialLink').addEventListener('click', () => {
                 App.switchTo('multiplyMonomial', 'multiplyMonomial');
                 startMultiplyQuiz();
             });
         })();
 
+        // ==================== QUIZ CHIA ĐƠN THỨC (ĐÃ SỬA LỖI PHÂN SỐ) ====================
+        (function() {
+            const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
+            function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
+            // Sửa lỗi: đổi tên class để không bị thay thế dấu gạch ngang
+            function formatFractionHTML(numerator, denominator) {
+                if (denominator === 1) return String(numerator);
+                const absNum = Math.abs(numerator);
+                const absDen = Math.abs(denominator);
+                const sign = (numerator * denominator < 0) ? '<span class="minus">−</span>' : '';
+                return `${sign}<span class="frac"><span class="fracNum">${absNum}</span><span class="fracDen">${absDen}</span></span>`;
+            }
+
+            function formatDivisionMonomial(coeffNum, coeffDen, exp, variable) {
+                if (coeffNum === 0) return '0';
+                let coeffHtml;
+                if (coeffDen === 1) coeffHtml = formatMonomialCoeff(coeffNum);
+                else coeffHtml = formatFractionHTML(coeffNum, coeffDen);
+                if (exp === 0) return coeffHtml;
+                let varPart = variable;
+                if (exp > 1) varPart += toSuperscript(exp);
+                if (coeffNum === 1 && coeffDen === 1) return varPart;
+                if (coeffNum === -1 && coeffDen === 1) return '<span class="minus">−</span>' + varPart;
+                return coeffHtml + varPart;
+            }
+
+            function formatMonomialCoeff(coeff) {
+                if (coeff === 0) return '0';
+                if (coeff === 1) return '';
+                if (coeff === -1) return '<span class="minus">−</span>';
+                if (coeff < 0) return '<span class="minus">−</span>' + String(Math.abs(coeff));
+                return String(coeff);
+            }
+
+            function formatMathTextLocalDiv(text) {
+                const supToDigit = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' };
+                let formatted = text.replace(/-/g, '<span class="minus">−</span>');
+                return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
+            }
+
+            function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
+
+            function createDivQuestion({
+                variable: forcedVar,
+                forceDivisible,
+                forceNonDivisibleGCD1,
+                allowEqualAbs = true,
+                forceExponentEqual = false,
+                forceDivisorCoeff,
+                forceDividendCoeff,
+                avoidEqualAbs = false,
+                avoidExponentEqual = false
+            } = {}) {
+                const variables = ['x', 'y', 'a', 'b'];
+                const variable = forcedVar || variables[randomInt(0, 3)];
+                let expDividend, expDivisor;
+                if (forceExponentEqual) {
+                    expDividend = randomInt(1, 10);
+                    expDivisor = expDividend;
+                } else {
+                    expDividend = randomInt(1, 10);
+                    if (avoidExponentEqual) {
+                        expDivisor = randomInt(1, expDividend - 1);
+                        if (expDivisor < 1) expDivisor = 1;
+                    } else {
+                        expDivisor = randomInt(1, expDividend);
+                    }
+                }
+                const resultExp = expDividend - expDivisor;
+
+                let coeffDivisor, coeffDividend;
+                let attempts = 0;
+                const maxAttempts = 100;
+                do {
+                    if (forceDivisorCoeff !== undefined) coeffDivisor = forceDivisorCoeff;
+                    else {
+                        coeffDivisor = randomInt(-20, 20);
+                        while (coeffDivisor === 0) coeffDivisor = randomInt(-20, 20);
+                    }
+                    if (forceDividendCoeff !== undefined) coeffDividend = forceDividendCoeff;
+                    else {
+                        coeffDividend = randomInt(-20, 20);
+                        while (coeffDividend === 0) coeffDividend = randomInt(-20, 20);
+                    }
+
+                    if (avoidEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
+                    if (!allowEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
+
+                    if (forceDivisible && coeffDividend % coeffDivisor !== 0) continue;
+                    if (forceNonDivisibleGCD1) {
+                        if (coeffDividend % coeffDivisor === 0) continue;
+                        if (gcd(coeffDividend, coeffDivisor) !== 1) continue;
+                    }
+                    break;
+                } while (attempts++ < maxAttempts);
+
+                const dividendStr = formatMonomialCoeff(coeffDividend) + variable + (expDividend > 1 ? toSuperscript(expDividend) : '');
+                let divisorStr = formatMonomialCoeff(coeffDivisor) + variable + (expDivisor > 1 ? toSuperscript(expDivisor) : '');
+                if (coeffDivisor < 0) divisorStr = `(${divisorStr})`;
+                const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ";
+                const text = prefix + dividendStr + ' : ' + divisorStr;
+
+                const g = gcd(coeffDividend, coeffDivisor);
+                const resultNum = coeffDividend / g;
+                const resultDen = coeffDivisor / g;
+                let finalNum = resultNum, finalDen = resultDen;
+                if (finalDen < 0) { finalNum = -finalNum; finalDen = -finalDen; }
+                const correctAnswerHTML = formatDivisionMonomial(finalNum, finalDen, resultExp, variable);
+
+                function generateDivisionDistractors(finalNum, finalDen, resultExp, variable) {
+                    const optionsSet = new Set();
+                    const wrongCandidates = [];
+                    wrongCandidates.push(formatDivisionMonomial(finalNum + 1, finalDen, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum - 1, finalDen, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(-finalNum, finalDen, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen + 1, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum * 2, finalDen * 2, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen, resultExp + 1, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen, Math.max(0, resultExp - 1), variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum + 2, finalDen, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum - 2, finalDen, resultExp, variable));
+                    for (const w of wrongCandidates) { if (w !== correctAnswerHTML && !optionsSet.has(w)) optionsSet.add(w); if (optionsSet.size >= 3) break; }
+                    while (optionsSet.size < 3) { const fakeNum = randomInt(-10, 10); const fakeDen = randomInt(1, 5); const fake = formatDivisionMonomial(fakeNum, fakeDen, resultExp, variable); if (fake !== correctAnswerHTML && !optionsSet.has(fake)) optionsSet.add(fake); }
+                    return Array.from(optionsSet).slice(0, 3);
+                }
+
+                const distractors = generateDivisionDistractors(finalNum, finalDen, resultExp, variable);
+                const options = [correctAnswerHTML, ...distractors];
+                const shuffled = shuffleArrayLocal(options);
+                const correctIndex = shuffled.indexOf(correctAnswerHTML);
+
+                const solutionSteps = [];
+                solutionSteps.push(`${dividendStr} : ${divisorStr}`);
+                const divisorCoeffStr = coeffDivisor < 0 ? `(${coeffDivisor})` : coeffDivisor;
+                solutionSteps.push(`= ${coeffDividend} : ${divisorCoeffStr} ⋅ (${variable}${toSuperscript(expDividend)} : ${variable}${toSuperscript(expDivisor)})`);
+                if (coeffDividend % coeffDivisor === 0) {
+                    solutionSteps.push(`= ${coeffDividend / coeffDivisor} ⋅ ${variable}${toSuperscript(resultExp)}`);
+                } else {
+                    const gLocal = gcd(coeffDividend, coeffDivisor);
+                    const num = coeffDividend / gLocal, den = coeffDivisor / gLocal;
+                    solutionSteps.push(`= (${num}/${den}) ⋅ ${variable}${toSuperscript(resultExp)}`);
+                }
+                solutionSteps.push(`= ${correctAnswerHTML}`);
+
+                const isDivisible = (coeffDividend % coeffDivisor === 0);
+                const equalExponent = (expDividend === expDivisor);
+                return { text, options: shuffled, correct: correctIndex, correctAnswer: correctAnswerHTML, solution: solutionSteps, isDivisible, equalExponent, equalAbs: Math.abs(coeffDividend) === Math.abs(coeffDivisor) };
+            }
+
+            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+
+            function generateQuizQuestions() {
+                const questions = [];
+                let countEqualExponent = 0;
+                let countEqualAbs = 0;
+                let countNonDivisible = 0;
+
+                const q1 = createDivQuestion({ forceDivisorCoeff: -1, avoidEqualAbs: true, avoidExponentEqual: true });
+                questions.push(q1);
+                if (q1.equalExponent) countEqualExponent++;
+                if (q1.equalAbs) countEqualAbs++;
+                if (!q1.isDivisible) countNonDivisible++;
+
+                const q2 = createDivQuestion({ forceDividendCoeff: -1, avoidEqualAbs: true, avoidExponentEqual: true });
+                questions.push(q2);
+                if (q2.equalExponent) countEqualExponent++;
+                if (q2.equalAbs) countEqualAbs++;
+                if (!q2.isDivisible) countNonDivisible++;
+
+                for (let i = 0; i < 2; i++) {
+                    const q = createDivQuestion({ forceExponentEqual: true, forceDivisible: true, avoidEqualAbs: true });
+                    questions.push(q);
+                    if (q.equalExponent) countEqualExponent++;
+                    if (q.equalAbs) countEqualAbs++;
+                    if (!q.isDivisible) countNonDivisible++;
+                }
+
+                const remaining = 15 - questions.length;
+                const neededNonDivisible = 3 - countNonDivisible;
+                for (let i = 0; i < remaining; i++) {
+                    let q;
+                    if (i < neededNonDivisible) {
+                        q = createDivQuestion({ forceNonDivisibleGCD1: true, allowEqualAbs: countEqualAbs < 1, avoidEqualAbs: countEqualAbs >= 1, avoidExponentEqual: true });
+                    } else {
+                        q = createDivQuestion({ forceDivisible: true, allowEqualAbs: countEqualAbs < 1, avoidEqualAbs: countEqualAbs >= 1, avoidExponentEqual: true });
+                    }
+                    if (q.equalExponent) countEqualExponent++;
+                    if (q.equalAbs) countEqualAbs++;
+                    if (!q.isDivisible) countNonDivisible++;
+                    questions.push(q);
+                }
+
+                if (countEqualExponent > 2) {
+                    for (let i = questions.length - 1; i >= 0 && countEqualExponent > 2; i--) {
+                        if (questions[i].equalExponent && !(i < 4 && i >= 2)) {
+                            const newQ = createDivQuestion({ forceDivisible: true, avoidEqualAbs: true, avoidExponentEqual: true });
+                            questions[i] = newQ;
+                            countEqualExponent--;
+                            if (newQ.equalAbs) countEqualAbs++;
+                            if (!newQ.isDivisible) countNonDivisible++;
+                        }
+                    }
+                }
+
+                return shuffleArrayLocal(questions);
+            }
+
+            let currentDivQuestions = [], currentDivIndex = 0, divAnsweredCount = 0, divCorrectCount = 0;
+            let divTotalTime = 0, isDivTestActive = false, isDivCurrentAnswered = false, divStartTime = null;
+            let divAutoTimeout = null, divFinishTimeout = null;
+            const divQuestionArea = document.getElementById('divQuestionArea');
+            const divCounterSpan = document.getElementById('divQuestionCounter');
+            const divProgressFill = document.getElementById('divProgressFill');
+            const divResultArea = document.getElementById('divResultArea');
+            document.getElementById('divTotalQ').textContent = "15";
+
+            function updateDivUI() { divCounterSpan.textContent = divAnsweredCount; divProgressFill.style.width = (divAnsweredCount / currentDivQuestions.length * 100) + '%'; }
+            function renderDivQuestion() {
+                if (!isDivTestActive || currentDivIndex >= currentDivQuestions.length) return;
+                const q = currentDivQuestions[currentDivIndex];
+                let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocalDiv(q.text)}</div><div class="options">`;
+                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="div_option" value="${idx}" id="div_opt_${idx}" aria-label="Đáp án ${letter}"><label for="div_opt_${idx}">${letter}. ${opt}</label></div>`; });
+                html += `</div></div>`; divQuestionArea.innerHTML = html;
+                document.querySelectorAll('#divQuestionArea .option').forEach(opt => opt.addEventListener('click', () => { const radio = opt.querySelector('input[type="radio"]'); if (radio && !radio.disabled) radio.checked = true; }));
+                divStartTime = Date.now(); isDivCurrentAnswered = false; divResultArea.innerHTML = ''; divResultArea.className = 'result-area';
+            }
+            function finishDivTest() {
+                isDivTestActive = false; const wrong = divAnsweredCount - divCorrectCount; const avg = (divTotalTime / divAnsweredCount).toFixed(2);
+                document.getElementById('divSummaryCorrect').textContent = divCorrectCount; document.getElementById('divSummaryWrong').textContent = wrong; document.getElementById('divAvgTime').textContent = avg;
+                const msg = divCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (divCorrectCount === currentDivQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
+                document.getElementById('divSummaryMessage').textContent = msg; if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('divSummaryOverlay').classList.add('active');
+            }
+            function scheduleFinishDivTest(delay) { if (divFinishTimeout) clearTimeout(divFinishTimeout); divFinishTimeout = setTimeout(finishDivTest, delay); }
+            function recordDivAnswer(isCorrect, timeSpent) {
+                if (!isDivTestActive || isDivCurrentAnswered || divAnsweredCount >= currentDivQuestions.length) return;
+                isDivCurrentAnswered = true; divAnsweredCount++; divTotalTime += timeSpent; if (isCorrect) divCorrectCount++;
+                updateDivUI(); document.querySelectorAll('input[name="div_option"]').forEach(radio => radio.disabled = true);
+                if (divAnsweredCount === currentDivQuestions.length) scheduleFinishDivTest(isCorrect ? 3000 : 5000);
+                else if (isCorrect) { if (divAutoTimeout) clearTimeout(divAutoTimeout); divAutoTimeout = setTimeout(() => { if (isDivTestActive && divAnsweredCount < currentDivQuestions.length) { currentDivIndex++; renderDivQuestion(); } divAutoTimeout = null; }, 3000); }
+            }
+            function handleDivCheck() {
+                if (!isDivTestActive || isDivCurrentAnswered || divAnsweredCount >= currentDivQuestions.length) return;
+                const selected = document.querySelector('input[name="div_option"]:checked');
+                if (!selected) { divResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; divResultArea.className = 'result-area result-wrong'; return; }
+                const selectedVal = parseInt(selected.value), q = currentDivQuestions[currentDivIndex];
+                const isCorrect = (selectedVal === q.correct), timeSpent = (Date.now() - divStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct), correctAnswerText = q.options[q.correct];
+                if (isCorrect) { divResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; divResultArea.className = 'result-area result-correct'; }
+                else { let stepsHtml = q.solution.map(step => formatMathTextLocalDiv(step)).join('<br>'); divResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; divResultArea.className = 'result-area result-wrong'; }
+                recordDivAnswer(isCorrect, timeSpent);
+            }
+            function moveToNextDivQuestion() {
+                if (!isDivTestActive || divAnsweredCount >= currentDivQuestions.length) return;
+                if (!isDivCurrentAnswered) { isDivCurrentAnswered = true; divAnsweredCount++; updateDivUI(); document.querySelectorAll('input[name="div_option"]').forEach(radio => radio.disabled = true); if (divAnsweredCount === currentDivQuestions.length) scheduleFinishDivTest(5000); else { if (divAutoTimeout) clearTimeout(divAutoTimeout); currentDivIndex++; renderDivQuestion(); } }
+                else { if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divAnsweredCount < currentDivQuestions.length) { currentDivIndex++; renderDivQuestion(); } }
+            }
+            function startDivisionQuiz() { if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divFinishTimeout) clearTimeout(divFinishTimeout); currentDivQuestions = generateQuizQuestions(); currentDivIndex = 0; divAnsweredCount = 0; divCorrectCount = 0; divTotalTime = 0; isDivTestActive = true; isDivCurrentAnswered = false; updateDivUI(); renderDivQuestion(); }
+            function cleanupDivision() { isDivTestActive = false; if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divFinishTimeout) clearTimeout(divFinishTimeout); document.getElementById('divSummaryOverlay').classList.remove('active'); }
+            document.getElementById('divCheckBtn').addEventListener('click', handleDivCheck);
+            document.getElementById('divNextBtn').addEventListener('click', moveToNextDivQuestion);
+            document.getElementById('divCloseSummaryBtn').addEventListener('click', () => App.goHome());
+            document.addEventListener('keypress', function divEnterHandler(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'divideMonomial' || !isDivTestActive || divAnsweredCount >= currentDivQuestions.length) return; e.preventDefault(); if (!isDivCurrentAnswered) handleDivCheck(); else moveToNextDivQuestion(); });
+            App.registerCleanup('divideMonomial', cleanupDivision);
+            document.getElementById('divideMonomialLink').addEventListener('click', () => { App.switchTo('divideMonomial', 'divideMonomial'); startDivisionQuiz(); });
+        })();
+
         // ==================== ĐIỀU HƯỚNG CHUNG ====================
-        document.getElementById('monomialTestLink').addEventListener('click', () => {
-            App.switchTo('monomial', 'monomial');
-            startMonoQuiz();
-        });
-
-        document.getElementById('toan8Block').addEventListener('click', () => {
-            App.switchTo('toan8');
-        });
-
-        document.getElementById('mentalBlock').addEventListener('click', () => {
-            App.switchTo('mental');
-        });
-
+        document.getElementById('monomialTestLink').addEventListener('click', () => { App.switchTo('monomial', 'monomial'); startMonoQuiz(); });
+        document.getElementById('toan8Block').addEventListener('click', () => App.switchTo('toan8'));
+        document.getElementById('mentalBlock').addEventListener('click', () => App.switchTo('mental'));
         document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
-
-        // Xử lý các chủ đề trong Tính nhẩm ngầu
         document.querySelectorAll('#mentalContent .topic-item').forEach(topic => {
             topic.addEventListener('click', (e) => {
                 const topicKey = topic.getAttribute('data-topic');
-                if (topicKey === 'complement100') {
-                    window.openComplement100Test();
-                } else {
-                    alert('✨ Tính năng đang được phát triển, vui lòng quay lại sau! ✨');
-                }
+                if (topicKey === 'complement100') window.openComplement100Test();
+                else alert('✨ Tính năng đang được phát triển, vui lòng quay lại sau! ✨');
             });
         });
-
-        document.getElementById('homeLogo').addEventListener('click', (e) => {
-            e.preventDefault();
-            App.goHome();
-        });
+        document.getElementById('homeLogo').addEventListener('click', (e) => { e.preventDefault(); App.goHome(); });
     })();
     </script>
 </body>
