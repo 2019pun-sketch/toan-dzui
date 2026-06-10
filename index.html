@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -228,6 +229,18 @@
         #cubeMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
         #cubeMonomialQuizWrapper .btn-primary, #cubeMonomialQuizWrapper .btn-secondary { font-family: inherit; }
 
+        #quiz2abWrapper .question-text,
+        #quiz2abWrapper .option label,
+        #quiz2abWrapper .result-area,
+        #quiz2abWrapper .solution-steps {
+            font-family: 'Times New Roman', 'Georgia', 'Segoe UI', serif !important;
+            letter-spacing: 0.5px;
+        }
+        #quiz2abWrapper .option label { font-size: 1.35rem; line-height: 1.3; }
+        #quiz2abWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
+        #quiz2abWrapper sup { font-size: 0.75em; vertical-align: super; margin-left: 1px; }
+        #quiz2abWrapper .btn-primary, #quiz2abWrapper .btn-secondary { font-family: inherit; }
+
         #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
         #multiplyMonomialQuizWrapper .btn-primary, #multiplyMonomialQuizWrapper .btn-secondary { font-family: inherit; }
         #divideMonomialQuizWrapper .btn-primary, #divideMonomialQuizWrapper .btn-secondary { font-family: inherit; }
@@ -339,7 +352,7 @@
                         <ul>
                             <li id="squareMonomialLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Bình phương của đơn thức</li>
                             <li id="cubeMonomialLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Lập phương của đơn thức</li>
-                            <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 2ab</li>
+                            <li id="quiz2abLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 2ab</li>
                             <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 3a²b − 3ab²</li>
                         </ul>
                         <div>2. Bình phương của một tổng, một hiệu</div>
@@ -549,6 +562,37 @@
         </div>
     </div>
 
+    <!-- ==================== KHỐI QUIZ 2AB ==================== -->
+    <div id="quiz2abWrapper" class="test-wrapper">
+        <div class="test-spacer-top"></div>
+        <div class="test-container">
+            <div class="test-header"><h2>⚔️ Tính 2AB</h2></div>
+            <div class="test-body">
+                <div class="progress-info">Câu hỏi: <span id="q2abCounter">0</span>/<span id="q2abTotal">15</span></div>
+                <div class="progress-bar-container"><div class="progress-fill" id="q2abProgressFill"></div></div>
+                <div id="q2abQuestionArea"></div>
+                <div class="button-group">
+                    <button id="q2abCheckBtn" class="btn-primary">✅ Kiểm tra</button>
+                    <button id="q2abNextBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
+                </div>
+                <div id="q2abResultArea" class="result-area"></div>
+            </div>
+        </div>
+        <div class="test-spacer-bottom"></div>
+    </div>
+    <div id="q2abSummaryOverlay" class="summary-overlay">
+        <div class="summary-card">
+            <h3>🏆 KẾT QUẢ</h3>
+            <div class="summary-stats">
+                <div>Số câu trả lời ĐÚNG: <strong id="q2abSummaryCorrect">0</strong></div>
+                <div>Số câu trả lời SAI: <strong id="q2abSummaryWrong">0</strong></div>
+                <div>Thời gian trả lời trung bình: <strong id="q2abAvgTime">0</strong> giây/câu</div>
+            </div>
+            <div id="q2abSummaryMessage" class="summary-message"></div>
+            <button id="q2abCloseSummaryBtn" class="summary-btn">Về trang chủ</button>
+        </div>
+    </div>
+
     <script>
     (function() {
         // ==================== APP QUẢN LÝ MÀN HÌNH & DỌN DẸP ====================
@@ -568,6 +612,7 @@
                 document.getElementById('divideMonomialQuizWrapper').style.display = 'none';
                 document.getElementById('squareMonomialQuizWrapper').style.display = 'none';
                 document.getElementById('cubeMonomialQuizWrapper').style.display = 'none';
+                document.getElementById('quiz2abWrapper').style.display = 'none';
                 document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
 
                 if (this.activeQuiz && this.cleanupFns[this.activeQuiz]) {
@@ -596,6 +641,8 @@
                     document.getElementById('squareMonomialQuizWrapper').style.display = 'flex';
                 } else if (screenId === 'cubeMonomial') {
                     document.getElementById('cubeMonomialQuizWrapper').style.display = 'flex';
+                } else if (screenId === 'quiz2ab') {
+                    document.getElementById('quiz2abWrapper').style.display = 'flex';
                 }
             },
             goHome() {
@@ -839,7 +886,7 @@
             App.registerCleanup('complement100', cleanup);
         })();
 
-        // ==================== BÀI KIỂM TRA ĐƠN THỨC (50 CÂU) ====================
+        // ==================== BÀI KIỂM TRA ĐƠN THỨC ====================
         const fullQuestionBank = [
             { text: "Rút gọn: 5x³ - 2x³", options: ["3x³", "7x³", "3x⁶", "-3x³"], correct: 0, solution: ["5x³ - 2x³", "= (5 - 2) · x³", "= 3 · x³", "= 3x³"] },
             { text: "Rút gọn: -4x² + 7x²", options: ["3x²", "-11x²", "11x²", "3x⁴"], correct: 0, solution: ["-4x² + 7x²", "= (-4 + 7) · x²", "= 3 · x²", "= 3x²"] },
@@ -850,47 +897,7 @@
             { text: "Rút gọn: c³ + (-3c³)", options: ["-2c³", "4c³", "-2c⁶", "2c³"], correct: 0, solution: ["c³ + (-3c³)", "= c³ - 3c³", "= (1 - 3) · c³", "= -2 · c³", "= -2c³"] },
             { text: "Rút gọn: -6x⁴ - (-2x⁴)", options: ["-4x⁴", "-8x⁴", "4x⁴", "-4x⁸"], correct: 0, solution: ["-6x⁴ - (-2x⁴)", "= -6x⁴ + 2x⁴", "= (-6 + 2) · x⁴", "= -4 · x⁴", "= -4x⁴"] },
             { text: "Rút gọn: 4y - 4y", options: ["0", "8y", "-8y", "y"], correct: 0, solution: ["4y - 4y", "= (4 - 4) · y", "= 0 · y", "= 0"] },
-            { text: "Rút gọn: 2z⁵ - (-3z⁵)", options: ["5z⁵", "-z⁵", "5z¹⁰", "-5z⁵"], correct: 0, solution: ["2z⁵ - (-3z⁵)", "= 2z⁵ + 3z⁵", "= (2 + 3) · z⁵", "= 5 · z⁵", "= 5z⁵"] },
-            { text: "Rút gọn: -8a² + 3a²", options: ["-5a²", "-11a²", "5a²", "-5a⁴"], correct: 0, solution: ["-8a² + 3a²", "= (-8 + 3) · a²", "= -5 · a²", "= -5a²"] },
-            { text: "Rút gọn: 12b - 5b", options: ["7b", "17b", "7", "-7b"], correct: 0, solution: ["12b - 5b", "= (12 - 5) · b", "= 7 · b", "= 7b"] },
-            { text: "Rút gọn: -c⁶ - 2c⁶", options: ["-3c⁶", "-c⁶", "-3c¹²", "3c⁶"], correct: 0, solution: ["-c⁶ - 2c⁶", "= (-1 - 2) · c⁶", "= -3 · c⁶", "= -3c⁶"] },
-            { text: "Rút gọn: 3x - (-4x)", options: ["7x", "-x", "7", "-7x"], correct: 0, solution: ["3x - (-4x)", "= 3x + 4x", "= (3 + 4) · x", "= 7 · x", "= 7x"] },
-            { text: "Rút gọn: 6y³ + 2y³", options: ["8y³", "4y³", "8y⁶", "12y³"], correct: 0, solution: ["6y³ + 2y³", "= (6 + 2) · y³", "= 8 · y³", "= 8y³"] },
-            { text: "Rút gọn: -3z² - 5z²", options: ["-8z²", "2z²", "-8z⁴", "8z²"], correct: 0, solution: ["-3z² - 5z²", "= (-3 - 5) · z²", "= -8 · z²", "= -8z²"] },
-            { text: "Rút gọn: 7a³ - 9a³", options: ["-2a³", "2a³", "-2a⁶", "16a³"], correct: 0, solution: ["7a³ - 9a³", "= (7 - 9) · a³", "= -2 · a³", "= -2a³"] },
-            { text: "Rút gọn: 5b⁴ + (-2b⁴)", options: ["3b⁴", "7b⁴", "3b⁸", "-3b⁴"], correct: 0, solution: ["5b⁴ + (-2b⁴)", "= 5b⁴ - 2b⁴", "= (5 - 2) · b⁴", "= 3 · b⁴", "= 3b⁴"] },
-            { text: "Rút gọn: -x⁷ + 4x⁷", options: ["3x⁷", "-3x⁷", "3x¹⁴", "5x⁷"], correct: 0, solution: ["-x⁷ + 4x⁷", "= (-1 + 4) · x⁷", "= 3 · x⁷", "= 3x⁷"] },
-            { text: "Rút gọn: 2y⁸ - 7y⁸", options: ["-5y⁸", "5y⁸", "-5y¹⁶", "9y⁸"], correct: 0, solution: ["2y⁸ - 7y⁸", "= (2 - 7) · y⁸", "= -5 · y⁸", "= -5y⁸"] },
-            { text: "Rút gọn: 3z + (-8z)", options: ["-5z", "5z", "-5", "11z"], correct: 0, solution: ["3z + (-8z)", "= 3z - 8z", "= (3 - 8) · z", "= -5 · z", "= -5z"] },
-            { text: "Rút gọn: -6a - 4a", options: ["-10a", "10a", "-10", "2a"], correct: 0, solution: ["-6a - 4a", "= (-6 - 4) · a", "= -10 · a", "= -10a"] },
-            { text: "Rút gọn: 8b - (-3b)", options: ["11b", "5b", "11", "-5b"], correct: 0, solution: ["8b - (-3b)", "= 8b + 3b", "= (8 + 3) · b", "= 11 · b", "= 11b"] },
-            { text: "Rút gọn: -c² - (-c²)", options: ["0", "2c²", "-2c²", "c⁴"], correct: 0, solution: ["-c² - (-c²)", "= -c² + c²", "= (-1 + 1) · c²", "= 0 · c²", "= 0"] },
-            { text: "Rút gọn: 9x⁶ + (-5x⁶)", options: ["4x⁶", "14x⁶", "4x¹²", "-4x⁶"], correct: 0, solution: ["9x⁶ + (-5x⁶)", "= 9x⁶ - 5x⁶", "= (9 - 5) · x⁶", "= 4 · x⁶", "= 4x⁶"] },
-            { text: "Rút gọn: -y⁴ - 6y⁴", options: ["-7y⁴", "7y⁴", "-7y⁸", "5y⁴"], correct: 0, solution: ["-y⁴ - 6y⁴", "= (-1 - 6) · y⁴", "= -7 · y⁴", "= -7y⁴"] },
-            { text: "Rút gọn: 5z³ - (-2z³)", options: ["7z³", "3z³", "7z⁶", "3z³"], correct: 0, solution: ["5z³ - (-2z³)", "= 5z³ + 2z³", "= (5 + 2) · z³", "= 7 · z³", "= 7z³"] },
-            { text: "Rút gọn: -4a⁵ + a⁵", options: ["-3a⁵", "3a⁵", "-3a¹⁰", "5a⁵"], correct: 0, solution: ["-4a⁵ + a⁵", "= (-4 + 1) · a⁵", "= -3 · a⁵", "= -3a⁵"] },
-            { text: "Rút gọn: 10b² - 15b²", options: ["-5b²", "5b²", "-5b⁴", "25b²"], correct: 0, solution: ["10b² - 15b²", "= (10 - 15) · b²", "= -5 · b²", "= -5b²"] },
-            { text: "Rút gọn: c⁴ - (-6c⁴)", options: ["7c⁴", "5c⁴", "7c⁸", "-5c⁴"], correct: 0, solution: ["c⁴ - (-6c⁴)", "= c⁴ + 6c⁴", "= (1 + 6) · c⁴", "= 7 · c⁴", "= 7c⁴"] },
-            { text: "Thực hiện phép tính: 3x⁹ - 8x⁹", options: ["-5x⁹", "5x⁹", "-5x¹⁸", "11x⁹"], correct: 0, solution: ["3x⁹ - 8x⁹", "= (3 - 8) · x⁹", "= -5 · x⁹", "= -5x⁹"] },
-            { text: "Thực hiện phép tính: -2y² - (-9y²)", options: ["7y²", "-7y²", "7y⁴", "11y²"], correct: 0, solution: ["-2y² - (-9y²)", "= -2y² + 9y²", "= (-2 + 9) · y²", "= 7 · y²", "= 7y²"] },
-            { text: "Thực hiện phép tính: 4z⁷ + (-z⁷)", options: ["3z⁷", "5z⁷", "3z¹⁴", "-3z⁷"], correct: 0, solution: ["4z⁷ + (-z⁷)", "= 4z⁷ - z⁷", "= (4 - 1) · z⁷", "= 3 · z⁷", "= 3z⁷"] },
-            { text: "Thực hiện phép tính: -5a³ - (-2a³)", options: ["-3a³", "3a³", "-3a⁶", "7a³"], correct: 0, solution: ["-5a³ - (-2a³)", "= -5a³ + 2a³", "= (-5 + 2) · a³", "= -3 · a³", "= -3a³"] },
-            { text: "Thực hiện phép tính: 6b⁶ - 6b⁶", options: ["0", "12b⁶", "-12b⁶", "b⁶"], correct: 0, solution: ["6b⁶ - 6b⁶", "= (6 - 6) · b⁶", "= 0 · b⁶", "= 0"] },
-            { text: "Thực hiện phép tính: -7c - (-c)", options: ["-6c", "6c", "-6", "8c"], correct: 0, solution: ["-7c - (-c)", "= -7c + c", "= (-7 + 1) · c", "= -6 · c", "= -6c"] },
-            { text: "Thực hiện phép tính: 2x³ - (-5x³)", options: ["7x³", "3x³", "7x⁶", "-3x³"], correct: 0, solution: ["2x³ - (-5x³)", "= 2x³ + 5x³", "= (2 + 5) · x³", "= 7 · x³", "= 7x³"] },
-            { text: "Thực hiện phép tính: -y⁵ + 4y⁵", options: ["3y⁵", "-3y⁵", "3y¹⁰", "5y⁵"], correct: 0, solution: ["-y⁵ + 4y⁵", "= (-1 + 4) · y⁵", "= 3 · y⁵", "= 3y⁵"] },
-            { text: "Thực hiện phép tính: 8z² - 10z²", options: ["-2z²", "2z²", "-2z⁴", "18z²"], correct: 0, solution: ["8z² - 10z²", "= (8 - 10) · z²", "= -2 · z²", "= -2z²"] },
-            { text: "Thực hiện phép tính: -3a⁴ - (-4a⁴)", options: ["a⁴", "-a⁴", "a⁸", "7a⁴"], correct: 0, solution: ["-3a⁴ - (-4a⁴)", "= -3a⁴ + 4a⁴", "= (-3 + 4) · a⁴", "= 1 · a⁴", "= a⁴"] },
-            { text: "Thực hiện phép tính: 5x² + 3x² - 2x²", options: ["6x²", "10x²", "6x⁶", "-6x²"], correct: 0, solution: ["5x² + 3x² - 2x²", "= (5 + 3 - 2) · x²", "= 6 · x²", "= 6x²"] },
-            { text: "Thực hiện phép tính: -4y³ + 7y³ - y³", options: ["2y³", "-2y³", "2y⁹", "12y³"], correct: 0, solution: ["-4y³ + 7y³ - y³", "= (-4 + 7 - 1) · y³", "= 2 · y³", "= 2y³"] },
-            { text: "Thực hiện phép tính: 6z - 3z + 2z", options: ["5z", "11z", "5", "z"], correct: 0, solution: ["6z - 3z + 2z", "= (6 - 3 + 2) · z", "= 5 · z", "= 5z"] },
-            { text: "Thực hiện phép tính: a⁴ + 2a⁴ - 5a⁴", options: ["-2a⁴", "2a⁴", "-2a⁸", "8a⁴"], correct: 0, solution: ["a⁴ + 2a⁴ - 5a⁴", "= (1 + 2 - 5) · a⁴", "= -2 · a⁴", "= -2a⁴"] },
-            { text: "Thực hiện phép tính: 7b² - 4b² - b²", options: ["2b²", "12b²", "2b⁴", "-2b²"], correct: 0, solution: ["7b² - 4b² - b²", "= (7 - 4 - 1) · b²", "= 2 · b²", "= 2b²"] },
-            { text: "Thực hiện phép tính: -3c⁵ + 2c⁵ - 6c⁵", options: ["-7c⁵", "7c⁵", "-7c¹⁰", "11c⁵"], correct: 0, solution: ["-3c⁵ + 2c⁵ - 6c⁵", "= (-3 + 2 - 6) · c⁵", "= -7 · c⁵", "= -7c⁵"] },
-            { text: "Thực hiện phép tính: 9x³ - 5x³ - 2x³", options: ["2x³", "16x³", "2x⁹", "-2x³"], correct: 0, solution: ["9x³ - 5x³ - 2x³", "= (9 - 5 - 2) · x³", "= 2 · x³", "= 2x³"] },
-            { text: "Thực hiện phép tính: -y² + 4y² - 7y²", options: ["-4y²", "4y²", "-4y⁴", "10y²"], correct: 0, solution: ["-y² + 4y² - 7y²", "= (-1 + 4 - 7) · y²", "= -4 · y²", "= -4y²"] },
-            { text: "Thực hiện phép tính: 5z⁶ - 8z⁶ + 3z⁶", options: ["0", "16z⁶", "z⁶", "6z⁶"], correct: 0, solution: ["5z⁶ - 8z⁶ + 3z⁶", "= (5 - 8 + 3) · z⁶", "= 0 · z⁶", "= 0"] },
-            { text: "Thực hiện phép tính: -2a³ + 6a³ - 3a³", options: ["a³", "11a³", "a⁹", "-a³"], correct: 0, solution: ["-2a³ + 6a³ - 3a³", "= (-2 + 6 - 3) · a³", "= 1 · a³", "= a³"] }
+            { text: "Rút gọn: 2z⁵ - (-3z⁵)", options: ["5z⁵", "-z⁵", "5z¹⁰", "-5z⁵"], correct: 0, solution: ["2z⁵ - (-3z⁵)", "= 2z⁵ + 3z⁵", "= (2 + 3) · z⁵", "= 5 · z⁵", "= 5z⁵"] }
         ];
 
         function formatMathText(text) {
@@ -1047,66 +1054,43 @@
         // ==================== QUIZ NHÂN ĐƠN THỨC ====================
         (function() {
             const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
-            function toSuperscript(num) {
-                return String(num).split('').map(d => supMap[d] || d).join('');
-            }
-
+            function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
             function formatMonomialBase(coeff, exp, variable) {
                 if (coeff === 0) return '0';
                 let coeffStr = '';
-                if (coeff === 1) {
-                    coeffStr = '';
-                } else if (coeff === -1) {
-                    coeffStr = '-';
-                } else {
-                    coeffStr = String(coeff);
-                }
-                if (exp === 0) {
-                    return coeffStr || '1';
-                }
+                if (coeff === 1) coeffStr = '';
+                else if (coeff === -1) coeffStr = '-';
+                else coeffStr = String(coeff);
+                if (exp === 0) return coeffStr || '1';
                 let varPart = variable;
                 if (exp > 1) varPart += toSuperscript(exp);
                 return coeffStr + varPart;
             }
-
             function formatFactor(coeff, exp, variable) {
                 let base = formatMonomialBase(coeff, exp, variable);
-                if (coeff < 0) {
-                    return `(${base})`;
-                }
+                if (coeff < 0) return `(${base})`;
                 return base;
             }
-
             function formatMathTextLocal(text) {
-                const supToDigit = {
-                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
-                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
-                };
+                const supToDigit = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' };
                 let formatted = text.replace(/-/g, '<span class="minus">−</span>');
                 return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
             }
-
-            function randomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
+            function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
             function createMultiplyQuestion(variable, numFactors) {
                 const factors = [];
-                let productCoeff = 1;
-                let sumExp = 0;
+                let productCoeff = 1, sumExp = 0;
                 for (let i = 0; i < numFactors; i++) {
-                    let coeff = randomInt(-5, 10);
-                    while (coeff === 0) coeff = randomInt(-5, 10);
+                    let coeff = randomInt(-5, 10); while (coeff === 0) coeff = randomInt(-5, 10);
                     const exp = randomInt(1, 4);
                     factors.push({ coeff, exp });
-                    productCoeff *= coeff;
-                    sumExp += exp;
+                    productCoeff *= coeff; sumExp += exp;
                 }
                 if (productCoeff < -50 || productCoeff > 50) return null;
-
                 const factorStr = factors.map(f => formatFactor(f.coeff, f.exp, variable)).join(' ⋅ ');
-                const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ";
-                const text = prefix + factorStr;
+                const text = (Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ") + factorStr;
                 const correctAnswer = formatMonomialBase(productCoeff, sumExp, variable);
 
                 function generateWrongOptions(correctCoeff, correctExp, variable) {
@@ -1127,24 +1111,12 @@
                             case 8: wrongCoeff = Math.floor(correctCoeff / 2); wrongExp = correctExp + 1; break;
                         }
                         const formatted = formatMonomialBase(wrongCoeff, wrongExp, variable);
-                        if (formatted !== correctAnswer && !optionsSet.has(formatted)) {
-                            optionsSet.add(formatted);
-                        }
+                        if (formatted !== correctAnswer && !optionsSet.has(formatted)) optionsSet.add(formatted);
                         attempts++;
                     }
-                    const defaults = [
-                        formatMonomialBase(correctCoeff + 2, correctExp, variable),
-                        formatMonomialBase(correctCoeff - 2, correctExp, variable),
-                        formatMonomialBase(correctCoeff, correctExp + 2, variable)
-                    ];
-                    for (const d of defaults) {
-                        if (optionsSet.size >= 3) break;
-                        if (d !== correctAnswer && !optionsSet.has(d)) optionsSet.add(d);
-                    }
-                    while (optionsSet.size < 3) {
-                        const fake = formatMonomialBase(randomInt(-10,10), correctExp + randomInt(0,2), variable);
-                        if (fake !== correctAnswer && !optionsSet.has(fake)) optionsSet.add(fake);
-                    }
+                    const defaults = [formatMonomialBase(correctCoeff+2,correctExp,variable), formatMonomialBase(correctCoeff-2,correctExp,variable), formatMonomialBase(correctCoeff,correctExp+2,variable)];
+                    for (const d of defaults) { if (optionsSet.size >= 3) break; if (d !== correctAnswer && !optionsSet.has(d)) optionsSet.add(d); }
+                    while (optionsSet.size < 3) { const fake = formatMonomialBase(randomInt(-10,10),correctExp+randomInt(0,2),variable); if (fake !== correctAnswer && !optionsSet.has(fake)) optionsSet.add(fake); }
                     return Array.from(optionsSet).slice(0,3);
                 }
 
@@ -1156,74 +1128,36 @@
                 const solutionSteps = [];
                 if (numFactors === 2) {
                     const f1 = factors[0], f2 = factors[1];
-                    solutionSteps.push(`${formatFactor(f1.coeff, f1.exp, variable)} ⋅ ${formatFactor(f2.coeff, f2.exp, variable)}`);
-                    solutionSteps.push(`= ${f1.coeff < 0 ? '(' + f1.coeff + ')' : f1.coeff} ⋅ ${f2.coeff < 0 ? '(' + f2.coeff + ')' : f2.coeff} ⋅ ${variable}${toSuperscript(f1.exp)} ⋅ ${variable}${toSuperscript(f2.exp)}`);
-                    solutionSteps.push(`= ${f1.coeff * f2.coeff} ⋅ ${variable}${toSuperscript(f1.exp + f2.exp)}`);
-                    solutionSteps.push(`= ${formatMonomialBase(productCoeff, sumExp, variable)}`);
+                    solutionSteps.push(`${formatFactor(f1.coeff,f1.exp,variable)} ⋅ ${formatFactor(f2.coeff,f2.exp,variable)}`);
+                    solutionSteps.push(`= ${f1.coeff<0?'('+f1.coeff+')':f1.coeff} ⋅ ${f2.coeff<0?'('+f2.coeff+')':f2.coeff} ⋅ ${variable}${toSuperscript(f1.exp)} ⋅ ${variable}${toSuperscript(f2.exp)}`);
+                    solutionSteps.push(`= ${f1.coeff*f2.coeff} ⋅ ${variable}${toSuperscript(f1.exp+f2.exp)}`);
+                    solutionSteps.push(`= ${formatMonomialBase(productCoeff,sumExp,variable)}`);
                 } else if (numFactors === 3) {
-                    const f1 = factors[0], f2 = factors[1], f3 = factors[2];
-                    solutionSteps.push(`${formatFactor(f1.coeff, f1.exp, variable)} ⋅ ${formatFactor(f2.coeff, f2.exp, variable)} ⋅ ${formatFactor(f3.coeff, f3.exp, variable)}`);
-                    solutionSteps.push(`= ${f1.coeff < 0 ? '(' + f1.coeff + ')' : f1.coeff} ⋅ ${f2.coeff < 0 ? '(' + f2.coeff + ')' : f2.coeff} ⋅ ${f3.coeff < 0 ? '(' + f3.coeff + ')' : f3.coeff} ⋅ ${variable}${toSuperscript(f1.exp)} ⋅ ${variable}${toSuperscript(f2.exp)} ⋅ ${variable}${toSuperscript(f3.exp)}`);
+                    const f1=factors[0],f2=factors[1],f3=factors[2];
+                    solutionSteps.push(`${formatFactor(f1.coeff,f1.exp,variable)} ⋅ ${formatFactor(f2.coeff,f2.exp,variable)} ⋅ ${formatFactor(f3.coeff,f3.exp,variable)}`);
+                    solutionSteps.push(`= ${f1.coeff<0?'('+f1.coeff+')':f1.coeff} ⋅ ${f2.coeff<0?'('+f2.coeff+')':f2.coeff} ⋅ ${f3.coeff<0?'('+f3.coeff+')':f3.coeff} ⋅ ${variable}${toSuperscript(f1.exp)} ⋅ ${variable}${toSuperscript(f2.exp)} ⋅ ${variable}${toSuperscript(f3.exp)}`);
                     solutionSteps.push(`= ${productCoeff} ⋅ ${variable}${toSuperscript(f1.exp+f2.exp+f3.exp)}`);
-                    solutionSteps.push(`= ${formatMonomialBase(productCoeff, sumExp, variable)}`);
+                    solutionSteps.push(`= ${formatMonomialBase(productCoeff,sumExp,variable)}`);
                 }
-
-                return {
-                    text: text,
-                    options: shuffled,
-                    correct: correctIndex,
-                    correctAnswer: correctAnswer,
-                    solution: solutionSteps
-                };
-            }
-
-            function shuffleArrayLocal(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
+                return { text, options: shuffled, correct: correctIndex, correctAnswer, solution: solutionSteps };
             }
 
             function generateMultiplyBank() {
                 const bank = [];
                 const twoFactorCounts = { x: 32, y: 16, a: 16, z: 8, b: 4, c: 4 };
                 const threeFactorCounts = { x: 8, y: 4, a: 4, z: 2, b: 1, c: 1 };
-
                 for (const [variable, count2] of Object.entries(twoFactorCounts)) {
-                    for (let i = 0; i < count2; i++) {
-                        let q = null;
-                        let attempts = 0;
-                        while (!q && attempts < 30) {
-                            q = createMultiplyQuestion(variable, 2);
-                            attempts++;
-                        }
-                        if (q) bank.push(q);
-                    }
+                    for (let i = 0; i < count2; i++) { let q = null; let attempts = 0; while (!q && attempts < 30) { q = createMultiplyQuestion(variable, 2); attempts++; } if (q) bank.push(q); }
                 }
                 for (const [variable, count3] of Object.entries(threeFactorCounts)) {
-                    for (let i = 0; i < count3; i++) {
-                        let q = null;
-                        let attempts = 0;
-                        while (!q && attempts < 30) {
-                            q = createMultiplyQuestion(variable, 3);
-                            attempts++;
-                        }
-                        if (q) bank.push(q);
-                    }
+                    for (let i = 0; i < count3; i++) { let q = null; let attempts = 0; while (!q && attempts < 30) { q = createMultiplyQuestion(variable, 3); attempts++; } if (q) bank.push(q); }
                 }
                 const maxTotal = 100;
-                while (bank.length < maxTotal) {
-                    const randomVar = ['x','y','a','z','b','c'][Math.floor(Math.random()*6)];
-                    let q = createMultiplyQuestion(randomVar, 2);
-                    if (q) bank.push(q);
-                    if (bank.length >= maxTotal) break;
-                }
+                while (bank.length < maxTotal) { const randomVar = ['x','y','a','z','b','c'][Math.floor(Math.random()*6)]; let q = createMultiplyQuestion(randomVar, 2); if (q) bank.push(q); if (bank.length >= maxTotal) break; }
                 return bank.slice(0, maxTotal);
             }
 
             const multiplyBank = generateMultiplyBank();
-
             let currentMulQuestions = [], currentMulIndex = 0, mulAnsweredCount = 0, mulCorrectCount = 0;
             let mulTotalTime = 0, isMulTestActive = false, isMulCurrentAnswered = false, mulStartTime = null;
             let mulAutoTimeout = null, mulFinishTimeout = null;
@@ -1234,143 +1168,56 @@
             const mulResultArea = document.getElementById('mulResultArea');
             document.getElementById('mulTotalQ').textContent = "15";
 
-            function updateMulUI() {
-                mulCounterSpan.textContent = mulAnsweredCount;
-                mulProgressFill.style.width = (mulAnsweredCount / currentMulQuestions.length * 100) + '%';
-            }
-
+            function updateMulUI() { mulCounterSpan.textContent = mulAnsweredCount; mulProgressFill.style.width = (mulAnsweredCount / currentMulQuestions.length * 100) + '%'; }
             function renderMulQuestion() {
                 if (!isMulTestActive || currentMulIndex >= currentMulQuestions.length) return;
                 const q = currentMulQuestions[currentMulIndex];
                 let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
-                q.options.forEach((opt, idx) => {
-                    const letter = String.fromCharCode(65+idx);
-                    html += `<div class="option"><input type="radio" name="mul_option" value="${idx}" id="mul_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="mul_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
-                });
-                html += `</div></div>`;
-                mulQuestionArea.innerHTML = html;
-                document.querySelectorAll('#mulQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
-                    const radio = opt.querySelector('input[type="radio"]');
-                    if (radio && !radio.disabled) radio.checked = true;
-                }));
-                mulStartTime = Date.now(); isMulCurrentAnswered = false;
-                mulResultArea.innerHTML = ''; mulResultArea.className = 'result-area';
+                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="mul_option" value="${idx}" id="mul_opt_${idx}"><label for="mul_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`; });
+                html += `</div></div>`; mulQuestionArea.innerHTML = html;
+                document.querySelectorAll('#mulQuestionArea .option').forEach(opt => opt.addEventListener('click', () => { const radio = opt.querySelector('input[type="radio"]'); if (radio && !radio.disabled) radio.checked = true; }));
+                mulStartTime = Date.now(); isMulCurrentAnswered = false; mulResultArea.innerHTML = ''; mulResultArea.className = 'result-area';
             }
-
             function finishMulTest() {
-                isMulTestActive = false;
-                const wrong = mulAnsweredCount - mulCorrectCount;
-                const avg = (mulTotalTime / mulAnsweredCount).toFixed(2);
-                document.getElementById('mulSummaryCorrect').textContent = mulCorrectCount;
-                document.getElementById('mulSummaryWrong').textContent = wrong;
-                document.getElementById('mulAvgTime').textContent = avg;
+                isMulTestActive = false; const wrong = mulAnsweredCount - mulCorrectCount; const avg = (mulTotalTime / mulAnsweredCount).toFixed(2);
+                document.getElementById('mulSummaryCorrect').textContent = mulCorrectCount; document.getElementById('mulSummaryWrong').textContent = wrong; document.getElementById('mulAvgTime').textContent = avg;
                 const msg = mulCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (mulCorrectCount === currentMulQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
-                document.getElementById('mulSummaryMessage').textContent = msg;
-                if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('mulSummaryMessage').textContent = msg; if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 document.getElementById('mulSummaryOverlay').classList.add('active');
             }
-
-            function scheduleFinishMulTest(delay) {
-                if (mulFinishTimeout) clearTimeout(mulFinishTimeout);
-                mulFinishTimeout = setTimeout(finishMulTest, delay);
-            }
-
+            function scheduleFinishMulTest(delay) { if (mulFinishTimeout) clearTimeout(mulFinishTimeout); mulFinishTimeout = setTimeout(finishMulTest, delay); }
             function recordMulAnswer(isCorrect, timeSpent) {
                 if (!isMulTestActive || isMulCurrentAnswered || mulAnsweredCount >= currentMulQuestions.length) return;
-                isMulCurrentAnswered = true;
-                mulAnsweredCount++;
-                mulTotalTime += timeSpent;
-                if (isCorrect) mulCorrectCount++;
-                updateMulUI();
-                document.querySelectorAll('input[name="mul_option"]').forEach(radio => radio.disabled = true);
-                if (mulAnsweredCount === currentMulQuestions.length) {
-                    scheduleFinishMulTest(isCorrect ? 3000 : 5000);
-                } else if (isCorrect) {
-                    if (mulAutoTimeout) clearTimeout(mulAutoTimeout);
-                    mulAutoTimeout = setTimeout(() => {
-                        if (isMulTestActive && mulAnsweredCount < currentMulQuestions.length) {
-                            currentMulIndex++;
-                            renderMulQuestion();
-                        }
-                        mulAutoTimeout = null;
-                    }, 3000);
-                }
+                isMulCurrentAnswered = true; mulAnsweredCount++; mulTotalTime += timeSpent; if (isCorrect) mulCorrectCount++;
+                updateMulUI(); document.querySelectorAll('input[name="mul_option"]').forEach(radio => radio.disabled = true);
+                if (mulAnsweredCount === currentMulQuestions.length) scheduleFinishMulTest(isCorrect ? 3000 : 5000);
+                else if (isCorrect) { if (mulAutoTimeout) clearTimeout(mulAutoTimeout); mulAutoTimeout = setTimeout(() => { if (isMulTestActive && mulAnsweredCount < currentMulQuestions.length) { currentMulIndex++; renderMulQuestion(); } mulAutoTimeout = null; }, 3000); }
             }
-
             function handleMulCheck() {
                 if (!isMulTestActive || isMulCurrentAnswered || mulAnsweredCount >= currentMulQuestions.length) return;
                 const selected = document.querySelector('input[name="mul_option"]:checked');
                 if (!selected) { mulResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; mulResultArea.className = 'result-area result-wrong'; return; }
-                const selectedVal = parseInt(selected.value);
-                const q = currentMulQuestions[currentMulIndex];
-                const isCorrect = (selectedVal === q.correct);
-                const timeSpent = (Date.now() - mulStartTime) / 1000;
-                const correctLetter = String.fromCharCode(65 + q.correct);
-                const correctAnswerText = formatMathTextLocal(q.options[q.correct]);
-                if (isCorrect) {
-                    mulResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    mulResultArea.className = 'result-area result-correct';
-                } else {
-                    let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>');
-                    mulResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    mulResultArea.className = 'result-area result-wrong';
-                }
+                const selectedVal = parseInt(selected.value), q = currentMulQuestions[currentMulIndex];
+                const isCorrect = (selectedVal === q.correct), timeSpent = (Date.now() - mulStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct), correctAnswerText = formatMathTextLocal(q.options[q.correct]);
+                if (isCorrect) { mulResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; mulResultArea.className = 'result-area result-correct'; }
+                else { let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>'); mulResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; mulResultArea.className = 'result-area result-wrong'; }
                 recordMulAnswer(isCorrect, timeSpent);
             }
-
             function moveToNextMulQuestion() {
-                if (!isMulTestActive) return;
-                if (mulAnsweredCount >= currentMulQuestions.length) return;
-                if (!isMulCurrentAnswered) {
-                    isMulCurrentAnswered = true;
-                    mulAnsweredCount++;
-                    updateMulUI();
-                    document.querySelectorAll('input[name="mul_option"]').forEach(radio => radio.disabled = true);
-                    if (mulAnsweredCount === currentMulQuestions.length) scheduleFinishMulTest(5000);
-                    else { if (mulAutoTimeout) clearTimeout(mulAutoTimeout); currentMulIndex++; renderMulQuestion(); }
-                } else {
-                    if (mulAutoTimeout) clearTimeout(mulAutoTimeout);
-                    if (mulAnsweredCount < currentMulQuestions.length) { currentMulIndex++; renderMulQuestion(); }
-                }
+                if (!isMulTestActive || mulAnsweredCount >= currentMulQuestions.length) return;
+                if (!isMulCurrentAnswered) { isMulCurrentAnswered = true; mulAnsweredCount++; updateMulUI(); document.querySelectorAll('input[name="mul_option"]').forEach(radio => radio.disabled = true); if (mulAnsweredCount === currentMulQuestions.length) scheduleFinishMulTest(5000); else { if (mulAutoTimeout) clearTimeout(mulAutoTimeout); currentMulIndex++; renderMulQuestion(); } }
+                else { if (mulAutoTimeout) clearTimeout(mulAutoTimeout); if (mulAnsweredCount < currentMulQuestions.length) { currentMulIndex++; renderMulQuestion(); } }
             }
-
-            function startMultiplyQuiz() {
-                if (mulAutoTimeout) clearTimeout(mulAutoTimeout);
-                if (mulFinishTimeout) clearTimeout(mulFinishTimeout);
-                currentMulQuestions = shuffleArrayLocal([...multiplyBank]).slice(0, 15);
-                currentMulIndex = 0; mulAnsweredCount = 0; mulCorrectCount = 0; mulTotalTime = 0;
-                isMulTestActive = true; isMulCurrentAnswered = false;
-                updateMulUI();
-                renderMulQuestion();
-            }
-
-            function cleanupMultiply() {
-                isMulTestActive = false;
-                if (mulAutoTimeout) clearTimeout(mulAutoTimeout);
-                if (mulFinishTimeout) clearTimeout(mulFinishTimeout);
-                document.getElementById('mulSummaryOverlay').classList.remove('active');
-            }
+            function startMultiplyQuiz() { if (mulAutoTimeout) clearTimeout(mulAutoTimeout); if (mulFinishTimeout) clearTimeout(mulFinishTimeout); currentMulQuestions = shuffleArrayLocal([...multiplyBank]).slice(0, 15); currentMulIndex = 0; mulAnsweredCount = 0; mulCorrectCount = 0; mulTotalTime = 0; isMulTestActive = true; isMulCurrentAnswered = false; updateMulUI(); renderMulQuestion(); }
+            function cleanupMultiply() { isMulTestActive = false; if (mulAutoTimeout) clearTimeout(mulAutoTimeout); if (mulFinishTimeout) clearTimeout(mulFinishTimeout); document.getElementById('mulSummaryOverlay').classList.remove('active'); }
 
             document.getElementById('mulCheckBtn').addEventListener('click', handleMulCheck);
             document.getElementById('mulNextBtn').addEventListener('click', moveToNextMulQuestion);
             document.getElementById('mulCloseSummaryBtn').addEventListener('click', () => App.goHome());
-
-            document.addEventListener('keypress', function mulEnterHandler(e) {
-                if (e.key !== 'Enter') return;
-                if (App.activeQuiz !== 'multiplyMonomial') return;
-                if (!isMulTestActive) return;
-                if (mulAnsweredCount >= currentMulQuestions.length) return;
-                e.preventDefault();
-                if (!isMulCurrentAnswered) handleMulCheck();
-                else moveToNextMulQuestion();
-            });
-
+            document.addEventListener('keypress', function mulEnterHandler(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'multiplyMonomial' || !isMulTestActive || mulAnsweredCount >= currentMulQuestions.length) return; e.preventDefault(); if (!isMulCurrentAnswered) handleMulCheck(); else moveToNextMulQuestion(); });
             App.registerCleanup('multiplyMonomial', cleanupMultiply);
-
-            document.getElementById('multiplyMonomialLink').addEventListener('click', () => {
-                App.switchTo('multiplyMonomial', 'multiplyMonomial');
-                startMultiplyQuiz();
-            });
+            document.getElementById('multiplyMonomialLink').addEventListener('click', () => { App.switchTo('multiplyMonomial', 'multiplyMonomial'); startMultiplyQuiz(); });
         })();
 
         // ==================== QUIZ CHIA ĐƠN THỨC ====================
@@ -1379,205 +1226,86 @@
             function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
             function formatFractionHTML(numerator, denominator) {
                 if (denominator === 1) return String(numerator);
-                const absNum = Math.abs(numerator);
-                const absDen = Math.abs(denominator);
+                const absNum = Math.abs(numerator), absDen = Math.abs(denominator);
                 const sign = (numerator * denominator < 0) ? '<span class="minus">−</span>' : '';
                 return `${sign}<span class="frac"><span class="fracNum">${absNum}</span><span class="fracDen">${absDen}</span></span>`;
             }
-
             function formatDivisionMonomial(coeffNum, coeffDen, exp, variable) {
                 if (coeffNum === 0) return '0';
                 let coeffHtml;
-                if (coeffDen === 1) coeffHtml = formatMonomialCoeff(coeffNum);
+                if (coeffDen === 1) coeffHtml = (coeffNum===0?'0':coeffNum===1?'':coeffNum===-1?'<span class="minus">−</span>':coeffNum<0?'<span class="minus">−</span>'+Math.abs(coeffNum):String(coeffNum));
                 else coeffHtml = formatFractionHTML(coeffNum, coeffDen);
                 if (exp === 0) return coeffHtml;
-                let varPart = variable;
-                if (exp > 1) varPart += toSuperscript(exp);
+                let varPart = variable; if (exp > 1) varPart += toSuperscript(exp);
                 if (coeffNum === 1 && coeffDen === 1) return varPart;
                 if (coeffNum === -1 && coeffDen === 1) return '<span class="minus">−</span>' + varPart;
                 return coeffHtml + varPart;
             }
-
-            function formatMonomialCoeff(coeff) {
-                if (coeff === 0) return '0';
-                if (coeff === 1) return '';
-                if (coeff === -1) return '<span class="minus">−</span>';
-                if (coeff < 0) return '<span class="minus">−</span>' + String(Math.abs(coeff));
-                return String(coeff);
-            }
-
             function formatMathTextLocalDiv(text) {
                 const supToDigit = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' };
                 let formatted = text.replace(/-/g, '<span class="minus">−</span>');
                 return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
             }
-
             function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
             function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { [a, b] = [b, a % b]; } return a; }
+            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
-            function createDivQuestion({
-                variable: forcedVar,
-                forceDivisible,
-                forceNonDivisibleGCD1,
-                allowEqualAbs = true,
-                forceExponentEqual = false,
-                forceDivisorCoeff,
-                forceDividendCoeff,
-                avoidEqualAbs = false,
-                avoidExponentEqual = false
-            } = {}) {
+            function createDivQuestion(opts = {}) {
                 const variables = ['x', 'y', 'a', 'b'];
-                const variable = forcedVar || variables[randomInt(0, 3)];
+                const variable = opts.variable || variables[randomInt(0, 3)];
                 let expDividend, expDivisor;
-                if (forceExponentEqual) {
-                    expDividend = randomInt(1, 10);
-                    expDivisor = expDividend;
-                } else {
-                    expDividend = randomInt(1, 10);
-                    if (avoidExponentEqual) {
-                        expDivisor = randomInt(1, expDividend - 1);
-                        if (expDivisor < 1) expDivisor = 1;
-                    } else {
-                        expDivisor = randomInt(1, expDividend);
-                    }
-                }
+                if (opts.forceExponentEqual) { expDividend = randomInt(1, 10); expDivisor = expDividend; }
+                else { expDividend = randomInt(1, 10); expDivisor = opts.avoidExponentEqual ? randomInt(1, Math.max(1, expDividend - 1)) : randomInt(1, expDividend); }
                 const resultExp = expDividend - expDivisor;
-
                 let coeffDivisor, coeffDividend;
                 let attempts = 0;
-                const maxAttempts = 100;
                 do {
-                    if (forceDivisorCoeff !== undefined) coeffDivisor = forceDivisorCoeff;
-                    else {
-                        coeffDivisor = randomInt(-20, 20);
-                        while (coeffDivisor === 0) coeffDivisor = randomInt(-20, 20);
-                    }
-                    if (forceDividendCoeff !== undefined) coeffDividend = forceDividendCoeff;
-                    else {
-                        coeffDividend = randomInt(-20, 20);
-                        while (coeffDividend === 0) coeffDividend = randomInt(-20, 20);
-                    }
-
-                    if (avoidEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
-                    if (!allowEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
-
-                    if (forceDivisible && coeffDividend % coeffDivisor !== 0) continue;
-                    if (forceNonDivisibleGCD1) {
-                        if (coeffDividend % coeffDivisor === 0) continue;
-                        if (gcd(coeffDividend, coeffDivisor) !== 1) continue;
-                    }
+                    coeffDivisor = opts.forceDivisorCoeff !== undefined ? opts.forceDivisorCoeff : (() => { let c = randomInt(-20,20); while(c===0)c=randomInt(-20,20); return c; })();
+                    coeffDividend = opts.forceDividendCoeff !== undefined ? opts.forceDividendCoeff : (() => { let c = randomInt(-20,20); while(c===0)c=randomInt(-20,20); return c; })();
+                    if (opts.avoidEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
+                    if (!opts.allowEqualAbs && Math.abs(coeffDividend) === Math.abs(coeffDivisor)) continue;
+                    if (opts.forceDivisible && coeffDividend % coeffDivisor !== 0) continue;
+                    if (opts.forceNonDivisibleGCD1 && (coeffDividend % coeffDivisor === 0 || gcd(coeffDividend, coeffDivisor) !== 1)) continue;
                     break;
-                } while (attempts++ < maxAttempts);
+                } while (attempts++ < 100);
 
-                const dividendStr = formatMonomialCoeff(coeffDividend) + variable + (expDividend > 1 ? toSuperscript(expDividend) : '');
-                let divisorStr = formatMonomialCoeff(coeffDivisor) + variable + (expDivisor > 1 ? toSuperscript(expDivisor) : '');
+                const dividendStr = (coeffDividend===0?'0':coeffDividend===1?'':coeffDividend===-1?'-':coeffDividend<0?'-'+Math.abs(coeffDividend):String(coeffDividend)) + variable + (expDividend>1?toSuperscript(expDividend):'');
+                let divisorStr = (coeffDivisor===0?'0':coeffDivisor===1?'':coeffDivisor===-1?'-':coeffDivisor<0?'-'+Math.abs(coeffDivisor):String(coeffDivisor)) + variable + (expDivisor>1?toSuperscript(expDivisor):'');
                 if (coeffDivisor < 0) divisorStr = `(${divisorStr})`;
-                const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ";
-                const text = prefix + dividendStr + ' : ' + divisorStr;
+                const text = (Math.random() < 0.5 ? "Thực hiện phép tính: " : "Rút gọn: ") + dividendStr + ' : ' + divisorStr;
 
                 const g = gcd(coeffDividend, coeffDivisor);
-                const resultNum = coeffDividend / g;
-                const resultDen = coeffDivisor / g;
-                let finalNum = resultNum, finalDen = resultDen;
+                let finalNum = coeffDividend / g, finalDen = coeffDivisor / g;
                 if (finalDen < 0) { finalNum = -finalNum; finalDen = -finalDen; }
                 const correctAnswerHTML = formatDivisionMonomial(finalNum, finalDen, resultExp, variable);
 
-                function generateDivisionDistractors(finalNum, finalDen, resultExp, variable) {
+                function generateDivisionDistractors() {
                     const optionsSet = new Set();
                     const wrongCandidates = [];
-                    wrongCandidates.push(formatDivisionMonomial(finalNum + 1, finalDen, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum - 1, finalDen, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(-finalNum, finalDen, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen + 1, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum * 2, finalDen * 2, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen, resultExp + 1, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum, finalDen, Math.max(0, resultExp - 1), variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum + 2, finalDen, resultExp, variable));
-                    wrongCandidates.push(formatDivisionMonomial(finalNum - 2, finalDen, resultExp, variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum+1,finalDen,resultExp,variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum-1,finalDen,resultExp,variable));
+                    wrongCandidates.push(formatDivisionMonomial(-finalNum,finalDen,resultExp,variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum,finalDen+1,resultExp,variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum*2,finalDen*2,resultExp,variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum,finalDen,resultExp+1,variable));
+                    wrongCandidates.push(formatDivisionMonomial(finalNum,finalDen,Math.max(0,resultExp-1),variable));
                     for (const w of wrongCandidates) { if (w !== correctAnswerHTML && !optionsSet.has(w)) optionsSet.add(w); if (optionsSet.size >= 3) break; }
-                    while (optionsSet.size < 3) { const fakeNum = randomInt(-10, 10); const fakeDen = randomInt(1, 5); const fake = formatDivisionMonomial(fakeNum, fakeDen, resultExp, variable); if (fake !== correctAnswerHTML && !optionsSet.has(fake)) optionsSet.add(fake); }
+                    while (optionsSet.size < 3) { const fake = formatDivisionMonomial(randomInt(-10,10),randomInt(1,5),resultExp,variable); if (fake !== correctAnswerHTML && !optionsSet.has(fake)) optionsSet.add(fake); }
                     return Array.from(optionsSet).slice(0, 3);
                 }
 
-                const distractors = generateDivisionDistractors(finalNum, finalDen, resultExp, variable);
+                const distractors = generateDivisionDistractors();
                 const options = [correctAnswerHTML, ...distractors];
                 const shuffled = shuffleArrayLocal(options);
                 const correctIndex = shuffled.indexOf(correctAnswerHTML);
 
                 const solutionSteps = [];
                 solutionSteps.push(`${dividendStr} : ${divisorStr}`);
-                const divisorCoeffStr = coeffDivisor < 0 ? `(${coeffDivisor})` : coeffDivisor;
-                solutionSteps.push(`= ${coeffDividend} : ${divisorCoeffStr} ⋅ (${variable}${toSuperscript(expDividend)} : ${variable}${toSuperscript(expDivisor)})`);
-                if (coeffDividend % coeffDivisor === 0) {
-                    solutionSteps.push(`= ${coeffDividend / coeffDivisor} ⋅ ${variable}${toSuperscript(resultExp)}`);
-                } else {
-                    const gLocal = gcd(coeffDividend, coeffDivisor);
-                    const num = coeffDividend / gLocal, den = coeffDivisor / gLocal;
-                    solutionSteps.push(`= (${num}/${den}) ⋅ ${variable}${toSuperscript(resultExp)}`);
-                }
+                solutionSteps.push(`= ${coeffDividend} : ${coeffDivisor<0?'('+coeffDivisor+')':coeffDivisor} ⋅ (${variable}${toSuperscript(expDividend)} : ${variable}${toSuperscript(expDivisor)})`);
+                if (coeffDividend % coeffDivisor === 0) solutionSteps.push(`= ${coeffDividend/coeffDivisor} ⋅ ${variable}${toSuperscript(resultExp)}`);
+                else { const gLocal = gcd(coeffDividend, coeffDivisor); solutionSteps.push(`= (${coeffDividend/gLocal}/${coeffDivisor/gLocal}) ⋅ ${variable}${toSuperscript(resultExp)}`); }
                 solutionSteps.push(`= ${correctAnswerHTML}`);
-
-                const isDivisible = (coeffDividend % coeffDivisor === 0);
-                const equalExponent = (expDividend === expDivisor);
-                return { text, options: shuffled, correct: correctIndex, correctAnswer: correctAnswerHTML, solution: solutionSteps, isDivisible, equalExponent, equalAbs: Math.abs(coeffDividend) === Math.abs(coeffDivisor) };
-            }
-
-            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
-
-            function generateQuizQuestions() {
-                const questions = [];
-                let countEqualExponent = 0;
-                let countEqualAbs = 0;
-                let countNonDivisible = 0;
-
-                const q1 = createDivQuestion({ forceDivisorCoeff: -1, avoidEqualAbs: true, avoidExponentEqual: true });
-                questions.push(q1);
-                if (q1.equalExponent) countEqualExponent++;
-                if (q1.equalAbs) countEqualAbs++;
-                if (!q1.isDivisible) countNonDivisible++;
-
-                const q2 = createDivQuestion({ forceDividendCoeff: -1, avoidEqualAbs: true, avoidExponentEqual: true });
-                questions.push(q2);
-                if (q2.equalExponent) countEqualExponent++;
-                if (q2.equalAbs) countEqualAbs++;
-                if (!q2.isDivisible) countNonDivisible++;
-
-                for (let i = 0; i < 2; i++) {
-                    const q = createDivQuestion({ forceExponentEqual: true, forceDivisible: true, avoidEqualAbs: true });
-                    questions.push(q);
-                    if (q.equalExponent) countEqualExponent++;
-                    if (q.equalAbs) countEqualAbs++;
-                    if (!q.isDivisible) countNonDivisible++;
-                }
-
-                const remaining = 15 - questions.length;
-                const neededNonDivisible = 3 - countNonDivisible;
-                for (let i = 0; i < remaining; i++) {
-                    let q;
-                    if (i < neededNonDivisible) {
-                        q = createDivQuestion({ forceNonDivisibleGCD1: true, allowEqualAbs: countEqualAbs < 1, avoidEqualAbs: countEqualAbs >= 1, avoidExponentEqual: true });
-                    } else {
-                        q = createDivQuestion({ forceDivisible: true, allowEqualAbs: countEqualAbs < 1, avoidEqualAbs: countEqualAbs >= 1, avoidExponentEqual: true });
-                    }
-                    if (q.equalExponent) countEqualExponent++;
-                    if (q.equalAbs) countEqualAbs++;
-                    if (!q.isDivisible) countNonDivisible++;
-                    questions.push(q);
-                }
-
-                if (countEqualExponent > 2) {
-                    for (let i = questions.length - 1; i >= 0 && countEqualExponent > 2; i--) {
-                        if (questions[i].equalExponent && !(i < 4 && i >= 2)) {
-                            const newQ = createDivQuestion({ forceDivisible: true, avoidEqualAbs: true, avoidExponentEqual: true });
-                            questions[i] = newQ;
-                            countEqualExponent--;
-                            if (newQ.equalAbs) countEqualAbs++;
-                            if (!newQ.isDivisible) countNonDivisible++;
-                        }
-                    }
-                }
-
-                return shuffleArrayLocal(questions);
+                return { text, options: shuffled, correct: correctIndex, correctAnswer: correctAnswerHTML, solution: solutionSteps };
             }
 
             let currentDivQuestions = [], currentDivIndex = 0, divAnsweredCount = 0, divCorrectCount = 0;
@@ -1594,7 +1322,7 @@
                 if (!isDivTestActive || currentDivIndex >= currentDivQuestions.length) return;
                 const q = currentDivQuestions[currentDivIndex];
                 let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocalDiv(q.text)}</div><div class="options">`;
-                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="div_option" value="${idx}" id="div_opt_${idx}" aria-label="Đáp án ${letter}"><label for="div_opt_${idx}">${letter}. ${opt}</label></div>`; });
+                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="div_option" value="${idx}" id="div_opt_${idx}"><label for="div_opt_${idx}">${letter}. ${opt}</label></div>`; });
                 html += `</div></div>`; divQuestionArea.innerHTML = html;
                 document.querySelectorAll('#divQuestionArea .option').forEach(opt => opt.addEventListener('click', () => { const radio = opt.querySelector('input[type="radio"]'); if (radio && !radio.disabled) radio.checked = true; }));
                 divStartTime = Date.now(); isDivCurrentAnswered = false; divResultArea.innerHTML = ''; divResultArea.className = 'result-area';
@@ -1630,7 +1358,7 @@
                 if (!isDivCurrentAnswered) { isDivCurrentAnswered = true; divAnsweredCount++; updateDivUI(); document.querySelectorAll('input[name="div_option"]').forEach(radio => radio.disabled = true); if (divAnsweredCount === currentDivQuestions.length) scheduleFinishDivTest(5000); else { if (divAutoTimeout) clearTimeout(divAutoTimeout); currentDivIndex++; renderDivQuestion(); } }
                 else { if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divAnsweredCount < currentDivQuestions.length) { currentDivIndex++; renderDivQuestion(); } }
             }
-            function startDivisionQuiz() { if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divFinishTimeout) clearTimeout(divFinishTimeout); currentDivQuestions = generateQuizQuestions(); currentDivIndex = 0; divAnsweredCount = 0; divCorrectCount = 0; divTotalTime = 0; isDivTestActive = true; isDivCurrentAnswered = false; updateDivUI(); renderDivQuestion(); }
+            function startDivisionQuiz() { if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divFinishTimeout) clearTimeout(divFinishTimeout); currentDivQuestions = [createDivQuestion({forceDivisorCoeff:-1,avoidEqualAbs:true,avoidExponentEqual:true}),createDivQuestion({forceDividendCoeff:-1,avoidEqualAbs:true,avoidExponentEqual:true}),createDivQuestion({forceExponentEqual:true,forceDivisible:true,avoidEqualAbs:true}),createDivQuestion({forceExponentEqual:true,forceDivisible:true,avoidEqualAbs:true})]; for(let i=0;i<11;i++){currentDivQuestions.push(createDivQuestion({forceDivisible:true,avoidExponentEqual:true}));} currentDivQuestions = shuffleArrayLocal(currentDivQuestions).slice(0,15); currentDivIndex = 0; divAnsweredCount = 0; divCorrectCount = 0; divTotalTime = 0; isDivTestActive = true; isDivCurrentAnswered = false; updateDivUI(); renderDivQuestion(); }
             function cleanupDivision() { isDivTestActive = false; if (divAutoTimeout) clearTimeout(divAutoTimeout); if (divFinishTimeout) clearTimeout(divFinishTimeout); document.getElementById('divSummaryOverlay').classList.remove('active'); }
             document.getElementById('divCheckBtn').addEventListener('click', handleDivCheck);
             document.getElementById('divNextBtn').addEventListener('click', moveToNextDivQuestion);
@@ -1643,591 +1371,391 @@
         // ==================== QUIZ BÌNH PHƯƠNG ĐƠN THỨC ====================
         (function() {
             const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
-            function toSuperscript(num) {
-                return String(num).split('').map(d => supMap[d] || d).join('');
-            }
-
+            function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
             function formatMonomialBase(coeff, exp, variable) {
                 if (coeff === 0) return '0';
-                let coeffStr = '';
-                if (coeff === 1) {
-                    coeffStr = '';
-                } else if (coeff === -1) {
-                    coeffStr = '-';
-                } else {
-                    coeffStr = String(coeff);
-                }
-                if (exp === 0) {
-                    return coeffStr || '1';
-                }
-                let varPart = variable;
-                if (exp > 1) varPart += toSuperscript(exp);
+                let coeffStr = ''; if (coeff === 1) coeffStr = ''; else if (coeff === -1) coeffStr = '-'; else coeffStr = String(coeff);
+                if (exp === 0) return coeffStr || '1';
+                let varPart = variable; if (exp > 1) varPart += toSuperscript(exp);
                 return coeffStr + varPart;
             }
-
-            function formatMathTextLocal(text) {
-                const supToDigit = {
-                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
-                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
-                };
-                let formatted = text.replace(/-/g, '<span class="minus">−</span>');
-                return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
-            }
-
-            function randomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
+            function formatMathTextLocal(text) { const supToDigit = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }; let formatted = text.replace(/-/g, '<span class="minus">−</span>'); return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`); }
+            function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
             function createSquareQuestion(variable, coeff) {
-                const prefix = Math.random() < 0.5 ? "Thực hiện phép tính: " : "Tính: ";
                 const factorStr = formatMonomialBase(coeff, 1, variable);
-                const text = prefix + "(" + factorStr + ")² = ";
-                
-                const resultCoeff = coeff * coeff;
-                const resultExp = 2;
+                const text = (Math.random() < 0.5 ? "Thực hiện phép tính: " : "Tính: ") + "(" + factorStr + ")² = ";
+                const resultCoeff = coeff * coeff, resultExp = 2;
                 const correctAnswer = formatMonomialBase(resultCoeff, resultExp, variable);
-
                 function generateWrongOptions(correctCoeff, variable) {
                     const optionsSet = new Set();
-                    const wrongCandidates = [];
-                    wrongCandidates.push(formatMonomialBase(correctCoeff * 2, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(-correctCoeff, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(correctCoeff, 1, variable));
-                    wrongCandidates.push(formatMonomialBase(Math.abs(coeff) * 2, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(coeff * coeff * coeff, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(coeff, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(resultCoeff, 4, variable));
-                    wrongCandidates.push(formatMonomialBase(resultCoeff, 0, variable));
-                    
-                    for (const w of wrongCandidates) {
-                        if (w !== correctAnswer && !optionsSet.has(w)) {
-                            optionsSet.add(w);
-                        }
-                        if (optionsSet.size >= 3) break;
-                    }
-                    
-                    while (optionsSet.size < 3) {
-                        const fakeCoeff = randomInt(-20, 20);
-                        if (fakeCoeff === 0) continue;
-                        const fake = formatMonomialBase(fakeCoeff, 2, variable);
-                        if (fake !== correctAnswer && !optionsSet.has(fake)) {
-                            optionsSet.add(fake);
-                        }
-                    }
+                    [formatMonomialBase(correctCoeff*2,2,variable),formatMonomialBase(-correctCoeff,2,variable),formatMonomialBase(correctCoeff,1,variable),formatMonomialBase(Math.abs(coeff)*2,2,variable),formatMonomialBase(coeff*coeff*coeff,2,variable),formatMonomialBase(coeff,2,variable),formatMonomialBase(resultCoeff,4,variable),formatMonomialBase(resultCoeff,0,variable)].forEach(w => { if (w !== correctAnswer && !optionsSet.has(w)) optionsSet.add(w); });
+                    while (optionsSet.size < 3) { const fakeCoeff = randomInt(-20,20); if (fakeCoeff===0) continue; const fake = formatMonomialBase(fakeCoeff,2,variable); if (fake !== correctAnswer && !optionsSet.has(fake)) optionsSet.add(fake); }
                     return Array.from(optionsSet).slice(0, 3);
                 }
-
                 const distractors = generateWrongOptions(resultCoeff, variable);
                 const options = [correctAnswer, ...distractors];
                 const shuffled = shuffleArrayLocal(options);
                 const correctIndex = shuffled.indexOf(correctAnswer);
-
-                const solutionSteps = [];
-                solutionSteps.push(`(${formatMonomialBase(coeff, 1, variable)})²`);
-                solutionSteps.push(`= (${coeff})² ⋅ (${variable})²`);
-                solutionSteps.push(`= ${coeff * coeff}${variable}²`);
-
-                return {
-                    text: text,
-                    options: shuffled,
-                    correct: correctIndex,
-                    correctAnswer: correctAnswer,
-                    solution: solutionSteps
-                };
-            }
-
-            function shuffleArrayLocal(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
+                const solutionSteps = [`(${formatMonomialBase(coeff,1,variable)})²`, `= (${coeff})² ⋅ (${variable})²`, `= ${coeff*coeff}${variable}²`];
+                return { text, options: shuffled, correct: correctIndex, correctAnswer, solution: solutionSteps };
             }
 
             function generateSquareQuestions() {
                 const questions = [];
-                const variables = ['x', 'y', 'a', 'b'];
-                const coeffsTier1 = [-2, -3, -4, 2, 3, 4];
-                const coeffsTier2 = [5, -5, 6, -6];
-                
-                const tier1Questions = [];
-                for (let i = 0; i < 11; i++) {
-                    const coeff = coeffsTier1[i % coeffsTier1.length];
-                    const variable = variables[Math.floor(Math.random() * variables.length)];
-                    tier1Questions.push(createSquareQuestion(variable, coeff));
-                }
-                
-                const tier2Questions = [];
-                for (let i = 0; i < 4; i++) {
-                    const coeff = coeffsTier2[i];
-                    const variable = variables[Math.floor(Math.random() * variables.length)];
-                    tier2Questions.push(createSquareQuestion(variable, coeff));
-                }
-                
-                const allQuestions = [...tier1Questions, ...tier2Questions];
-                return shuffleArrayLocal(allQuestions);
+                const variables = ['x','y','a','b'];
+                const coeffsTier1 = [-2,-3,-4,2,3,4], coeffsTier2 = [5,-5,6,-6];
+                for (let i = 0; i < 11; i++) { const coeff = coeffsTier1[i%coeffsTier1.length]; const variable = variables[Math.floor(Math.random()*variables.length)]; questions.push(createSquareQuestion(variable, coeff)); }
+                for (let i = 0; i < 4; i++) { const coeff = coeffsTier2[i]; const variable = variables[Math.floor(Math.random()*variables.length)]; questions.push(createSquareQuestion(variable, coeff)); }
+                return shuffleArrayLocal(questions);
             }
 
             let currentSqQuestions = [], currentSqIndex = 0, sqAnsweredCount = 0, sqCorrectCount = 0;
             let sqTotalTime = 0, isSqTestActive = false, isSqCurrentAnswered = false, sqStartTime = null;
             let sqAutoTimeout = null, sqFinishTimeout = null;
-
             const sqQuestionArea = document.getElementById('sqQuestionArea');
             const sqCounterSpan = document.getElementById('sqQuestionCounter');
             const sqProgressFill = document.getElementById('sqProgressFill');
             const sqResultArea = document.getElementById('sqResultArea');
             document.getElementById('sqTotalQ').textContent = "15";
 
-            function updateSqUI() {
-                sqCounterSpan.textContent = sqAnsweredCount;
-                sqProgressFill.style.width = (sqAnsweredCount / currentSqQuestions.length * 100) + '%';
-            }
-
+            function updateSqUI() { sqCounterSpan.textContent = sqAnsweredCount; sqProgressFill.style.width = (sqAnsweredCount / currentSqQuestions.length * 100) + '%'; }
             function renderSqQuestion() {
                 if (!isSqTestActive || currentSqIndex >= currentSqQuestions.length) return;
                 const q = currentSqQuestions[currentSqIndex];
                 let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
-                q.options.forEach((opt, idx) => {
-                    const letter = String.fromCharCode(65+idx);
-                    html += `<div class="option"><input type="radio" name="sq_option" value="${idx}" id="sq_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="sq_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
-                });
-                html += `</div></div>`;
-                sqQuestionArea.innerHTML = html;
-                document.querySelectorAll('#sqQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
-                    const radio = opt.querySelector('input[type="radio"]');
-                    if (radio && !radio.disabled) radio.checked = true;
-                }));
-                sqStartTime = Date.now(); isSqCurrentAnswered = false;
-                sqResultArea.innerHTML = ''; sqResultArea.className = 'result-area';
+                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="sq_option" value="${idx}" id="sq_opt_${idx}"><label for="sq_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`; });
+                html += `</div></div>`; sqQuestionArea.innerHTML = html;
+                document.querySelectorAll('#sqQuestionArea .option').forEach(opt => opt.addEventListener('click', () => { const radio = opt.querySelector('input[type="radio"]'); if (radio && !radio.disabled) radio.checked = true; }));
+                sqStartTime = Date.now(); isSqCurrentAnswered = false; sqResultArea.innerHTML = ''; sqResultArea.className = 'result-area';
             }
-
             function finishSqTest() {
-                isSqTestActive = false;
-                const wrong = sqAnsweredCount - sqCorrectCount;
-                const avg = (sqTotalTime / sqAnsweredCount).toFixed(2);
-                document.getElementById('sqSummaryCorrect').textContent = sqCorrectCount;
-                document.getElementById('sqSummaryWrong').textContent = wrong;
-                document.getElementById('sqAvgTime').textContent = avg;
+                isSqTestActive = false; const wrong = sqAnsweredCount - sqCorrectCount; const avg = (sqTotalTime / sqAnsweredCount).toFixed(2);
+                document.getElementById('sqSummaryCorrect').textContent = sqCorrectCount; document.getElementById('sqSummaryWrong').textContent = wrong; document.getElementById('sqAvgTime').textContent = avg;
                 const msg = sqCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (sqCorrectCount === currentSqQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
-                document.getElementById('sqSummaryMessage').textContent = msg;
-                if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('sqSummaryMessage').textContent = msg; if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 document.getElementById('sqSummaryOverlay').classList.add('active');
             }
-
-            function scheduleFinishSqTest(delay) {
-                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
-                sqFinishTimeout = setTimeout(finishSqTest, delay);
-            }
-
+            function scheduleFinishSqTest(delay) { if (sqFinishTimeout) clearTimeout(sqFinishTimeout); sqFinishTimeout = setTimeout(finishSqTest, delay); }
             function recordSqAnswer(isCorrect, timeSpent) {
                 if (!isSqTestActive || isSqCurrentAnswered || sqAnsweredCount >= currentSqQuestions.length) return;
-                isSqCurrentAnswered = true;
-                sqAnsweredCount++;
-                sqTotalTime += timeSpent;
-                if (isCorrect) sqCorrectCount++;
-                updateSqUI();
-                document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true);
-                if (sqAnsweredCount === currentSqQuestions.length) {
-                    scheduleFinishSqTest(isCorrect ? 3000 : 5000);
-                } else if (isCorrect) {
-                    if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
-                    sqAutoTimeout = setTimeout(() => {
-                        if (isSqTestActive && sqAnsweredCount < currentSqQuestions.length) {
-                            currentSqIndex++;
-                            renderSqQuestion();
-                        }
-                        sqAutoTimeout = null;
-                    }, 3000);
-                }
+                isSqCurrentAnswered = true; sqAnsweredCount++; sqTotalTime += timeSpent; if (isCorrect) sqCorrectCount++;
+                updateSqUI(); document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true);
+                if (sqAnsweredCount === currentSqQuestions.length) scheduleFinishSqTest(isCorrect ? 3000 : 5000);
+                else if (isCorrect) { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); sqAutoTimeout = setTimeout(() => { if (isSqTestActive && sqAnsweredCount < currentSqQuestions.length) { currentSqIndex++; renderSqQuestion(); } sqAutoTimeout = null; }, 3000); }
             }
-
             function handleSqCheck() {
                 if (!isSqTestActive || isSqCurrentAnswered || sqAnsweredCount >= currentSqQuestions.length) return;
                 const selected = document.querySelector('input[name="sq_option"]:checked');
                 if (!selected) { sqResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; sqResultArea.className = 'result-area result-wrong'; return; }
-                const selectedVal = parseInt(selected.value);
-                const q = currentSqQuestions[currentSqIndex];
-                const isCorrect = (selectedVal === q.correct);
-                const timeSpent = (Date.now() - sqStartTime) / 1000;
-                const correctLetter = String.fromCharCode(65 + q.correct);
-                const correctAnswerText = formatMathTextLocal(q.options[q.correct]);
-                if (isCorrect) {
-                    sqResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    sqResultArea.className = 'result-area result-correct';
-                } else {
-                    let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>');
-                    sqResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    sqResultArea.className = 'result-area result-wrong';
-                }
+                const selectedVal = parseInt(selected.value), q = currentSqQuestions[currentSqIndex];
+                const isCorrect = (selectedVal === q.correct), timeSpent = (Date.now() - sqStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct), correctAnswerText = formatMathTextLocal(q.options[q.correct]);
+                if (isCorrect) { sqResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; sqResultArea.className = 'result-area result-correct'; }
+                else { let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>'); sqResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; sqResultArea.className = 'result-area result-wrong'; }
                 recordSqAnswer(isCorrect, timeSpent);
             }
-
             function moveToNextSqQuestion() {
-                if (!isSqTestActive) return;
-                if (sqAnsweredCount >= currentSqQuestions.length) return;
-                if (!isSqCurrentAnswered) {
-                    isSqCurrentAnswered = true;
-                    sqAnsweredCount++;
-                    updateSqUI();
-                    document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true);
-                    if (sqAnsweredCount === currentSqQuestions.length) scheduleFinishSqTest(5000);
-                    else { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); currentSqIndex++; renderSqQuestion(); }
-                } else {
-                    if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
-                    if (sqAnsweredCount < currentSqQuestions.length) { currentSqIndex++; renderSqQuestion(); }
-                }
+                if (!isSqTestActive || sqAnsweredCount >= currentSqQuestions.length) return;
+                if (!isSqCurrentAnswered) { isSqCurrentAnswered = true; sqAnsweredCount++; updateSqUI(); document.querySelectorAll('input[name="sq_option"]').forEach(radio => radio.disabled = true); if (sqAnsweredCount === currentSqQuestions.length) scheduleFinishSqTest(5000); else { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); currentSqIndex++; renderSqQuestion(); } }
+                else { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); if (sqAnsweredCount < currentSqQuestions.length) { currentSqIndex++; renderSqQuestion(); } }
             }
-
-            function startSquareQuiz() {
-                if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
-                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
-                currentSqQuestions = generateSquareQuestions();
-                currentSqIndex = 0; sqAnsweredCount = 0; sqCorrectCount = 0; sqTotalTime = 0;
-                isSqTestActive = true; isSqCurrentAnswered = false;
-                updateSqUI();
-                renderSqQuestion();
-            }
-
-            function cleanupSquare() {
-                isSqTestActive = false;
-                if (sqAutoTimeout) clearTimeout(sqAutoTimeout);
-                if (sqFinishTimeout) clearTimeout(sqFinishTimeout);
-                document.getElementById('sqSummaryOverlay').classList.remove('active');
-            }
-
+            function startSquareQuiz() { if (sqAutoTimeout) clearTimeout(sqAutoTimeout); if (sqFinishTimeout) clearTimeout(sqFinishTimeout); currentSqQuestions = generateSquareQuestions(); currentSqIndex = 0; sqAnsweredCount = 0; sqCorrectCount = 0; sqTotalTime = 0; isSqTestActive = true; isSqCurrentAnswered = false; updateSqUI(); renderSqQuestion(); }
+            function cleanupSquare() { isSqTestActive = false; if (sqAutoTimeout) clearTimeout(sqAutoTimeout); if (sqFinishTimeout) clearTimeout(sqFinishTimeout); document.getElementById('sqSummaryOverlay').classList.remove('active'); }
             document.getElementById('sqCheckBtn').addEventListener('click', handleSqCheck);
             document.getElementById('sqNextBtn').addEventListener('click', moveToNextSqQuestion);
             document.getElementById('sqCloseSummaryBtn').addEventListener('click', () => App.goHome());
-
-            document.addEventListener('keypress', function sqEnterHandler(e) {
-                if (e.key !== 'Enter') return;
-                if (App.activeQuiz !== 'squareMonomial') return;
-                if (!isSqTestActive) return;
-                if (sqAnsweredCount >= currentSqQuestions.length) return;
-                e.preventDefault();
-                if (!isSqCurrentAnswered) handleSqCheck();
-                else moveToNextSqQuestion();
-            });
-
+            document.addEventListener('keypress', function sqEnterHandler(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'squareMonomial' || !isSqTestActive || sqAnsweredCount >= currentSqQuestions.length) return; e.preventDefault(); if (!isSqCurrentAnswered) handleSqCheck(); else moveToNextSqQuestion(); });
             App.registerCleanup('squareMonomial', cleanupSquare);
-
-            document.getElementById('squareMonomialLink').addEventListener('click', () => {
-                App.switchTo('squareMonomial', 'squareMonomial');
-                startSquareQuiz();
-            });
+            document.getElementById('squareMonomialLink').addEventListener('click', () => { App.switchTo('squareMonomial', 'squareMonomial'); startSquareQuiz(); });
         })();
 
         // ==================== QUIZ LẬP PHƯƠNG ĐƠN THỨC ====================
         (function() {
             const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
-            function toSuperscript(num) {
-                return String(num).split('').map(d => supMap[d] || d).join('');
-            }
-
+            function toSuperscript(num) { return String(num).split('').map(d => supMap[d] || d).join(''); }
             function formatMonomialBase(coeff, exp, variable) {
                 if (coeff === 0) return '0';
-                let coeffStr = '';
-                if (coeff === 1) {
-                    coeffStr = '';
-                } else if (coeff === -1) {
-                    coeffStr = '-';
-                } else {
-                    coeffStr = String(coeff);
-                }
-                if (exp === 0) {
-                    return coeffStr || '1';
-                }
-                let varPart = variable;
-                if (exp > 1) varPart += toSuperscript(exp);
+                let coeffStr = ''; if (coeff === 1) coeffStr = ''; else if (coeff === -1) coeffStr = '-'; else coeffStr = String(coeff);
+                if (exp === 0) return coeffStr || '1';
+                let varPart = variable; if (exp > 1) varPart += toSuperscript(exp);
                 return coeffStr + varPart;
             }
-
-            function formatMathTextLocal(text) {
-                const supToDigit = {
-                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
-                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
-                };
-                let formatted = text.replace(/-/g, '<span class="minus">−</span>');
-                return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
-            }
-
-            function randomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
+            function formatMathTextLocal(text) { const supToDigit = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }; let formatted = text.replace(/-/g, '<span class="minus">−</span>'); return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`); }
+            function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+            function shuffleArrayLocal(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
             function createCubeQuestion(variable, coeff) {
                 const factorStr = formatMonomialBase(coeff, 1, variable);
                 const text = "Tính: (" + factorStr + ")³ = ";
-                
-                const resultCoeff = coeff * coeff * coeff;
-                const resultExp = 3;
+                const resultCoeff = coeff * coeff * coeff, resultExp = 3;
                 const correctAnswer = formatMonomialBase(resultCoeff, resultExp, variable);
-
                 function generateWrongOptions(correctCoeff, variable) {
                     const optionsSet = new Set();
-                    const wrongCandidates = [];
-                    wrongCandidates.push(formatMonomialBase(correctCoeff * 3, 3, variable));
-                    wrongCandidates.push(formatMonomialBase(-correctCoeff, 3, variable));
-                    wrongCandidates.push(formatMonomialBase(correctCoeff, 1, variable));
-                    wrongCandidates.push(formatMonomialBase(Math.abs(coeff) * 3, 3, variable));
-                    wrongCandidates.push(formatMonomialBase(coeff * coeff, 3, variable));
-                    wrongCandidates.push(formatMonomialBase(coeff * coeff, 2, variable));
-                    wrongCandidates.push(formatMonomialBase(resultCoeff, 1, variable));
-                    wrongCandidates.push(formatMonomialBase(resultCoeff, 0, variable));
-                    
-                    for (const w of wrongCandidates) {
-                        if (w !== correctAnswer && !optionsSet.has(w)) {
-                            optionsSet.add(w);
-                        }
-                        if (optionsSet.size >= 3) break;
-                    }
-                    
-                    while (optionsSet.size < 3) {
-                        const fakeCoeff = randomInt(-30, 30);
-                        if (fakeCoeff === 0) continue;
-                        const fake = formatMonomialBase(fakeCoeff, 3, variable);
-                        if (fake !== correctAnswer && !optionsSet.has(fake)) {
-                            optionsSet.add(fake);
-                        }
-                    }
+                    [formatMonomialBase(correctCoeff*3,3,variable),formatMonomialBase(-correctCoeff,3,variable),formatMonomialBase(correctCoeff,1,variable),formatMonomialBase(Math.abs(coeff)*3,3,variable),formatMonomialBase(coeff*coeff,3,variable),formatMonomialBase(coeff*coeff,2,variable),formatMonomialBase(resultCoeff,1,variable),formatMonomialBase(resultCoeff,0,variable)].forEach(w => { if (w !== correctAnswer && !optionsSet.has(w)) optionsSet.add(w); });
+                    while (optionsSet.size < 3) { const fakeCoeff = randomInt(-30,30); if (fakeCoeff===0) continue; const fake = formatMonomialBase(fakeCoeff,3,variable); if (fake !== correctAnswer && !optionsSet.has(fake)) optionsSet.add(fake); }
                     return Array.from(optionsSet).slice(0, 3);
                 }
-
                 const distractors = generateWrongOptions(resultCoeff, variable);
                 const options = [correctAnswer, ...distractors];
                 const shuffled = shuffleArrayLocal(options);
                 const correctIndex = shuffled.indexOf(correctAnswer);
-
-                const solutionSteps = [];
-                solutionSteps.push(`(${formatMonomialBase(coeff, 1, variable)})³`);
-                solutionSteps.push(`= (${coeff})³ ⋅ (${variable})³`);
-                solutionSteps.push(`= ${coeff * coeff * coeff}${variable}³`);
-
-                return {
-                    text: text,
-                    options: shuffled,
-                    correct: correctIndex,
-                    correctAnswer: correctAnswer,
-                    solution: solutionSteps
-                };
-            }
-
-            function shuffleArrayLocal(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
+                const solutionSteps = [`(${formatMonomialBase(coeff,1,variable)})³`, `= (${coeff})³ ⋅ (${variable})³`, `= ${coeff*coeff*coeff}${variable}³`];
+                return { text, options: shuffled, correct: correctIndex, correctAnswer, solution: solutionSteps };
             }
 
             function generateCubeQuestions() {
-                const variables = ['x', 'y', 'a', 'b'];
-                const coeffsTier1 = [-2, -3, -4, 2, 3, 4]; // 12 câu
-                const coeffsTier2 = [5, -5]; // 3 câu
-                
+                const variables = ['x','y','a','b'];
+                const coeffsTier1 = [-2,-3,-4,2,3,4];
+                const coeffsTier2 = [5,-5];
                 const allQuestions = [];
                 let lastAbsCoeff = null;
-                
-                // Tạo 12 câu từ tier 1, đảm bảo 2 câu liền nhau có trị tuyệt đối khác nhau
                 const tier1Pool = [...coeffsTier1];
                 for (let i = 0; i < 12; i++) {
                     let availableCoeffs = tier1Pool.filter(c => Math.abs(c) !== lastAbsCoeff);
                     if (availableCoeffs.length === 0) availableCoeffs = [...tier1Pool];
-                    
                     const coeff = availableCoeffs[Math.floor(Math.random() * availableCoeffs.length)];
                     const variable = variables[Math.floor(Math.random() * variables.length)];
                     allQuestions.push(createCubeQuestion(variable, coeff));
                     lastAbsCoeff = Math.abs(coeff);
                 }
-                
-                // Tạo 3 câu từ tier 2
                 const tier2Questions = [];
                 const tier2Pool = [...coeffsTier2];
-                for (let i = 0; i < 3; i++) {
-                    const coeff = tier2Pool[i % tier2Pool.length];
-                    const variable = variables[Math.floor(Math.random() * variables.length)];
-                    tier2Questions.push(createCubeQuestion(variable, coeff));
-                }
-                
-                // Chèn 3 câu tier 2 vào vị trí ngẫu nhiên trong mảng 15 câu
+                for (let i = 0; i < 3; i++) { const coeff = tier2Pool[i % tier2Pool.length]; const variable = variables[Math.floor(Math.random() * variables.length)]; tier2Questions.push(createCubeQuestion(variable, coeff)); }
                 const positions = Array.from({length: 15}, (_, i) => i);
                 const tier2Positions = [];
-                
-                // Chọn ngẫu nhiên 3 vị trí khác nhau
-                for (let i = 0; i < 3; i++) {
-                    const randomIndex = Math.floor(Math.random() * positions.length);
-                    tier2Positions.push(positions[randomIndex]);
-                    positions.splice(randomIndex, 1);
-                }
-                
-                // Sắp xếp vị trí để dễ chèn
+                for (let i = 0; i < 3; i++) { const randomIndex = Math.floor(Math.random() * positions.length); tier2Positions.push(positions[randomIndex]); positions.splice(randomIndex, 1); }
                 tier2Positions.sort((a, b) => a - b);
-                
-                // Tạo mảng kết quả 15 câu
                 const finalQuestions = [];
-                let tier1Index = 0;
-                let tier2Index = 0;
-                
-                for (let i = 0; i < 15; i++) {
-                    if (tier2Positions.includes(i)) {
-                        finalQuestions.push(tier2Questions[tier2Index]);
-                        tier2Index++;
-                    } else {
-                        finalQuestions.push(allQuestions[tier1Index]);
-                        tier1Index++;
-                    }
-                }
-                
+                let tier1Index = 0, tier2Index = 0;
+                for (let i = 0; i < 15; i++) { if (tier2Positions.includes(i)) { finalQuestions.push(tier2Questions[tier2Index]); tier2Index++; } else { finalQuestions.push(allQuestions[tier1Index]); tier1Index++; } }
                 return finalQuestions;
             }
 
             let currentCbQuestions = [], currentCbIndex = 0, cbAnsweredCount = 0, cbCorrectCount = 0;
             let cbTotalTime = 0, isCbTestActive = false, isCbCurrentAnswered = false, cbStartTime = null;
             let cbAutoTimeout = null, cbFinishTimeout = null;
-
             const cbQuestionArea = document.getElementById('cbQuestionArea');
             const cbCounterSpan = document.getElementById('cbQuestionCounter');
             const cbProgressFill = document.getElementById('cbProgressFill');
             const cbResultArea = document.getElementById('cbResultArea');
             document.getElementById('cbTotalQ').textContent = "15";
 
-            function updateCbUI() {
-                cbCounterSpan.textContent = cbAnsweredCount;
-                cbProgressFill.style.width = (cbAnsweredCount / currentCbQuestions.length * 100) + '%';
-            }
-
+            function updateCbUI() { cbCounterSpan.textContent = cbAnsweredCount; cbProgressFill.style.width = (cbAnsweredCount / currentCbQuestions.length * 100) + '%'; }
             function renderCbQuestion() {
                 if (!isCbTestActive || currentCbIndex >= currentCbQuestions.length) return;
                 const q = currentCbQuestions[currentCbIndex];
                 let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
-                q.options.forEach((opt, idx) => {
-                    const letter = String.fromCharCode(65+idx);
-                    html += `<div class="option"><input type="radio" name="cb_option" value="${idx}" id="cb_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="cb_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
-                });
-                html += `</div></div>`;
-                cbQuestionArea.innerHTML = html;
-                document.querySelectorAll('#cbQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
-                    const radio = opt.querySelector('input[type="radio"]');
-                    if (radio && !radio.disabled) radio.checked = true;
-                }));
-                cbStartTime = Date.now(); isCbCurrentAnswered = false;
-                cbResultArea.innerHTML = ''; cbResultArea.className = 'result-area';
+                q.options.forEach((opt, idx) => { const letter = String.fromCharCode(65+idx); html += `<div class="option"><input type="radio" name="cb_option" value="${idx}" id="cb_opt_${idx}"><label for="cb_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`; });
+                html += `</div></div>`; cbQuestionArea.innerHTML = html;
+                document.querySelectorAll('#cbQuestionArea .option').forEach(opt => opt.addEventListener('click', () => { const radio = opt.querySelector('input[type="radio"]'); if (radio && !radio.disabled) radio.checked = true; }));
+                cbStartTime = Date.now(); isCbCurrentAnswered = false; cbResultArea.innerHTML = ''; cbResultArea.className = 'result-area';
             }
-
             function finishCbTest() {
-                isCbTestActive = false;
-                const wrong = cbAnsweredCount - cbCorrectCount;
-                const avg = (cbTotalTime / cbAnsweredCount).toFixed(2);
-                document.getElementById('cbSummaryCorrect').textContent = cbCorrectCount;
-                document.getElementById('cbSummaryWrong').textContent = wrong;
-                document.getElementById('cbAvgTime').textContent = avg;
+                isCbTestActive = false; const wrong = cbAnsweredCount - cbCorrectCount; const avg = (cbTotalTime / cbAnsweredCount).toFixed(2);
+                document.getElementById('cbSummaryCorrect').textContent = cbCorrectCount; document.getElementById('cbSummaryWrong').textContent = wrong; document.getElementById('cbAvgTime').textContent = avg;
                 const msg = cbCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (cbCorrectCount === currentCbQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
-                document.getElementById('cbSummaryMessage').textContent = msg;
-                if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('cbSummaryMessage').textContent = msg; if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 document.getElementById('cbSummaryOverlay').classList.add('active');
             }
-
-            function scheduleFinishCbTest(delay) {
-                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
-                cbFinishTimeout = setTimeout(finishCbTest, delay);
-            }
-
+            function scheduleFinishCbTest(delay) { if (cbFinishTimeout) clearTimeout(cbFinishTimeout); cbFinishTimeout = setTimeout(finishCbTest, delay); }
             function recordCbAnswer(isCorrect, timeSpent) {
                 if (!isCbTestActive || isCbCurrentAnswered || cbAnsweredCount >= currentCbQuestions.length) return;
-                isCbCurrentAnswered = true;
-                cbAnsweredCount++;
-                cbTotalTime += timeSpent;
-                if (isCorrect) cbCorrectCount++;
-                updateCbUI();
-                document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true);
-                if (cbAnsweredCount === currentCbQuestions.length) {
-                    scheduleFinishCbTest(isCorrect ? 3000 : 5000);
-                } else if (isCorrect) {
-                    if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
-                    cbAutoTimeout = setTimeout(() => {
-                        if (isCbTestActive && cbAnsweredCount < currentCbQuestions.length) {
-                            currentCbIndex++;
-                            renderCbQuestion();
-                        }
-                        cbAutoTimeout = null;
-                    }, 3000);
-                }
+                isCbCurrentAnswered = true; cbAnsweredCount++; cbTotalTime += timeSpent; if (isCorrect) cbCorrectCount++;
+                updateCbUI(); document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true);
+                if (cbAnsweredCount === currentCbQuestions.length) scheduleFinishCbTest(isCorrect ? 3000 : 5000);
+                else if (isCorrect) { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); cbAutoTimeout = setTimeout(() => { if (isCbTestActive && cbAnsweredCount < currentCbQuestions.length) { currentCbIndex++; renderCbQuestion(); } cbAutoTimeout = null; }, 3000); }
             }
-
             function handleCbCheck() {
                 if (!isCbTestActive || isCbCurrentAnswered || cbAnsweredCount >= currentCbQuestions.length) return;
                 const selected = document.querySelector('input[name="cb_option"]:checked');
                 if (!selected) { cbResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; cbResultArea.className = 'result-area result-wrong'; return; }
-                const selectedVal = parseInt(selected.value);
-                const q = currentCbQuestions[currentCbIndex];
-                const isCorrect = (selectedVal === q.correct);
-                const timeSpent = (Date.now() - cbStartTime) / 1000;
-                const correctLetter = String.fromCharCode(65 + q.correct);
-                const correctAnswerText = formatMathTextLocal(q.options[q.correct]);
-                if (isCorrect) {
-                    cbResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    cbResultArea.className = 'result-area result-correct';
-                } else {
-                    let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>');
-                    cbResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
-                    cbResultArea.className = 'result-area result-wrong';
-                }
+                const selectedVal = parseInt(selected.value), q = currentCbQuestions[currentCbIndex];
+                const isCorrect = (selectedVal === q.correct), timeSpent = (Date.now() - cbStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct), correctAnswerText = formatMathTextLocal(q.options[q.correct]);
+                if (isCorrect) { cbResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; cbResultArea.className = 'result-area result-correct'; }
+                else { let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>'); cbResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`; cbResultArea.className = 'result-area result-wrong'; }
                 recordCbAnswer(isCorrect, timeSpent);
             }
-
             function moveToNextCbQuestion() {
-                if (!isCbTestActive) return;
-                if (cbAnsweredCount >= currentCbQuestions.length) return;
-                if (!isCbCurrentAnswered) {
-                    isCbCurrentAnswered = true;
-                    cbAnsweredCount++;
-                    updateCbUI();
-                    document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true);
-                    if (cbAnsweredCount === currentCbQuestions.length) scheduleFinishCbTest(5000);
-                    else { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); currentCbIndex++; renderCbQuestion(); }
-                } else {
-                    if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
-                    if (cbAnsweredCount < currentCbQuestions.length) { currentCbIndex++; renderCbQuestion(); }
-                }
+                if (!isCbTestActive || cbAnsweredCount >= currentCbQuestions.length) return;
+                if (!isCbCurrentAnswered) { isCbCurrentAnswered = true; cbAnsweredCount++; updateCbUI(); document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true); if (cbAnsweredCount === currentCbQuestions.length) scheduleFinishCbTest(5000); else { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); currentCbIndex++; renderCbQuestion(); } }
+                else { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); if (cbAnsweredCount < currentCbQuestions.length) { currentCbIndex++; renderCbQuestion(); } }
             }
-
-            function startCubeQuiz() {
-                if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
-                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
-                currentCbQuestions = generateCubeQuestions();
-                currentCbIndex = 0; cbAnsweredCount = 0; cbCorrectCount = 0; cbTotalTime = 0;
-                isCbTestActive = true; isCbCurrentAnswered = false;
-                updateCbUI();
-                renderCbQuestion();
-            }
-
-            function cleanupCube() {
-                isCbTestActive = false;
-                if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
-                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
-                document.getElementById('cbSummaryOverlay').classList.remove('active');
-            }
-
+            function startCubeQuiz() { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); if (cbFinishTimeout) clearTimeout(cbFinishTimeout); currentCbQuestions = generateCubeQuestions(); currentCbIndex = 0; cbAnsweredCount = 0; cbCorrectCount = 0; cbTotalTime = 0; isCbTestActive = true; isCbCurrentAnswered = false; updateCbUI(); renderCbQuestion(); }
+            function cleanupCube() { isCbTestActive = false; if (cbAutoTimeout) clearTimeout(cbAutoTimeout); if (cbFinishTimeout) clearTimeout(cbFinishTimeout); document.getElementById('cbSummaryOverlay').classList.remove('active'); }
             document.getElementById('cbCheckBtn').addEventListener('click', handleCbCheck);
             document.getElementById('cbNextBtn').addEventListener('click', moveToNextCbQuestion);
             document.getElementById('cbCloseSummaryBtn').addEventListener('click', () => App.goHome());
-
-            document.addEventListener('keypress', function cbEnterHandler(e) {
-                if (e.key !== 'Enter') return;
-                if (App.activeQuiz !== 'cubeMonomial') return;
-                if (!isCbTestActive) return;
-                if (cbAnsweredCount >= currentCbQuestions.length) return;
-                e.preventDefault();
-                if (!isCbCurrentAnswered) handleCbCheck();
-                else moveToNextCbQuestion();
-            });
-
+            document.addEventListener('keypress', function cbEnterHandler(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'cubeMonomial' || !isCbTestActive || cbAnsweredCount >= currentCbQuestions.length) return; e.preventDefault(); if (!isCbCurrentAnswered) handleCbCheck(); else moveToNextCbQuestion(); });
             App.registerCleanup('cubeMonomial', cleanupCube);
+            document.getElementById('cubeMonomialLink').addEventListener('click', () => { App.switchTo('cubeMonomial', 'cubeMonomial'); startCubeQuiz(); });
+        })();
 
-            document.getElementById('cubeMonomialLink').addEventListener('click', () => {
-                App.switchTo('cubeMonomial', 'cubeMonomial');
-                startCubeQuiz();
-            });
+        // ==================== QUIZ 2AB ====================
+        (function() {
+            function formatMonomialMultiVarHTML(coeff, variables) {
+                const sortedVars = [...variables].sort((a, b) => { const varA = typeof a === 'string' ? a : a.base; const varB = typeof b === 'string' ? b : b.base; return varA.localeCompare(varB); });
+                if (coeff === 0) return '0';
+                let result = '';
+                if (coeff === 1) result = '';
+                else if (coeff === -1) result = '<span class="minus">−</span>';
+                else if (coeff < 0) result = '<span class="minus">−</span>' + Math.abs(coeff);
+                else result = String(coeff);
+                let hasVar = false;
+                for (const v of sortedVars) { const base = typeof v === 'string' ? v : v.base; const exp = typeof v === 'string' ? 1 : (v.exp || 1); if (exp > 0) { result += base; if (exp > 1) result += '<sup>' + exp + '</sup>'; hasVar = true; } }
+                if (!hasVar && result === '') return '1';
+                return result || '1';
+            }
+            function formatMathTextLocal(text) { const supMap = { '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }; let formatted = text.replace(/-/g, '<span class="minus">−</span>'); return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => '<sup>' + supMap[m] + '</sup>'); }
+            function stripHTML(html) { const div = document.createElement('div'); div.innerHTML = html; return div.textContent || div.innerText || ''; }
+            function shuffleArray(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+            const xyPool2ab = [[2,'x',3,'y'],[3,'x',1,'y'],[5,'x',1,''],[1,'x',2,'y'],[2,'x',1,'y'],[3,'x',2,''],[4,'',1,'x'],[6,'',1,'x'],[3,'x',2,''],[1,'x',5,'y'],[2,'x',5,'y'],[3,'x',5,'y'],[2,'x',1,''],[2,'x',5,''],[4,'',3,'x']];
+            const abPool2ab = [[2,'a',3,''],[6,'',1,'a'],[1,'',5,'a'],[2,'a',5,''],[1,'a',2,'b'],[1,'a',5,'b'],[3,'b',4,'a'],[3,'a',5,'b']];
+
+            function parsePair2ab(pair) {
+                const [coeffA, varA, coeffB, varB] = pair;
+                let aStr = varA === '' ? String(coeffA) : (coeffA === 1 ? varA : (coeffA === -1 ? '-' + varA : coeffA + varA));
+                let bStr = varB === '' ? String(coeffB) : (coeffB === 1 ? varB : (coeffB === -1 ? '-' + varB : coeffB + varB));
+                const resultCoeff = 2 * coeffA * coeffB;
+                const varMap = {}; if (varA) varMap[varA] = (varMap[varA] || 0) + 1; if (varB) varMap[varB] = (varMap[varB] || 0) + 1;
+                const resultVars = []; for (const [v, exp] of Object.entries(varMap)) { resultVars.push({ base: v, exp: exp }); }
+                return { aStr, bStr, resultCoeff, resultVars, coeffA, varA, coeffB, varB };
+            }
+
+            function generateQuestion2ab(parsed) {
+                const { aStr, bStr, resultCoeff, resultVars, coeffA, varA, coeffB, varB } = parsed;
+                const isNegative = Math.random() < 0.5;
+                const sign = isNegative ? '-' : '';
+                const finalCoeff = isNegative ? -resultCoeff : resultCoeff;
+                const text = 'Tính: ' + sign + '2.' + aStr + '.' + bStr + ' =';
+                const correctAnswer = formatMonomialMultiVarHTML(finalCoeff, resultVars);
+                const correctStr = stripHTML(correctAnswer);
+
+                function genWrong() {
+                    const wrong = new Set();
+                    const strats = [
+                        () => formatMonomialMultiVarHTML(finalCoeff / 2, resultVars),
+                        () => formatMonomialMultiVarHTML(finalCoeff * 2, resultVars),
+                        () => formatMonomialMultiVarHTML(-finalCoeff, resultVars),
+                        () => { if (resultVars.length >= 2) return formatMonomialMultiVarHTML(finalCoeff, [resultVars[0]]); return formatMonomialMultiVarHTML(finalCoeff * 2, resultVars); },
+                        () => { if (resultVars.length >= 2) return formatMonomialMultiVarHTML(finalCoeff, [resultVars[1]]); return formatMonomialMultiVarHTML(finalCoeff + 1, resultVars); },
+                        () => { if (resultVars.length >= 1) { const nv = resultVars.map((v,i) => i===0?{base:v.base,exp:v.exp+1}:v); return formatMonomialMultiVarHTML(finalCoeff, nv); } return formatMonomialMultiVarHTML(finalCoeff + 2, resultVars); },
+                        () => { if (resultVars.length >= 1 && resultVars[0].exp > 1) { const nv = resultVars.map((v,i) => i===0?{base:v.base,exp:v.exp-1}:v); return formatMonomialMultiVarHTML(finalCoeff, nv); } return formatMonomialMultiVarHTML(finalCoeff - 2, resultVars); },
+                        () => formatMonomialMultiVarHTML(finalCoeff + (finalCoeff > 0 ? 1 : -1), resultVars),
+                        () => formatMonomialMultiVarHTML(finalCoeff + (finalCoeff > 0 ? 2 : -2), resultVars),
+                        () => formatMonomialMultiVarHTML(finalCoeff + (finalCoeff > 0 ? 3 : -3), resultVars),
+                        () => formatMonomialMultiVarHTML(Math.round(finalCoeff * 1.5), resultVars),
+                        () => String(finalCoeff),
+                    ];
+                    let att = 0;
+                    while (wrong.size < 3 && att < 150) { const s = strats[Math.floor(Math.random() * strats.length)]; try { const v = s(); const vs = stripHTML(v); if (vs !== correctStr && vs !== '0' && !wrong.has(vs)) wrong.add(vs); } catch(e) {} att++; }
+                    const absC = Math.abs(finalCoeff);
+                    [absC+1,absC+2,absC+3,absC+4,absC+5,absC*2,absC*3,Math.max(1,absC-1)].forEach(num => { if (wrong.size >= 3) return; const sn = finalCoeff < 0 ? -num : num; const fs = String(sn); if (fs !== correctStr && !wrong.has(fs)) wrong.add(fs); });
+                    return Array.from(wrong).slice(0, 3);
+                }
+
+                const distractors = genWrong();
+                const options = [correctAnswer, ...distractors.map(d => { if (/^-?\d+$/.test(d)) { if (d.startsWith('-')) return '<span class="minus">−</span>' + d.substring(1); return d; } return d; })];
+                for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
+                const correctIndex = options.indexOf(correctAnswer);
+
+                const sol = [];
+                const signNum = isNegative ? -1 : 1;
+                sol.push(sign + '2 ⋅ ' + aStr + ' ⋅ ' + bStr);
+                const coeffs = [];
+                if (signNum === -1) coeffs.push('(-2)'); else coeffs.push('2');
+                if (coeffA !== 1 || varA === '') coeffs.push(String(coeffA));
+                if (coeffB !== 1 || varB === '') coeffs.push(String(coeffB));
+                let varPart = '';
+                if (varA) varPart += varA; if (varB) varPart += varB;
+                if (varA && varB && varA === varB) varPart = varA + '²';
+                if (varPart) sol.push('= ' + coeffs.join(' ⋅ ') + '.' + varPart);
+                else sol.push('= ' + coeffs.join(' ⋅ '));
+                sol.push('= ' + correctAnswer);
+                return { text, options, correct: correctIndex, correctAnswer, solution: sol };
+            }
+
+            function generateQSet2ab() {
+                const qs = [];
+                const sXY = shuffleArray(xyPool2ab); const selXY = []; for (let i = 0; i < 10; i++) selXY.push(sXY[i % sXY.length]);
+                const sAB = shuffleArray(abPool2ab); const selAB = []; for (let i = 0; i < 5; i++) selAB.push(sAB[i % sAB.length]);
+                const all = shuffleArray([...selXY, ...selAB]);
+                const used = new Set();
+                for (const p of all) { const parsed = parsePair2ab(p); let q = generateQuestion2ab(parsed); let att = 0; while (used.has(q.text) && att < 10) { q = generateQuestion2ab(parsed); att++; } used.add(q.text); qs.push(q); }
+                return qs;
+            }
+
+            const TOTAL = 15;
+            let questions = [], idx = 0, answered = 0, correct = 0, totalTime = 0;
+            let active = false, answeredFlag = false, startTime = null, autoTO = null, finishTO = null;
+
+            const qArea = document.getElementById('q2abQuestionArea');
+            const qCount = document.getElementById('q2abCounter');
+            const qProg = document.getElementById('q2abProgressFill');
+            const qRes = document.getElementById('q2abResultArea');
+            const checkB = document.getElementById('q2abCheckBtn');
+            const nextB = document.getElementById('q2abNextBtn');
+            const sumOver = document.getElementById('q2abSummaryOverlay');
+            const sumCor = document.getElementById('q2abSummaryCorrect');
+            const sumWro = document.getElementById('q2abSummaryWrong');
+            const sumAvg = document.getElementById('q2abAvgTime');
+            const sumMsg = document.getElementById('q2abSummaryMessage');
+            const closeB = document.getElementById('q2abCloseSummaryBtn');
+            document.getElementById('q2abTotal').textContent = TOTAL;
+
+            function updUI() { qCount.textContent = answered; qProg.style.width = (answered / TOTAL * 100) + '%'; }
+            function renderQ() {
+                if (!active || idx >= questions.length) return;
+                const q = questions[idx];
+                let h = '<div class="question-box" style="text-align:center;"><div class="question-text">' + formatMathTextLocal(q.text) + '</div><div class="options">';
+                q.options.forEach((o, i) => { const l = String.fromCharCode(65 + i); h += '<div class="option"><input type="radio" name="q2ab_opt" value="' + i + '" id="q2ab_opt_' + i + '"><label for="q2ab_opt_' + i + '">' + l + '. ' + o + '</label></div>'; });
+                h += '</div></div>'; qArea.innerHTML = h;
+                document.querySelectorAll('#q2abQuestionArea .option').forEach(o => o.addEventListener('click', () => { const r = o.querySelector('input[type="radio"]'); if (r && !r.disabled) r.checked = true; }));
+                startTime = Date.now(); answeredFlag = false; qRes.innerHTML = ''; qRes.className = 'result-area';
+            }
+            function finish() {
+                active = false; const w = answered - correct; const a = answered > 0 ? (totalTime / answered).toFixed(2) : 0;
+                sumCor.textContent = correct; sumWro.textContent = w; sumAvg.textContent = a;
+                const m = correct < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (correct === TOTAL && parseFloat(a) <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
+                sumMsg.textContent = m; if (m.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                sumOver.classList.add('active');
+            }
+            function schedFin(d) { if (finishTO) clearTimeout(finishTO); finishTO = setTimeout(finish, d); }
+            function recAns(ok, t) {
+                if (!active || answeredFlag || answered >= TOTAL) return;
+                answeredFlag = true; answered++; totalTime += t; if (ok) correct++;
+                updUI(); document.querySelectorAll('input[name="q2ab_opt"]').forEach(r => r.disabled = true);
+                if (answered === TOTAL) schedFin(ok ? 3000 : 5000);
+                else if (ok) { if (autoTO) clearTimeout(autoTO); autoTO = setTimeout(() => { if (active && answered < TOTAL) { idx++; renderQ(); } autoTO = null; }, 3000); }
+            }
+            function handleCheck() {
+                if (!active || answeredFlag || answered >= TOTAL) return;
+                const sel = document.querySelector('input[name="q2ab_opt"]:checked');
+                if (!sel) { qRes.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; qRes.className = 'result-area result-wrong'; return; }
+                const sv = parseInt(sel.value), q = questions[idx];
+                const ok = (sv === q.correct), t = (Date.now() - startTime) / 1000;
+                const cl = String.fromCharCode(65 + q.correct);
+                if (ok) { qRes.innerHTML = '🎉 Chính xác! Đáp án đúng: ' + cl + '. ' + q.options[q.correct]; qRes.className = 'result-area result-correct'; }
+                else { const st = q.solution.map(s => formatMathTextLocal(s)).join('<br>'); qRes.innerHTML = '❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">' + st + '</div>Đáp án đúng: ' + cl + '. ' + q.options[q.correct]; qRes.className = 'result-area result-wrong'; }
+                recAns(ok, t);
+            }
+            function moveNext() {
+                if (!active || answered >= TOTAL) return;
+                if (!answeredFlag) { answeredFlag = true; answered++; updUI(); document.querySelectorAll('input[name="q2ab_opt"]').forEach(r => r.disabled = true); if (answered === TOTAL) schedFin(5000); else { if (autoTO) clearTimeout(autoTO); idx++; renderQ(); } }
+                else { if (autoTO) clearTimeout(autoTO); if (answered < TOTAL) { idx++; renderQ(); } }
+            }
+            function start() { if (autoTO) clearTimeout(autoTO); if (finishTO) clearTimeout(finishTO); questions = generateQSet2ab(); idx = 0; answered = 0; correct = 0; totalTime = 0; active = true; answeredFlag = false; updUI(); renderQ(); }
+            function cleanup() { active = false; if (autoTO) clearTimeout(autoTO); if (finishTO) clearTimeout(finishTO); sumOver.classList.remove('active'); }
+
+            checkB.addEventListener('click', handleCheck);
+            nextB.addEventListener('click', moveNext);
+            closeB.addEventListener('click', () => App.goHome());
+            document.addEventListener('keypress', function h(e) { if (e.key !== 'Enter' || App.activeQuiz !== 'quiz2ab' || !active || answered >= TOTAL) return; e.preventDefault(); if (!answeredFlag) handleCheck(); else moveNext(); });
+            App.registerCleanup('quiz2ab', cleanup);
+            window.openQuiz2ab = function() { App.switchTo('quiz2ab', 'quiz2ab'); start(); };
         })();
 
         // ==================== ĐIỀU HƯỚNG CHUNG ====================
@@ -2235,6 +1763,7 @@
         document.getElementById('toan8Block').addEventListener('click', () => App.switchTo('toan8'));
         document.getElementById('mentalBlock').addEventListener('click', () => App.switchTo('mental'));
         document.getElementById('testBlock').addEventListener('click', () => alert('Chức năng TEST NHANH đang được phát triển!'));
+        document.getElementById('quiz2abLink').addEventListener('click', () => { App.switchTo('quiz2ab', 'quiz2ab'); openQuiz2ab(); });
         document.querySelectorAll('#mentalContent .topic-item').forEach(topic => {
             topic.addEventListener('click', (e) => {
                 const topicKey = topic.getAttribute('data-topic');
