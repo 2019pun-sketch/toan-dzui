@@ -216,6 +216,18 @@
         #squareMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
         #squareMonomialQuizWrapper .btn-primary, #squareMonomialQuizWrapper .btn-secondary { font-family: inherit; }
 
+        #cubeMonomialQuizWrapper .question-text,
+        #cubeMonomialQuizWrapper .option label,
+        #cubeMonomialQuizWrapper .result-area,
+        #cubeMonomialQuizWrapper .solution-steps {
+            font-family: 'Inter', sans-serif !important;
+            letter-spacing: 0.35px;
+        }
+        #cubeMonomialQuizWrapper .option label { font-size: 1.25rem; }
+        #cubeMonomialQuizWrapper .question-text { font-size: 1.68rem !important; font-weight: bold; margin-bottom: 20px; }
+        #cubeMonomialQuizWrapper sup { font-size: 0.8em; vertical-align: super; margin-left: 0.05em; }
+        #cubeMonomialQuizWrapper .btn-primary, #cubeMonomialQuizWrapper .btn-secondary { font-family: inherit; }
+
         #monomialQuizWrapper .btn-primary, #monomialQuizWrapper .btn-secondary { font-family: inherit; }
         #multiplyMonomialQuizWrapper .btn-primary, #multiplyMonomialQuizWrapper .btn-secondary { font-family: inherit; }
         #divideMonomialQuizWrapper .btn-primary, #divideMonomialQuizWrapper .btn-secondary { font-family: inherit; }
@@ -326,7 +338,7 @@
                         <div>1. Luyện tập trước khi học Hằng đẳng thức</div>
                         <ul>
                             <li id="squareMonomialLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Bình phương của đơn thức</li>
-                            <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Lập phương của đơn thức</li>
+                            <li id="cubeMonomialLink" style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 Lập phương của đơn thức</li>
                             <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 2ab</li>
                             <li style="cursor:pointer; color:#E24265; font-weight:bold;">🔍 3a²b − 3ab²</li>
                         </ul>
@@ -506,6 +518,37 @@
         </div>
     </div>
 
+    <!-- ==================== KHỐI QUIZ LẬP PHƯƠNG ĐƠN THỨC ==================== -->
+    <div id="cubeMonomialQuizWrapper" class="test-wrapper">
+        <div class="test-spacer-top"></div>
+        <div class="test-container">
+            <div class="test-header"><h2>⚔️ Lập phương của đơn thức</h2></div>
+            <div class="test-body">
+                <div class="progress-info">Câu hỏi: <span id="cbQuestionCounter">0</span>/<span id="cbTotalQ">15</span></div>
+                <div class="progress-bar-container"><div class="progress-fill" id="cbProgressFill"></div></div>
+                <div id="cbQuestionArea"></div>
+                <div class="button-group">
+                    <button id="cbCheckBtn" class="btn-primary">✅ Kiểm tra</button>
+                    <button id="cbNextBtn" class="btn-secondary">🔄 Câu hỏi mới</button>
+                </div>
+                <div id="cbResultArea" class="result-area"></div>
+            </div>
+        </div>
+        <div class="test-spacer-bottom"></div>
+    </div>
+    <div id="cbSummaryOverlay" class="summary-overlay">
+        <div class="summary-card">
+            <h3>🏆 KẾT QUẢ</h3>
+            <div class="summary-stats">
+                <div>Số câu trả lời ĐÚNG: <strong id="cbSummaryCorrect">0</strong></div>
+                <div>Số câu trả lời SAI: <strong id="cbSummaryWrong">0</strong></div>
+                <div>Thời gian trả lời trung bình: <strong id="cbAvgTime">0</strong> giây/câu</div>
+            </div>
+            <div id="cbSummaryMessage" class="summary-message"></div>
+            <button id="cbCloseSummaryBtn" class="summary-btn">Về trang chủ</button>
+        </div>
+    </div>
+
     <script>
     (function() {
         // ==================== APP QUẢN LÝ MÀN HÌNH & DỌN DẸP ====================
@@ -524,6 +567,7 @@
                 document.getElementById('multiplyMonomialQuizWrapper').style.display = 'none';
                 document.getElementById('divideMonomialQuizWrapper').style.display = 'none';
                 document.getElementById('squareMonomialQuizWrapper').style.display = 'none';
+                document.getElementById('cubeMonomialQuizWrapper').style.display = 'none';
                 document.body.classList.remove('test-mode', 'toan8-mode', 'mental-mode');
 
                 if (this.activeQuiz && this.cleanupFns[this.activeQuiz]) {
@@ -550,6 +594,8 @@
                     document.getElementById('divideMonomialQuizWrapper').style.display = 'flex';
                 } else if (screenId === 'squareMonomial') {
                     document.getElementById('squareMonomialQuizWrapper').style.display = 'flex';
+                } else if (screenId === 'cubeMonomial') {
+                    document.getElementById('cubeMonomialQuizWrapper').style.display = 'flex';
                 }
             },
             goHome() {
@@ -1868,6 +1914,319 @@
             document.getElementById('squareMonomialLink').addEventListener('click', () => {
                 App.switchTo('squareMonomial', 'squareMonomial');
                 startSquareQuiz();
+            });
+        })();
+
+        // ==================== QUIZ LẬP PHƯƠNG ĐƠN THỨC ====================
+        (function() {
+            const supMap = { '0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹' };
+            function toSuperscript(num) {
+                return String(num).split('').map(d => supMap[d] || d).join('');
+            }
+
+            function formatMonomialBase(coeff, exp, variable) {
+                if (coeff === 0) return '0';
+                let coeffStr = '';
+                if (coeff === 1) {
+                    coeffStr = '';
+                } else if (coeff === -1) {
+                    coeffStr = '-';
+                } else {
+                    coeffStr = String(coeff);
+                }
+                if (exp === 0) {
+                    return coeffStr || '1';
+                }
+                let varPart = variable;
+                if (exp > 1) varPart += toSuperscript(exp);
+                return coeffStr + varPart;
+            }
+
+            function formatMathTextLocal(text) {
+                const supToDigit = {
+                    '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4',
+                    '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9'
+                };
+                let formatted = text.replace(/-/g, '<span class="minus">−</span>');
+                return formatted.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => `<sup>${supToDigit[m]}</sup>`);
+            }
+
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function createCubeQuestion(variable, coeff) {
+                const factorStr = formatMonomialBase(coeff, 1, variable);
+                const text = "Tính: (" + factorStr + ")³ = ";
+                
+                const resultCoeff = coeff * coeff * coeff;
+                const resultExp = 3;
+                const correctAnswer = formatMonomialBase(resultCoeff, resultExp, variable);
+
+                function generateWrongOptions(correctCoeff, variable) {
+                    const optionsSet = new Set();
+                    const wrongCandidates = [];
+                    wrongCandidates.push(formatMonomialBase(correctCoeff * 3, 3, variable));
+                    wrongCandidates.push(formatMonomialBase(-correctCoeff, 3, variable));
+                    wrongCandidates.push(formatMonomialBase(correctCoeff, 1, variable));
+                    wrongCandidates.push(formatMonomialBase(Math.abs(coeff) * 3, 3, variable));
+                    wrongCandidates.push(formatMonomialBase(coeff * coeff, 3, variable));
+                    wrongCandidates.push(formatMonomialBase(coeff * coeff, 2, variable));
+                    wrongCandidates.push(formatMonomialBase(resultCoeff, 1, variable));
+                    wrongCandidates.push(formatMonomialBase(resultCoeff, 0, variable));
+                    
+                    for (const w of wrongCandidates) {
+                        if (w !== correctAnswer && !optionsSet.has(w)) {
+                            optionsSet.add(w);
+                        }
+                        if (optionsSet.size >= 3) break;
+                    }
+                    
+                    while (optionsSet.size < 3) {
+                        const fakeCoeff = randomInt(-30, 30);
+                        if (fakeCoeff === 0) continue;
+                        const fake = formatMonomialBase(fakeCoeff, 3, variable);
+                        if (fake !== correctAnswer && !optionsSet.has(fake)) {
+                            optionsSet.add(fake);
+                        }
+                    }
+                    return Array.from(optionsSet).slice(0, 3);
+                }
+
+                const distractors = generateWrongOptions(resultCoeff, variable);
+                const options = [correctAnswer, ...distractors];
+                const shuffled = shuffleArrayLocal(options);
+                const correctIndex = shuffled.indexOf(correctAnswer);
+
+                const solutionSteps = [];
+                solutionSteps.push(`(${formatMonomialBase(coeff, 1, variable)})³`);
+                solutionSteps.push(`= (${coeff})³ ⋅ (${variable})³`);
+                solutionSteps.push(`= ${coeff * coeff * coeff}${variable}³`);
+
+                return {
+                    text: text,
+                    options: shuffled,
+                    correct: correctIndex,
+                    correctAnswer: correctAnswer,
+                    solution: solutionSteps
+                };
+            }
+
+            function shuffleArrayLocal(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function generateCubeQuestions() {
+                const variables = ['x', 'y', 'a', 'b'];
+                const coeffsTier1 = [-2, -3, -4, 2, 3, 4]; // 12 câu
+                const coeffsTier2 = [5, -5]; // 3 câu
+                
+                const allQuestions = [];
+                let lastAbsCoeff = null;
+                
+                // Tạo 12 câu từ tier 1, đảm bảo 2 câu liền nhau có trị tuyệt đối khác nhau
+                const tier1Pool = [...coeffsTier1];
+                for (let i = 0; i < 12; i++) {
+                    let availableCoeffs = tier1Pool.filter(c => Math.abs(c) !== lastAbsCoeff);
+                    if (availableCoeffs.length === 0) availableCoeffs = [...tier1Pool];
+                    
+                    const coeff = availableCoeffs[Math.floor(Math.random() * availableCoeffs.length)];
+                    const variable = variables[Math.floor(Math.random() * variables.length)];
+                    allQuestions.push(createCubeQuestion(variable, coeff));
+                    lastAbsCoeff = Math.abs(coeff);
+                }
+                
+                // Tạo 3 câu từ tier 2
+                const tier2Questions = [];
+                const tier2Pool = [...coeffsTier2];
+                for (let i = 0; i < 3; i++) {
+                    const coeff = tier2Pool[i % tier2Pool.length];
+                    const variable = variables[Math.floor(Math.random() * variables.length)];
+                    tier2Questions.push(createCubeQuestion(variable, coeff));
+                }
+                
+                // Chèn 3 câu tier 2 vào vị trí ngẫu nhiên trong mảng 15 câu
+                const positions = Array.from({length: 15}, (_, i) => i);
+                const tier2Positions = [];
+                
+                // Chọn ngẫu nhiên 3 vị trí khác nhau
+                for (let i = 0; i < 3; i++) {
+                    const randomIndex = Math.floor(Math.random() * positions.length);
+                    tier2Positions.push(positions[randomIndex]);
+                    positions.splice(randomIndex, 1);
+                }
+                
+                // Sắp xếp vị trí để dễ chèn
+                tier2Positions.sort((a, b) => a - b);
+                
+                // Tạo mảng kết quả 15 câu
+                const finalQuestions = [];
+                let tier1Index = 0;
+                let tier2Index = 0;
+                
+                for (let i = 0; i < 15; i++) {
+                    if (tier2Positions.includes(i)) {
+                        finalQuestions.push(tier2Questions[tier2Index]);
+                        tier2Index++;
+                    } else {
+                        finalQuestions.push(allQuestions[tier1Index]);
+                        tier1Index++;
+                    }
+                }
+                
+                return finalQuestions;
+            }
+
+            let currentCbQuestions = [], currentCbIndex = 0, cbAnsweredCount = 0, cbCorrectCount = 0;
+            let cbTotalTime = 0, isCbTestActive = false, isCbCurrentAnswered = false, cbStartTime = null;
+            let cbAutoTimeout = null, cbFinishTimeout = null;
+
+            const cbQuestionArea = document.getElementById('cbQuestionArea');
+            const cbCounterSpan = document.getElementById('cbQuestionCounter');
+            const cbProgressFill = document.getElementById('cbProgressFill');
+            const cbResultArea = document.getElementById('cbResultArea');
+            document.getElementById('cbTotalQ').textContent = "15";
+
+            function updateCbUI() {
+                cbCounterSpan.textContent = cbAnsweredCount;
+                cbProgressFill.style.width = (cbAnsweredCount / currentCbQuestions.length * 100) + '%';
+            }
+
+            function renderCbQuestion() {
+                if (!isCbTestActive || currentCbIndex >= currentCbQuestions.length) return;
+                const q = currentCbQuestions[currentCbIndex];
+                let html = `<div class="question-box" style="text-align:center;"><div class="question-text">${formatMathTextLocal(q.text)}</div><div class="options">`;
+                q.options.forEach((opt, idx) => {
+                    const letter = String.fromCharCode(65+idx);
+                    html += `<div class="option"><input type="radio" name="cb_option" value="${idx}" id="cb_opt_${idx}" aria-label="Đáp án ${letter}: ${opt}"><label for="cb_opt_${idx}">${letter}. ${formatMathTextLocal(opt)}</label></div>`;
+                });
+                html += `</div></div>`;
+                cbQuestionArea.innerHTML = html;
+                document.querySelectorAll('#cbQuestionArea .option').forEach(opt => opt.addEventListener('click', () => {
+                    const radio = opt.querySelector('input[type="radio"]');
+                    if (radio && !radio.disabled) radio.checked = true;
+                }));
+                cbStartTime = Date.now(); isCbCurrentAnswered = false;
+                cbResultArea.innerHTML = ''; cbResultArea.className = 'result-area';
+            }
+
+            function finishCbTest() {
+                isCbTestActive = false;
+                const wrong = cbAnsweredCount - cbCorrectCount;
+                const avg = (cbTotalTime / cbAnsweredCount).toFixed(2);
+                document.getElementById('cbSummaryCorrect').textContent = cbCorrectCount;
+                document.getElementById('cbSummaryWrong').textContent = wrong;
+                document.getElementById('cbAvgTime').textContent = avg;
+                const msg = cbCorrectCount < 12 ? 'BẠN CẦN LUYỆN TẬP THÊM' : (cbCorrectCount === currentCbQuestions.length && avg <= 6 ? 'BẠN ĐÃ HOÀN THÀNH XUẤT SẮC' : 'BẠN ĐÃ HOÀN THÀNH TỐT');
+                document.getElementById('cbSummaryMessage').textContent = msg;
+                if (msg.includes('XUẤT SẮC')) canvasConfetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                document.getElementById('cbSummaryOverlay').classList.add('active');
+            }
+
+            function scheduleFinishCbTest(delay) {
+                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
+                cbFinishTimeout = setTimeout(finishCbTest, delay);
+            }
+
+            function recordCbAnswer(isCorrect, timeSpent) {
+                if (!isCbTestActive || isCbCurrentAnswered || cbAnsweredCount >= currentCbQuestions.length) return;
+                isCbCurrentAnswered = true;
+                cbAnsweredCount++;
+                cbTotalTime += timeSpent;
+                if (isCorrect) cbCorrectCount++;
+                updateCbUI();
+                document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true);
+                if (cbAnsweredCount === currentCbQuestions.length) {
+                    scheduleFinishCbTest(isCorrect ? 3000 : 5000);
+                } else if (isCorrect) {
+                    if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
+                    cbAutoTimeout = setTimeout(() => {
+                        if (isCbTestActive && cbAnsweredCount < currentCbQuestions.length) {
+                            currentCbIndex++;
+                            renderCbQuestion();
+                        }
+                        cbAutoTimeout = null;
+                    }, 3000);
+                }
+            }
+
+            function handleCbCheck() {
+                if (!isCbTestActive || isCbCurrentAnswered || cbAnsweredCount >= currentCbQuestions.length) return;
+                const selected = document.querySelector('input[name="cb_option"]:checked');
+                if (!selected) { cbResultArea.innerHTML = '⚠️ Vui lòng chọn một đáp án!'; cbResultArea.className = 'result-area result-wrong'; return; }
+                const selectedVal = parseInt(selected.value);
+                const q = currentCbQuestions[currentCbIndex];
+                const isCorrect = (selectedVal === q.correct);
+                const timeSpent = (Date.now() - cbStartTime) / 1000;
+                const correctLetter = String.fromCharCode(65 + q.correct);
+                const correctAnswerText = formatMathTextLocal(q.options[q.correct]);
+                if (isCorrect) {
+                    cbResultArea.innerHTML = `🎉 Chính xác! Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
+                    cbResultArea.className = 'result-area result-correct';
+                } else {
+                    let stepsHtml = q.solution.map(step => formatMathTextLocal(step)).join('<br>');
+                    cbResultArea.innerHTML = `❌ Sai.<br>🧩 Lời giải chi tiết:<div class="solution-steps">${stepsHtml}</div>Đáp án đúng: ${correctLetter}. ${correctAnswerText}`;
+                    cbResultArea.className = 'result-area result-wrong';
+                }
+                recordCbAnswer(isCorrect, timeSpent);
+            }
+
+            function moveToNextCbQuestion() {
+                if (!isCbTestActive) return;
+                if (cbAnsweredCount >= currentCbQuestions.length) return;
+                if (!isCbCurrentAnswered) {
+                    isCbCurrentAnswered = true;
+                    cbAnsweredCount++;
+                    updateCbUI();
+                    document.querySelectorAll('input[name="cb_option"]').forEach(radio => radio.disabled = true);
+                    if (cbAnsweredCount === currentCbQuestions.length) scheduleFinishCbTest(5000);
+                    else { if (cbAutoTimeout) clearTimeout(cbAutoTimeout); currentCbIndex++; renderCbQuestion(); }
+                } else {
+                    if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
+                    if (cbAnsweredCount < currentCbQuestions.length) { currentCbIndex++; renderCbQuestion(); }
+                }
+            }
+
+            function startCubeQuiz() {
+                if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
+                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
+                currentCbQuestions = generateCubeQuestions();
+                currentCbIndex = 0; cbAnsweredCount = 0; cbCorrectCount = 0; cbTotalTime = 0;
+                isCbTestActive = true; isCbCurrentAnswered = false;
+                updateCbUI();
+                renderCbQuestion();
+            }
+
+            function cleanupCube() {
+                isCbTestActive = false;
+                if (cbAutoTimeout) clearTimeout(cbAutoTimeout);
+                if (cbFinishTimeout) clearTimeout(cbFinishTimeout);
+                document.getElementById('cbSummaryOverlay').classList.remove('active');
+            }
+
+            document.getElementById('cbCheckBtn').addEventListener('click', handleCbCheck);
+            document.getElementById('cbNextBtn').addEventListener('click', moveToNextCbQuestion);
+            document.getElementById('cbCloseSummaryBtn').addEventListener('click', () => App.goHome());
+
+            document.addEventListener('keypress', function cbEnterHandler(e) {
+                if (e.key !== 'Enter') return;
+                if (App.activeQuiz !== 'cubeMonomial') return;
+                if (!isCbTestActive) return;
+                if (cbAnsweredCount >= currentCbQuestions.length) return;
+                e.preventDefault();
+                if (!isCbCurrentAnswered) handleCbCheck();
+                else moveToNextCbQuestion();
+            });
+
+            App.registerCleanup('cubeMonomial', cleanupCube);
+
+            document.getElementById('cubeMonomialLink').addEventListener('click', () => {
+                App.switchTo('cubeMonomial', 'cubeMonomial');
+                startCubeQuiz();
             });
         })();
 
